@@ -16,7 +16,7 @@ public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION(BlueprintCallable)
-	void InitInventoryUI();
+	void InitInventoryUI() {}
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 BagRowCount;

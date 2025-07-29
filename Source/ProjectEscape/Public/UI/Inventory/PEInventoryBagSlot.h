@@ -24,7 +24,6 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> ItemImage;
 
-
 protected:
 	uint32 SlotIndex;
 	uint32 StackCount;

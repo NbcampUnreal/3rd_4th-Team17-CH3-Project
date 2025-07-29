@@ -13,28 +13,6 @@ enum class EInventoryItemCategory : uint8
 	KEY_ITEM,
 };
 
-USTRUCT(BlueprintType)
-struct FInventoryItemInfo
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(BlueprintReadWrite)
-	int32 StackCount;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool IsStackable;
-
-	UPROPERTY(BlueprintReadWrite)
-	EInventoryItemCategory Category;
-
-	UPROPERTY(BlueprintReadWrite)
-	TObjectPtr<UTexture2D> ItemImageTexture;
-
-	UPROPERTY(BlueprintReadWrite)
-	FText ItemDescription;
-};
-
 UENUM(BlueprintType)
 enum class EInventoryWeaponCategory : uint8
 {
@@ -45,19 +23,45 @@ enum class EInventoryWeaponCategory : uint8
 };
 
 USTRUCT(BlueprintType)
-struct FInventoryRangeWeaponInfo
+struct FInventoryItemInfoBase
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	EInventoryWeaponCategory Category;
-
-	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<UTexture2D> ItemImageTexture;
 
 	UPROPERTY(BlueprintReadWrite)
 	FText ItemDescription;
+};
+
+USTRUCT(BlueprintType)
+struct FInventoryItemInfo : public FInventoryItemInfoBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	EInventoryItemCategory Category = EInventoryItemCategory::NONE;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 StackCount;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 MaxStackCount;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool IsStackable;
+};
+
+USTRUCT(BlueprintType)
+struct FInventoryRangeWeaponInfo : public FInventoryItemInfoBase
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	EInventoryWeaponCategory Category = EInventoryWeaponCategory::NONE;
 
 	UPROPERTY(BlueprintReadWrite)
 	int32 CurrentAmmo;
@@ -67,17 +71,36 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FInventoryMeleeWeaponInfo
+struct FInventoryMeleeWeaponInfo : public FInventoryItemInfoBase
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	EInventoryWeaponCategory Category;
+	EInventoryWeaponCategory Category = EInventoryWeaponCategory::NONE;
+};
+
+USTRUCT(BlueprintType)
+struct FInventoryInfo
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	TMap<int32, FInventoryItemInfo> Bags;
 
 	UPROPERTY(BlueprintReadWrite)
-	TObjectPtr<UTexture2D> ItemImageTexture;
+	FInventoryRangeWeaponInfo MainWeapon;
 
 	UPROPERTY(BlueprintReadWrite)
-	FText ItemDescription;
+	FInventoryRangeWeaponInfo SubWeapon;
+
+	UPROPERTY(BlueprintReadWrite)
+	FInventoryMeleeWeaponInfo MeleeWeapon;
+
+	UPROPERTY(BlueprintReadWrite)
+	FInventoryItemInfo HealItem;
+
+	UPROPERTY(BlueprintReadWrite)
+	FInventoryItemInfo Grenade;
 };
