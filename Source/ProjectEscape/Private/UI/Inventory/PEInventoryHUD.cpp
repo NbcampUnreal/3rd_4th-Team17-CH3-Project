@@ -10,3 +10,8 @@ UPEInventoryHUD::UPEInventoryHUD(const FObjectInitializer& ObjectInitializer) : 
 void UPEInventoryHUD::NativeOnInitialized()
 {
 }
+
+void UPEInventoryHUD::InitInventoryUI(FInventoryInfo InInventoryInfo)
+{
+	InventoryInfo = InInventoryInfo;
+}
