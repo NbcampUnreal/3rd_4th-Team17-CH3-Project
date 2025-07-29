@@ -19,10 +19,10 @@ public:
 
 	void InitSlot(uint32 InSlotIndex, IInventoryBagItem& BagItem);
 
-	UPROPERTY(meta = (BineWidget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> StackCountText;
 
-	UPROPERTY(meta = (BineWidget))
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> ItemImage;
 
 
