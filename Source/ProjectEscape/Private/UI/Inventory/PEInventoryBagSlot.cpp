@@ -1,5 +1,4 @@
 #include "UI/Inventory/PEInventoryBagSlot.h"
-#include "UI/Inventory/PEInventoryType.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 
@@ -88,5 +87,4 @@ void UPEInventoryBagSlot::SetStackCount(int Count, bool Stackable)
 			StackCountText->SetText(FText::FromString(FString("")));
 		}
 	}
-
 }

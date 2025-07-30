@@ -2,13 +2,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/Inventory/PEInventoryType.h"
 #include "PEInventoryBagSlot.generated.h"
 
 class UTextBlock;
 class UImage;
 class UTexture2D;
 class UPEInventoryHUD;
-struct FInventoryItemInfo;
 
 UCLASS()
 class PROJECTESCAPE_API UPEInventoryBagSlot : public UUserWidget
