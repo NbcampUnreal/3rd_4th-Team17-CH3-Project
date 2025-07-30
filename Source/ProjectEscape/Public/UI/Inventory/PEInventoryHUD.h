@@ -7,6 +7,7 @@
 
 class UUniformGridPanel;
 class UUserWidget;
+class UActorComponent;
 
 UCLASS()
 class PROJECTESCAPE_API UPEInventoryHUD : public UUserWidget
@@ -20,6 +21,29 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void InitInventoryUI(FInventoryInfo InInventoryInfo);
+
+	UFUNCTION(BlueprintCallable)
+	void DropItemFromBagToLand(int32 Index);
+
+	UFUNCTION(BlueprintCallable)
+	void SwapItemInBag(int32 Index, int32 OhterIndex);
+
+	//UFUNCTION(BlueprintCallable)
+	//void UnequipWeaponAndDropToLand(EInventoryWeaponCategory WeaponCategory);
+
+	//UFUNCTION(BlueprintCallable)
+	//void AddItemToQuickSlot();
+
+	//UFUNCTION(BlueprintCallable)
+	//void RemoveItemFromQuickSlot();
+
+	// Interface, To be confirmed.
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UActorComponent> IntenvoryBagComponent;
+
+	// Interface, To be confirmed.
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UActorComponent> EquipmentQuickSlotComponent;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUniformGridPanel> BagSlotUniformGrid;
@@ -37,8 +61,10 @@ public:
 
 
 private:
-	void InitEmptyBagSlot();
-	void InitBagSlot();
+	void InitEmptyBagSlots();
+	void InitBagSlots();
+
+	void ResetSlot(int32 Index);
 
 	TMap<int32, UUserWidget*> BagSlots;
 };

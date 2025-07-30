@@ -18,11 +18,20 @@ void UPEInventoryHUD::InitInventoryUI(FInventoryInfo InInventoryInfo)
 {
 	InventoryInfo = InInventoryInfo;
 
-	InitEmptyBagSlot();
-	InitBagSlot();
+	InitEmptyBagSlots();
+	InitBagSlots();
 }
 
-void UPEInventoryHUD::InitEmptyBagSlot()
+void UPEInventoryHUD::DropItemFromBagToLand(int32 Index)
+{
+}
+
+void UPEInventoryHUD::SwapItemInBag(int32 Index, int32 OhterIndex)
+{
+}
+
+
+void UPEInventoryHUD::InitEmptyBagSlots()
 {
 	if (BagSlotUniformGrid && BagSlotClass)
 	{
@@ -41,7 +50,7 @@ void UPEInventoryHUD::InitEmptyBagSlot()
 	}
 }
 
-void UPEInventoryHUD::InitBagSlot()
+void UPEInventoryHUD::InitBagSlots()
 {
 	if (BagSlotUniformGrid)
 	{
@@ -59,4 +68,8 @@ void UPEInventoryHUD::InitBagSlot()
 			}
 		}
 	}
+}
+
+void UPEInventoryHUD::ResetSlot(int32 Index)
+{
 }
