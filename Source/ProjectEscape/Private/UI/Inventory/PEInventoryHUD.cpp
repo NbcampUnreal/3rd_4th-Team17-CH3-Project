@@ -1,5 +1,6 @@
 #include "UI/Inventory/PEInventoryHUD.h"
 #include "UI/Inventory/PEInventoryBagSlot.h"
+#include "UI/Inventory/PEInventoryType.h"
 #include "Components/UniformGridPanel.h"
 
 
@@ -18,6 +19,7 @@ void UPEInventoryHUD::InitInventoryUI(FInventoryInfo InInventoryInfo)
 	InventoryInfo = InInventoryInfo;
 
 	InitEmptyBagSlot();
+	InitBagSlot();
 }
 
 void UPEInventoryHUD::InitEmptyBagSlot()
@@ -29,8 +31,31 @@ void UPEInventoryHUD::InitEmptyBagSlot()
 			for (int Col = 0; Col < BagColCount; Col++)
 			{
 				UPEInventoryBagSlot* NewSlot = CreateWidget<UPEInventoryBagSlot>(this, BagSlotClass);
-				NewSlot->InitEmpty(Row * BagColCount + Col);
+				int32 Index = Row * BagColCount + Col;
+				NewSlot->InitEmpty(Index);
+
 				BagSlotUniformGrid->AddChildToUniformGrid(NewSlot, Row, Col);
+				BagSlots.Add(Index, NewSlot);
+			}
+		}
+	}
+}
+
+void UPEInventoryHUD::InitBagSlot()
+{
+	if (BagSlotUniformGrid)
+	{
+		for (auto& BagInfo : InventoryInfo.Bags)
+		{
+			int32 Index = BagInfo.Key;
+			FInventoryItemInfo& ItemInfo = BagInfo.Value;
+
+			if (BagSlots.Contains(Index))
+			{
+				if (UPEInventoryBagSlot* BagSlot = Cast<UPEInventoryBagSlot>(BagSlots[Index]))
+				{
+					BagSlot->InitSlot(Index, ItemInfo);
+				}
 			}
 		}
 	}

@@ -6,7 +6,7 @@
 
 class UTextBlock;
 class UImage;
-class IInventoryBagItem;
+struct FInventoryItemInfo;
 
 UCLASS()
 class PROJECTESCAPE_API UPEInventoryBagSlot : public UUserWidget
@@ -17,7 +17,7 @@ public:
 	virtual void NativeOnInitialized() override;
 
 	void InitEmpty(uint32 InSlotIndex);
-	void InitSlot(uint32 InSlotIndex, IInventoryBagItem& BagItem);
+	void InitSlot(uint32 InSlotIndex, FInventoryItemInfo& ItemInfo);
 
 	bool IsValid() const { return IsVaildSlot; };
 

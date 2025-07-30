@@ -38,4 +38,7 @@ public:
 
 private:
 	void InitEmptyBagSlot();
+	void InitBagSlot();
+
+	TMap<int32, UUserWidget*> BagSlots;
 };
