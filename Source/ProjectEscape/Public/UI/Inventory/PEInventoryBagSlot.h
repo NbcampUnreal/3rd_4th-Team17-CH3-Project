@@ -19,6 +19,7 @@ public:
 	void InitEmpty(uint32 InSlotIndex);
 	void InitSlot(uint32 InSlotIndex, FInventoryItemInfo& ItemInfo);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	bool IsValid() const { return IsVaildSlot; };
 
 	UPROPERTY(meta = (BindWidget))
