@@ -18,7 +18,7 @@ void UPEInventoryHUD::InitInventoryUI(FInventoryInfo InInventoryInfo)
 {
 	InventoryInfo = InInventoryInfo;
 
-	InitEmptyBagSlots();
+	CreateEmptyBagSlots();
 	InitBagSlots();
 }
 
@@ -33,7 +33,7 @@ void UPEInventoryHUD::SwapItemInBag(int32 Index, int32 OhterIndex)
 }
 
 
-void UPEInventoryHUD::InitEmptyBagSlots()
+void UPEInventoryHUD::CreateEmptyBagSlots()
 {
 	if (BagSlotUniformGrid && BagSlotClass)
 	{
@@ -43,6 +43,7 @@ void UPEInventoryHUD::InitEmptyBagSlots()
 			{
 				UPEInventoryBagSlot* NewSlot = CreateWidget<UPEInventoryBagSlot>(this, BagSlotClass);
 				int32 Index = Row * BagColCount + Col;
+				NewSlot->SetParentWidget(this);
 				NewSlot->InitEmpty(Index);
 
 				BagSlotUniformGrid->AddChildToUniformGrid(NewSlot, Row, Col);

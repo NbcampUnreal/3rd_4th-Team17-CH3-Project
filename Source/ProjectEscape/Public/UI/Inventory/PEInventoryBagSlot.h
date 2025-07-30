@@ -6,6 +6,7 @@
 
 class UTextBlock;
 class UImage;
+class UPEInventoryHUD;
 struct FInventoryItemInfo;
 
 UCLASS()
@@ -18,6 +19,11 @@ public:
 
 	void InitEmpty(int32 InSlotIndex);
 	void InitSlot(int32 InSlotIndex, FInventoryItemInfo& ItemInfo);
+	
+	void SetParentWidget(UPEInventoryHUD* Parent)
+	{
+		ParentWidget = Parent;
+	}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	bool IsValid() const { return IsVaildSlot; };
@@ -29,6 +35,9 @@ public:
 	TObjectPtr<UImage> ItemImage;
 
 protected:
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<UPEInventoryHUD> ParentWidget;
+
 	UPROPERTY(BlueprintReadOnly)
 	int32 SlotIndex;
 

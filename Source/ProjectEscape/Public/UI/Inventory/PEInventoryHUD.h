@@ -61,7 +61,7 @@ public:
 
 
 private:
-	void InitEmptyBagSlots();
+	void CreateEmptyBagSlots();
 	void InitBagSlots();
 
 	void ResetSlot(int32 Index);
