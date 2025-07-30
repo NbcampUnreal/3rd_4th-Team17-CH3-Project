@@ -1,6 +1,7 @@
 #include "UI/Inventory/PEInventoryHUD.h"
 #include "UI/Inventory/PEInventoryBagSlot.h"
 #include "UI/Inventory/PEInventoryType.h"
+#include "UI/Inventory/PEInventoryWeaponSlot.h"
 #include "Components/UniformGridPanel.h"
 
 
@@ -27,6 +28,28 @@ void UPEInventoryHUD::InitInventoryUI(FInventoryInfo InInventoryInfo)
 		ResetBagSlots();
 	}
 	InitBagSlots();
+
+	if (MainWeaponSlot)
+	{
+		MainWeaponSlot->InitEmpty(EInventoryWeaponCategory::MAIN_WEAPON);
+	}
+	if (SubWeaponSlot)
+	{
+		SubWeaponSlot->InitEmpty(EInventoryWeaponCategory::SUB_WEAPON);
+	}
+	if (MeleeWeaponSlot)
+	{
+		MeleeWeaponSlot->InitEmpty(EInventoryWeaponCategory::MELEE_WEAPON);
+	}
+	// TODO: 여기서부터
+	//if (HealItemSlot)
+	//{
+	//	HealItemSlot->InitEmpty(EInventoryWeaponCategory:);
+	//}
+	//if (GrenadeSlot)
+	//{
+	//	GrenadeSlot->InitEmpty(EInventoryWeaponCategory::MAIN_WEAPON);
+	//}
 }
 
 void UPEInventoryHUD::DropItemFromBagToLand(int32 Index)

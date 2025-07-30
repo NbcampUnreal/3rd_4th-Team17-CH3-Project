@@ -26,6 +26,9 @@ void UPEInventorySlot::InitSlot(FInventoryRangeWeaponInfo& WeaponInfo)
 
 void UPEInventorySlot::ResetSlot()
 {
+	SetTexture(nullptr);
+	SetShortCutBoxVisiblity(false);
+	IsVaildSlot = false;
 }
 
 void UPEInventorySlot::SetTexture(UTexture2D* Texture)
@@ -78,9 +81,8 @@ void UPEInventoryRangeWeaponSlot::InitSlot(FInventoryRangeWeaponInfo& WeaponInfo
 
 void UPEInventoryRangeWeaponSlot::ResetSlot()
 {
-	SetTexture(nullptr);
-	SetAmmoCount(0, 0);
-	SetShortCutBoxVisiblity(false);
+	Super::ResetSlot();
+	SetAmmoCount(-1, -1);
 	IsVaildSlot = false;
 }
 
@@ -98,7 +100,14 @@ void UPEInventoryRangeWeaponSlot::SetAmmoCount(int Current, int Total)
 	TotalAmmoCount = Total;
 	if (AmmoCountText)
 	{
-		FString FormatString = FString::Printf(TEXT("%d/%d"), Current, Total);
-		AmmoCountText->SetText(FText::FromString(FormatString));
+		if (Current > 0 && Total > 0)
+		{
+			FString FormatString = FString::Printf(TEXT("%d/%d"), Current, Total);
+			AmmoCountText->SetText(FText::FromString(FormatString));
+		}
+		else
+		{
+			AmmoCountText->SetText(FText::FromString(FString("")));
+		}
 	}
 }

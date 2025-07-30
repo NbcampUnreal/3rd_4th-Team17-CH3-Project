@@ -8,6 +8,9 @@
 class UUniformGridPanel;
 class UUserWidget;
 class UActorComponent;
+class UPEInventoryRangeWeaponSlot;
+class UPEInventoryMeleeWeaponSlot;
+class UPEInventoryQuickItemSlot;
 
 UCLASS()
 class PROJECTESCAPE_API UPEInventoryHUD : public UUserWidget
@@ -47,6 +50,21 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUniformGridPanel> BagSlotUniformGrid;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UPEInventoryRangeWeaponSlot> MainWeaponSlot;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UPEInventoryRangeWeaponSlot> SubWeaponSlot;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UPEInventoryMeleeWeaponSlot> MeleeWeaponSlot;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UPEInventoryQuickItemSlot> HealItemSlot;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UPEInventoryQuickItemSlot> GrenadeSlot;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSubclassOf<UUserWidget> BagSlotClass;
