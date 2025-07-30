@@ -18,18 +18,37 @@ void UPEInventoryHUD::InitInventoryUI(FInventoryInfo InInventoryInfo)
 {
 	InventoryInfo = InInventoryInfo;
 
-	CreateEmptyBagSlots();
+	if (BagSlots.IsEmpty())
+	{
+		CreateEmptyBagSlots();
+	}
+	else
+	{
+		ResetBagSlots();
+	}
 	InitBagSlots();
 }
 
 void UPEInventoryHUD::DropItemFromBagToLand(int32 Index)
 {
 	UE_LOG(LogTemp, Display, TEXT("[DEBUG] DropItemFromBagToLand Index: %d"), Index);
+
+	// Remove From UI
+	ResetSlot(Index);
+
+	// Notify to Character Component
+	// To Be Added.
 }
 
 void UPEInventoryHUD::SwapItemInBag(int32 Index, int32 OhterIndex)
 {
 	UE_LOG(LogTemp, Display, TEXT("[DEBUG] SwapItemInBag Index: %d, OhterIndex: %d"), Index, OhterIndex);
+
+	// Swap In UI
+	SwapSlot(Index, OhterIndex);
+
+	// Notify to Character Component
+	// To Be Added.
 }
 
 
@@ -49,6 +68,18 @@ void UPEInventoryHUD::CreateEmptyBagSlots()
 				BagSlotUniformGrid->AddChildToUniformGrid(NewSlot, Row, Col);
 				BagSlots.Add(Index, NewSlot);
 			}
+		}
+	}
+}
+
+void UPEInventoryHUD::ResetBagSlots()
+{
+	for (int Row = 0; Row < BagRowCount; Row++)
+	{
+		for (int Col = 0; Col < BagColCount; Col++)
+		{
+			int32 Index = Row * BagColCount + Col;
+			ResetSlot(Index);
 		}
 	}
 }
@@ -75,4 +106,24 @@ void UPEInventoryHUD::InitBagSlots()
 
 void UPEInventoryHUD::ResetSlot(int32 Index)
 {
+	if (BagSlots.Contains(Index))
+	{
+		if (UPEInventoryBagSlot* BagSlot = Cast<UPEInventoryBagSlot>(BagSlots[Index]))
+		{
+			BagSlot->ResetSlot();
+		}
+	}
+}
+
+void UPEInventoryHUD::SwapSlot(int32 Index, int32 OtherIndex)
+{
+	if (BagSlots.Contains(Index) && BagSlots.Contains(OtherIndex))
+	{
+		UPEInventoryBagSlot* BagSlot1 = Cast<UPEInventoryBagSlot>(BagSlots[Index]);
+		UPEInventoryBagSlot* BagSlot2 = Cast<UPEInventoryBagSlot>(BagSlots[OtherIndex]);
+		if (BagSlot1 && BagSlot2)
+		{
+			BagSlot1->SwapSlot(BagSlot2);
+		}
+	}
 }

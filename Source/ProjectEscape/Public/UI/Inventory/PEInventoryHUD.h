@@ -62,9 +62,11 @@ public:
 
 private:
 	void CreateEmptyBagSlots();
+	void ResetBagSlots();
 	void InitBagSlots();
 
 	void ResetSlot(int32 Index);
+	void SwapSlot(int32 Index, int32 OtherIndex);
 
 	TMap<int32, UUserWidget*> BagSlots;
 };

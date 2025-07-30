@@ -6,6 +6,7 @@
 
 class UTextBlock;
 class UImage;
+class UTexture2D;
 class UPEInventoryHUD;
 struct FInventoryItemInfo;
 
@@ -19,6 +20,10 @@ public:
 
 	void InitEmpty(int32 InSlotIndex);
 	void InitSlot(int32 InSlotIndex, FInventoryItemInfo& ItemInfo);
+
+	void ResetSlot();
+	void SetSlot(UTexture2D* Texture, int Count, bool Stackable);
+	void SwapSlot(UPEInventoryBagSlot* Other);
 	
 	void SetParentWidget(UPEInventoryHUD* Parent)
 	{
@@ -41,12 +46,19 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	int32 SlotIndex;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY()
+	UTexture2D* ItemTexture;
+
+	UPROPERTY()
 	int32 StackCount;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY()
 	bool IsStackable;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY()
 	bool IsVaildSlot;
+
+private:
+	void SetTexture(UTexture2D* Texture);
+	void SetStackCount(int Count, bool Stackable);
 };
