@@ -8,7 +8,7 @@ void UPEInventoryBagSlot::NativeOnInitialized()
 	Super::NativeOnInitialized();
 }
 
-void UPEInventoryBagSlot::InitEmpty(uint32 InSlotIndex)
+void UPEInventoryBagSlot::InitEmpty(int32 InSlotIndex)
 {
 	SlotIndex = InSlotIndex;
 	IsVaildSlot = false;
@@ -25,7 +25,7 @@ void UPEInventoryBagSlot::InitEmpty(uint32 InSlotIndex)
 	}
 }
 
-void UPEInventoryBagSlot::InitSlot(uint32 InSlotIndex, FInventoryItemInfo& ItemInfo)
+void UPEInventoryBagSlot::InitSlot(int32 InSlotIndex, FInventoryItemInfo& ItemInfo)
 {
 	SlotIndex = InSlotIndex;
 	IsVaildSlot = true;

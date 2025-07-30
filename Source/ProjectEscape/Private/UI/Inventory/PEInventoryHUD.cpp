@@ -24,10 +24,12 @@ void UPEInventoryHUD::InitInventoryUI(FInventoryInfo InInventoryInfo)
 
 void UPEInventoryHUD::DropItemFromBagToLand(int32 Index)
 {
+	UE_LOG(LogTemp, Display, TEXT("[DEBUG] DropItemFromBagToLand Index: %d"), Index);
 }
 
 void UPEInventoryHUD::SwapItemInBag(int32 Index, int32 OhterIndex)
 {
+	UE_LOG(LogTemp, Display, TEXT("[DEBUG] SwapItemInBag Index: %d, OhterIndex: %d"), Index, OhterIndex);
 }
 
 

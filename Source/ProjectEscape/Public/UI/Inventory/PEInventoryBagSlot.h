@@ -16,8 +16,8 @@ class PROJECTESCAPE_API UPEInventoryBagSlot : public UUserWidget
 public:
 	virtual void NativeOnInitialized() override;
 
-	void InitEmpty(uint32 InSlotIndex);
-	void InitSlot(uint32 InSlotIndex, FInventoryItemInfo& ItemInfo);
+	void InitEmpty(int32 InSlotIndex);
+	void InitSlot(int32 InSlotIndex, FInventoryItemInfo& ItemInfo);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	bool IsValid() const { return IsVaildSlot; };
@@ -29,8 +29,15 @@ public:
 	TObjectPtr<UImage> ItemImage;
 
 protected:
-	uint32 SlotIndex;
-	uint32 StackCount;
+	UPROPERTY(BlueprintReadOnly)
+	int32 SlotIndex;
+
+	UPROPERTY(BlueprintReadOnly)
+	int32 StackCount;
+
+	UPROPERTY(BlueprintReadOnly)
 	bool IsStackable;
+
+	UPROPERTY(BlueprintReadOnly)
 	bool IsVaildSlot;
 };
