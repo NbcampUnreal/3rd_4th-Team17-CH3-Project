@@ -6,6 +6,7 @@
 #include "PEInventoryHUD.generated.h"
 
 class UUniformGridPanel;
+class UUserWidget;
 
 UCLASS()
 class PROJECTESCAPE_API UPEInventoryHUD : public UUserWidget
@@ -22,6 +23,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUniformGridPanel> BagSlotUniformGrid;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSubclassOf<UUserWidget> BagSlotClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	int32 BagRowCount;
@@ -30,4 +34,8 @@ public:
 	int32 BagColCount;
 
 	FInventoryInfo InventoryInfo;
+
+
+private:
+	void InitEmptyBagSlot();
 };

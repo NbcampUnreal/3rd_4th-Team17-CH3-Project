@@ -16,7 +16,10 @@ class PROJECTESCAPE_API UPEInventoryBagSlot : public UUserWidget
 public:
 	virtual void NativeOnInitialized() override;
 
+	void InitEmpty(uint32 InSlotIndex);
 	void InitSlot(uint32 InSlotIndex, IInventoryBagItem& BagItem);
+
+	bool IsValid() const { return IsVaildSlot; };
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> StackCountText;
@@ -28,4 +31,5 @@ protected:
 	uint32 SlotIndex;
 	uint32 StackCount;
 	bool IsStackable;
+	bool IsVaildSlot;
 };
