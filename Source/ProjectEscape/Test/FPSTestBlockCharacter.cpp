@@ -110,27 +110,11 @@ UPEInteractManagerComponent* AFPSTestBlockCharacter::GetInteractManagerComponent
 
 void AFPSTestBlockCharacter::TryInteract(AActor* TargetActor)
 {
-	if (UActorComponent* ActorComponent = TargetActor->GetComponentByClass(UPEQuickSlotItemComponent::StaticClass()))
+	if (UPEQuickSlotItemComponent* QuickSlotItemComponent = TargetActor->FindComponentByClass<UPEQuickSlotItemComponent>())
 	{
-		if (UPEQuickSlotItemComponent* QuickSlotItemComponent = Cast<UPEQuickSlotItemComponent>(ActorComponent))
-		{
-			QuickSlotItemComponent->OnItemPickedUp(this);
-			QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), TargetActor);
-			UE_LOG(LogTemp, Warning, TEXT("QuickSlotItemComponent found and set for %s"), *GetNameSafe(TargetActor));
-		}
-
-		/*
-		if (UPEUseableComponent* UseableComponent = Cast<UPEUseableComponent>(ActorComponent))
-		{
-			// 임시로 상호작용 시 바로 착용
-			UseableComponent->Hold(this);
-			//UseableItemManagerComponent->SetHandItem(UseableComponent);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Target Actor %s does not have a valid UseableComponent!"), *GetNameSafe(TargetActor));
-		}
-		*/
+		QuickSlotItemComponent->OnItemPickedUp(this);
+		QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), TargetActor);
+		UE_LOG(LogTemp, Warning, TEXT("QuickSlotItemComponent found and set for %s"), *GetNameSafe(TargetActor));
 	}
 	UE_LOG(LogTemp, Warning, TEXT("TryInteract called on %s with target %s"), *GetName(), *GetNameSafe(TargetActor));
 	
@@ -180,24 +164,36 @@ void AFPSTestBlockCharacter::Use()
 void AFPSTestBlockCharacter::HandEquipment(EPEEquipmentType EquipmentType)
 {
 	// Todo: 퀵슬롯으로 부터 아이템을 받은 다음 손에 장착
-	if (!QuickSlotManagerComponent && !UseableItemManagerComponent)
+	if (!QuickSlotManagerComponent || !UseableItemManagerComponent)
 	{
+		UE_LOG(LogTemp, Error, TEXT("Required components are not initialized!"));
 		return;
 	}
+	
 	if (AActor* HandItem = QuickSlotManagerComponent->SelectEquipment(EquipmentType))
 	{
-		if (IPEUseable* UseableInterface = Cast<IPEUseable>(HandItem))
+		// 아이템에서 직접 UPEUseableComponent를 찾기
+		if (UPEUseableComponent* UseableComponent = HandItem->FindComponentByClass<UPEUseableComponent>())
 		{
 			// 아이템을 손에 들고 있는 상태로 설정
-			UseableItemManagerComponent->SetHandItem(UseableInterface->GetUseableComponent());
-			UseableInterface->OnHand(this);
+			UseableItemManagerComponent->SetHandItem(UseableComponent);
+			
+			// 인터페이스가 구현되어 있다면 OnHand 호출
+			if (IPEUseable* UseableInterface = Cast<IPEUseable>(HandItem))
+			{
+				UseableInterface->OnHand(this);
+			}
+			
 			UE_LOG(LogTemp, Warning, TEXT("HandEquipment: %s is now in hand"), *HandItem->GetName());
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("HandEquipment: %s does not implement IPEUseable interface!"), *GetNameSafe(HandItem));
-			return;
+			UE_LOG(LogTemp, Warning, TEXT("HandEquipment: %s does not have UPEUseableComponent!"), *GetNameSafe(HandItem));
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No equipment found for type: %d"), static_cast<int32>(EquipmentType));
 	}
 }
 

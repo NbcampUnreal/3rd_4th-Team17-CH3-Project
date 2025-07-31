@@ -24,6 +24,7 @@ class PROJECTESCAPE_API IPEQuickSlotItem
 
 public:
 	virtual AActor* GetItemOwner() const = 0;
+	virtual void OnDropped() = 0;
 	virtual UPEQuickSlotItemComponent* GetQuickSlotItemComponent() const = 0;
 	virtual EPEEquipmentType GetEquipmentType() const = 0;
 };

@@ -41,6 +41,7 @@ void UPEUseableItemManagerComponent::SetHandItem(IPEUseable* NewItem)
 		UE_LOG(LogTemp, Log, TEXT("UPEUseableItemManagerComponent: Cleared current item"));
 	}
 }
+}
 */
 
 void UPEUseableItemManagerComponent::SetHandItem(UPEUseableComponent* NewItemComponent)

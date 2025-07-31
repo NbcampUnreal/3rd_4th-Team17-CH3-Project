@@ -57,6 +57,7 @@ protected:
 	/* IPEQuickSlotItem 인터페이스 선언 */
 public:
 	virtual AActor* GetItemOwner() const override;
+	virtual void OnDropped() override;
 	virtual UPEQuickSlotItemComponent* GetQuickSlotItemComponent() const override;
 	virtual EPEEquipmentType GetEquipmentType() const override;
 };

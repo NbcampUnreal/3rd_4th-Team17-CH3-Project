@@ -73,6 +73,11 @@ AActor* APEWeaponBase::GetItemOwner() const
 	return OwnerActor;
 }
 
+void APEWeaponBase::OnDropped()
+{
+	OwnerActor = nullptr;
+}
+
 UPEQuickSlotItemComponent* APEWeaponBase::GetQuickSlotItemComponent() const
 {
 	return QuickSlotItemComponent;

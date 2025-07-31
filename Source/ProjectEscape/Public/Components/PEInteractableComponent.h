@@ -23,7 +23,7 @@ protected:
 	virtual void BeginPlay() override;
 
 protected:
-	IPEInteractable*			ComponentOwner;
+	IPEInteractable* ComponentOwner;
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Interaction")

@@ -40,6 +40,15 @@ void UPEQuickSlotItemComponent::OnItemDropped(AActor* NewItemOwner)
 		
 		// 콜리전도 다시 활성화
 		ComponentOwnerActor->SetActorEnableCollision(true);
+
+		if (IPEQuickSlotItem* QuickSlotItemInterface = Cast<IPEQuickSlotItem>(ComponentOwnerActor))
+		{
+			QuickSlotItemInterface->OnDropped();
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PEQuickSlotItemComponent: Owner %s does not implement IPEQuickSlotItem interface!"), *ComponentOwnerActor->GetName());
+		}
 	}
 }
 
