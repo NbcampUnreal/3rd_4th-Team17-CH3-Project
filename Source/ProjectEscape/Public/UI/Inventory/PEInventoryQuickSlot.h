@@ -3,7 +3,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/Inventory/PEInventoryType.h"
-#include "PEInventoryWeaponSlot.generated.h"
+#include "PEInventoryQuickSlot.generated.h"
 
 class UTextBlock;
 class UImage;
@@ -11,16 +11,15 @@ class UTexture2D;
 class UPEInventoryHUD;
 
 UCLASS()
-class PROJECTESCAPE_API UPEInventorySlot : public UUserWidget
+class PROJECTESCAPE_API UPEInventoryQuickSlot : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
 	virtual void NativeOnInitialized() override;
 
-	void InitEmpty(EInventoryWeaponCategory InCategory);
-	virtual void InitSlot(FInventoryRangeWeaponInfo& WeaponInfo);
-	virtual void ResetSlot();
+	void InitEmpty(EInventoryItemCategory InCategory);
+	virtual void ResetSlot() {}
 
 	void SetParentWidget(UPEInventoryHUD* Parent)
 	{
@@ -44,7 +43,7 @@ protected:
 	TObjectPtr<UPEInventoryHUD> ParentWidget;
 
 	UPROPERTY()
-	EInventoryWeaponCategory Category;
+	EInventoryItemCategory Category;
 
 	UPROPERTY()
 	UTexture2D* WeaponTexture;
@@ -60,37 +59,53 @@ protected:
 };
 
 UCLASS()
-class PROJECTESCAPE_API UPEInventoryMeleeWeaponSlot : public UPEInventorySlot
-{
-	GENERATED_BODY()
-};
-
-UCLASS()
-class PROJECTESCAPE_API UPEInventoryQuickItemSlot : public UPEInventorySlot
+class PROJECTESCAPE_API UPEInventoryMeleeWeaponSlot : public UPEInventoryQuickSlot
 {
 	GENERATED_BODY()
 
 public:
-	// TODO: 개수 표시
+	void InitSlot(FInventoryMeleeWeaponInfo& WeaponInfo);
+	virtual void ResetSlot() override;
+	void SetSlot(UTexture2D* Texture);
+};
+
+UCLASS()
+class PROJECTESCAPE_API UPEInventoryQuickItemSlot : public UPEInventoryQuickSlot
+{
+	GENERATED_BODY()
+
+public:
+	void InitSlot(FInventoryItemInfo& ItemInfo);
+	virtual void ResetSlot() override;
+	void SetSlot(UTexture2D* Texture, int32 Stack, int32 MaxStack, bool Stackable);
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UTextBlock> StackCountText;
 
 protected:
 	UPROPERTY()
 	int32 StackCount;
+
+	UPROPERTY()
+	int32 MaxStackCount;
+
+	UPROPERTY()
+	bool IsStackable;
+
+	void SetStackCount(int32 Stack, int32 MaxStack, bool Stackable);
 };
 
 UCLASS()
-class PROJECTESCAPE_API UPEInventoryRangeWeaponSlot : public UPEInventorySlot
+class PROJECTESCAPE_API UPEInventoryRangeWeaponSlot : public UPEInventoryQuickSlot
 {
 	GENERATED_BODY()
 	
 public:
 	virtual void NativeOnInitialized() override;
 
-	virtual void InitSlot(FInventoryRangeWeaponInfo& WeaponInfo) override;
+	void InitSlot(FInventoryRangeWeaponInfo& WeaponInfo);
 	virtual void ResetSlot() override;
-	void SetSlot(UTexture2D* Texture, int CurrentAmmo, int TotalAmmo);
+	void SetSlot(UTexture2D* Texture, int32 CurrentAmmo, int32 TotalAmmo);
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UTextBlock> AmmoCountText;
@@ -102,5 +117,5 @@ protected:
 	UPROPERTY()
 	int32 TotalAmmoCount;
 
-	void SetAmmoCount(int Current, int Total);
+	void SetAmmoCount(int32 Current, int32 Total);
 };

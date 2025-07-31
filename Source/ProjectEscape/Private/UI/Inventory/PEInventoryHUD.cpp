@@ -1,7 +1,7 @@
 #include "UI/Inventory/PEInventoryHUD.h"
 #include "UI/Inventory/PEInventoryBagSlot.h"
 #include "UI/Inventory/PEInventoryType.h"
-#include "UI/Inventory/PEInventoryWeaponSlot.h"
+#include "UI/Inventory/PEInventoryQuickSlot.h"
 #include "Components/UniformGridPanel.h"
 
 
@@ -31,25 +31,29 @@ void UPEInventoryHUD::InitInventoryUI(FInventoryInfo InInventoryInfo)
 
 	if (MainWeaponSlot)
 	{
-		MainWeaponSlot->InitEmpty(EInventoryWeaponCategory::MAIN_WEAPON);
+		MainWeaponSlot->InitEmpty(EInventoryItemCategory::MAIN_WEAPON);
+		MainWeaponSlot->InitSlot(InventoryInfo.MainWeapon);
 	}
 	if (SubWeaponSlot)
 	{
-		SubWeaponSlot->InitEmpty(EInventoryWeaponCategory::SUB_WEAPON);
+		SubWeaponSlot->InitEmpty(EInventoryItemCategory::SUB_WEAPON);
+		SubWeaponSlot->InitSlot(InventoryInfo.SubWeapon);
 	}
 	if (MeleeWeaponSlot)
 	{
-		MeleeWeaponSlot->InitEmpty(EInventoryWeaponCategory::MELEE_WEAPON);
+		MeleeWeaponSlot->InitEmpty(EInventoryItemCategory::MELEE_WEAPON);
+		MeleeWeaponSlot->InitSlot(InventoryInfo.MeleeWeapon);
 	}
-	// TODO: 여기서부터
-	//if (HealItemSlot)
-	//{
-	//	HealItemSlot->InitEmpty(EInventoryWeaponCategory:);
-	//}
-	//if (GrenadeSlot)
-	//{
-	//	GrenadeSlot->InitEmpty(EInventoryWeaponCategory::MAIN_WEAPON);
-	//}
+	if (HealItemSlot)
+	{
+		HealItemSlot->InitEmpty(EInventoryItemCategory::HEAL_ITEM);
+		HealItemSlot->InitSlot(InventoryInfo.HealItem);
+	}
+	if (GrenadeSlot)
+	{
+		GrenadeSlot->InitEmpty(EInventoryItemCategory::GRENADE_ITEM);
+		GrenadeSlot->InitSlot(InventoryInfo.Grenade);
+	}
 }
 
 void UPEInventoryHUD::DropItemFromBagToLand(int32 Index)

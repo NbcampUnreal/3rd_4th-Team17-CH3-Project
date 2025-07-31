@@ -32,7 +32,7 @@ public:
 	void SwapItemInBag(int32 Index, int32 OhterIndex);
 
 	//UFUNCTION(BlueprintCallable)
-	//void UnequipWeaponAndDropToLand(EInventoryWeaponCategory WeaponCategory);
+	//void UnequipWeaponAndDropToLand(EInventoryQuickSlotCategory WeaponCategory);
 
 	//UFUNCTION(BlueprintCallable)
 	//void AddItemToQuickSlot();

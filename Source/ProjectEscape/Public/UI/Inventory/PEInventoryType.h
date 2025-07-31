@@ -7,19 +7,13 @@ UENUM(BlueprintType)
 enum class EInventoryItemCategory : uint8
 {
 	NONE,
+	MAIN_WEAPON,
+	SUB_WEAPON,
+	MELEE_WEAPON,
 	AMMO,
 	HEAL_ITEM,
 	GRENADE_ITEM,
 	KEY_ITEM,
-};
-
-UENUM(BlueprintType)
-enum class EInventoryWeaponCategory : uint8
-{
-	NONE,
-	MAIN_WEAPON,
-	SUB_WEAPON,
-	MELEE_WEAPON,
 };
 
 USTRUCT(BlueprintType)
@@ -61,7 +55,7 @@ struct FInventoryRangeWeaponInfo : public FInventoryItemInfoBase
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	EInventoryWeaponCategory Category = EInventoryWeaponCategory::NONE;
+	EInventoryItemCategory Category = EInventoryItemCategory::NONE;
 
 	UPROPERTY(BlueprintReadWrite)
 	int32 CurrentAmmo;
@@ -77,7 +71,7 @@ struct FInventoryMeleeWeaponInfo : public FInventoryItemInfoBase
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	EInventoryWeaponCategory Category = EInventoryWeaponCategory::NONE;
+	EInventoryItemCategory Category = EInventoryItemCategory::NONE;
 };
 
 USTRUCT(BlueprintType)
