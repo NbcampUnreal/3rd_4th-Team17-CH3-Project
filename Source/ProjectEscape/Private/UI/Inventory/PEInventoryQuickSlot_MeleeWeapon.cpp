@@ -29,6 +29,6 @@ void UPEInventoryQuickSlotWidget_MeleeWeapon::SetSlot(FInventoryMeleeWeaponInfo&
 void UPEInventoryQuickSlotWidget_MeleeWeapon::ResetSlot()
 {
 	SetImageFromTexture(nullptr);
-	SetShortCutBoxVisiblity(true);
+	SetShortCutBoxVisiblity(false);
 	IsVaildSlot = false;
 }

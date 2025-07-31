@@ -22,6 +22,7 @@ class PROJECTESCAPE_API UPEInventoryQuickSlot_Widget : public UUserWidget
 
 public:
 	virtual void NativeOnInitialized() override;
+	void UpdateInventoryUI(FInventoryInfo& InInventoryInfo);
 
 	void SetParentWidget(UPEInventoryHUD* Parent)
 	{
@@ -54,6 +55,7 @@ class PROJECTESCAPE_API UPEInventoryQuickSlot_SlotBase : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	virtual void NativeOnInitialized() override;
 	virtual void ResetSlot() {}
 
 	void SetParentWidget(UPEInventoryHUD* Parent)

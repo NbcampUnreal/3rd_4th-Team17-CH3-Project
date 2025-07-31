@@ -27,7 +27,7 @@ void UPEInventoryHUD::UpdateInventoryUI(UPARAM(ref) FInventoryInfo& InInventoryI
 
 	if (QuickSlotWidget)
 	{
-		//QuickSlotWidget->UpdateInventoryUI(InInventoryInfo);
+		QuickSlotWidget->UpdateInventoryUI(InInventoryInfo);
 	}
 }
 
