@@ -13,6 +13,7 @@
 #include "ProjectEscape/Public/Components/PEQuickSlotManagerComponent.h"
 #include "ProjectEscape/Public/Components/PEUseableItemManagerComponent.h"
 #include "Engine/LocalPlayer.h"
+#include "Interface/PEQuickSlotItem.h"
 #include "ProjectEscape/Public/Interface/PEUseable.h"
 #include "ProjectEscape/Public/Components/PEInteractManagerComponent.h"
 #include "ProjectEscape/Public/Components/PEUseableComponent.h"
@@ -103,24 +104,6 @@ void AFPSTestBlockCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	}
 }
 
-UPEInteractManagerComponent* AFPSTestBlockCharacter::GetInteractManagerComponent() const
-{
-	return InteractManagerComponent; 
-}
-
-void AFPSTestBlockCharacter::TryInteract(AActor* TargetActor)
-{
-	if (UPEQuickSlotItemComponent* QuickSlotItemComponent = TargetActor->FindComponentByClass<UPEQuickSlotItemComponent>())
-	{
-		QuickSlotItemComponent->OnItemPickedUp(this);
-		QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), TargetActor);
-		UE_LOG(LogTemp, Warning, TEXT("QuickSlotItemComponent found and set for %s"), *GetNameSafe(TargetActor));
-	}
-	UE_LOG(LogTemp, Warning, TEXT("TryInteract called on %s with target %s"), *GetName(), *GetNameSafe(TargetActor));
-	
-}
-
-
 void AFPSTestBlockCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
@@ -145,6 +128,33 @@ void AFPSTestBlockCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+
+void AFPSTestBlockCharacter::TryInteract(AActor* TargetActor)
+{
+	//Todo: 우선순위 설정 필요 (인벤토리 > 퀵슬롯)
+
+	if (UPEQuickSlotItemComponent* QuickSlotItemComponent = TargetActor->FindComponentByClass<UPEQuickSlotItemComponent>())
+	{
+		QuickSlotItemComponent->OnItemPickedUp();
+		QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), TargetActor);
+		UE_LOG(LogTemp, Warning, TEXT("QuickSlotItemComponent found and set for %s"), *GetNameSafe(TargetActor));
+
+		// 상호작용 한 장비 자동 장착
+		EPEEquipmentType EquipmentType = QuickSlotItemComponent->GetEquipmentType();
+		if (QuickSlotManagerComponent->ContainWeaponType(EquipmentType))
+		{
+			HandEquipment(EquipmentType);
+		}
+	}
+	UE_LOG(LogTemp, Warning, TEXT("TryInteract called on %s with target %s"), *GetName(), *GetNameSafe(TargetActor));
+	
+}
+
+UPEInteractManagerComponent* AFPSTestBlockCharacter::GetInteractManagerComponent() const
+{
+	return InteractManagerComponent; 
 }
 
 void AFPSTestBlockCharacter::Use()

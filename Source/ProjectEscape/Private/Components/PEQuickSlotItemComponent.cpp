@@ -19,7 +19,7 @@ void UPEQuickSlotItemComponent::BeginPlay()
 	ComponentOwnerActor = GetOwner();
 }
 
-void UPEQuickSlotItemComponent::OnItemPickedUp(AActor* NewItemOwner)
+void UPEQuickSlotItemComponent::OnItemPickedUp()
 {
 	if (ComponentOwnerActor)
 	{
@@ -31,7 +31,7 @@ void UPEQuickSlotItemComponent::OnItemPickedUp(AActor* NewItemOwner)
 	}
 }
 
-void UPEQuickSlotItemComponent::OnItemDropped(AActor* NewItemOwner)
+void UPEQuickSlotItemComponent::OnItemDropped()
 {
 	if (ComponentOwnerActor)
 	{

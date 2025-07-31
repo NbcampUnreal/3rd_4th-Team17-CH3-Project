@@ -15,6 +15,14 @@ class UInputAction;
 
 /*
  *	Interact를 실행시킬 액터에 부착하여 사용하는 컴포넌트 클래스입니다.
+ *	구현해야 하는 기능:
+ *	1. 상호작용 가능한 액터를 Ray 캐스팅으로 감지하는 기능
+ *	2. 상호작용 가능한 액터와의 거리를 계산하여 상호작용 가능한지 여부를 판단하는 기능
+ *	3. 상호작용 입력을 처리하는 기능
+ *	4. 상호작용 가능한 액터와의 상호작용을 실행하는 기능
+ *
+ *	Todo: 현재 입력을 해당 컴포넌트에서 받고 있음,
+ *		해당 컴포넌트의 오너가 입력을 처리하고 컴포넌트의 상호작용 기능을 호출하도록 변경해야함
  */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTESCAPE_API UPEInteractManagerComponent : public UActorComponent

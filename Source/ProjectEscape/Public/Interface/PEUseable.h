@@ -15,7 +15,7 @@ class UPEUseable : public UInterface
 };
 
 /**
- *  손에 들고 사용해야 하는 액터들을 위한 인터페이스입니다
+ *  손에 들고 사용해야 하는 액터(아이템)들을 위한 인터페이스입니다
  */
 class PROJECTESCAPE_API IPEUseable
 {

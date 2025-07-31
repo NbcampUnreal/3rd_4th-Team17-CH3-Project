@@ -43,7 +43,7 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 			{
 				if (UPEQuickSlotItemComponent* QuickSlotItemComponent = QuickSlotItemInterface->GetQuickSlotItemComponent())
 				{
-					QuickSlotItemComponent->OnItemDropped(EquipOwner);
+					QuickSlotItemComponent->OnItemDropped();
 				}
 			}
 		}
@@ -80,6 +80,20 @@ void UPEQuickSlotManagerComponent::RemoveQuickSlotItem(EPEEquipmentType Equipmen
 
 void UPEQuickSlotManagerComponent::ClearQuickSlots()
 {
+}
+
+bool UPEQuickSlotManagerComponent::ContainWeaponType(EPEEquipmentType EquipmentType)
+{
+	if (QuickSlotItems.Contains(EquipmentType) && QuickSlotItems[EquipmentType] != nullptr)
+	{
+		return true;
+	}
+	return false;
+}
+
+AActor* UPEQuickSlotManagerComponent::GetActorFromQuickSlot(EPEEquipmentType EquipmentType) const
+{
+	return QuickSlotItems.Contains(EquipmentType) ? QuickSlotItems[EquipmentType] : nullptr;
 }
 
 TMap<EPEEquipmentType, TObjectPtr<AActor>> UPEQuickSlotManagerComponent::GetQuickSlotItem(

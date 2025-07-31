@@ -21,12 +21,12 @@ void UPEUseableComponent::BeginPlay()
 	
 }
 
-void UPEUseableComponent::Hold(AActor* Holder)
+void UPEUseableComponent::Hold()
 {
 	bIsHold = true;
 }
 
-void UPEUseableComponent::Release(AActor* Holder)
+void UPEUseableComponent::Release()
 {
 	bIsHold = false;
 }

@@ -8,7 +8,12 @@
 
 enum class EPEEquipmentType : uint8;
 /*
- * 미정 클래스
+ * 퀵슬롯에 등록될 수 있는 아이템을 위한 컴포넌트 클래스입니다.
+ * 구현되어야 할 기능:
+ * 1. 아이템이 주워졌을 때 호출되는 함수
+ * 2. 아이템이 떨어졌을 때 호출되는 함수
+ * 3. 아이템의 장비 타입을 반환하는 함수
+ * 
  */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTESCAPE_API UPEQuickSlotItemComponent : public UActorComponent
@@ -30,10 +35,10 @@ protected:
 public:
 	// 아이템이 주워졌을 때 호출
 	UFUNCTION()
-	void OnItemPickedUp(AActor* NewItemOwner);
+	void OnItemPickedUp();
 
 	UFUNCTION()
-	void OnItemDropped(AActor* NewItemOwner);
+	void OnItemDropped();
 
 	UFUNCTION()
 	EPEEquipmentType GetEquipmentType();

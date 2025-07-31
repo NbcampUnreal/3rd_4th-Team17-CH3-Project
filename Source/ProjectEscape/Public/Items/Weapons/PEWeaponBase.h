@@ -30,35 +30,44 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	TObjectPtr<UPEInteractableComponent> InteractableComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
-	TObjectPtr<UPEUseableComponent> HoldableComponent;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
-	TObjectPtr<UPEQuickSlotItemComponent> QuickSlotItemComponent;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TObjectPtr<AActor> OwnerActor; // 아이템을 소유한 액터
-
-	bool bIsInHand;
-	
+	/* IPEInteractable 인터페이스 선언 */
 public:
 	virtual void Interact(AActor* Interactor) override;
-	virtual void Use(AActor* Holder) override;
-	virtual void OnHand(AActor* NewOwner) override;
 	virtual bool IsInteractable() const override;
-	virtual UPEUseableComponent* GetUseableComponent() const override; // 사용 가능한 컴포넌트를 반환합니다
 
 	/* Weapon Stat 관련 섹션 */
+	//Todo: 무기 타입을 Tag로 관리하도록 변경
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
 	EPEEquipmentType EquipmentType;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	TObjectPtr<AActor> OwnerActor; // 아이템을 소유한 액터
+	
+	bool bIsInHand;
 
+	/* 퀵슬롯 관련 섹션 */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	TObjectPtr<UPEQuickSlotItemComponent> QuickSlotItemComponent;
+	
 	/* IPEQuickSlotItem 인터페이스 선언 */
 public:
 	virtual AActor* GetItemOwner() const override;
 	virtual void OnDropped() override;
 	virtual UPEQuickSlotItemComponent* GetQuickSlotItemComponent() const override;
 	virtual EPEEquipmentType GetEquipmentType() const override;
+
+	/* 아이템 사용 관련 섹션 */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	TObjectPtr<UPEUseableComponent> HoldableComponent;
+
+	/* IPEUseable 인터페이스 선언 */
+public:
+	virtual void Use(AActor* Holder) override;
+	virtual void OnHand(AActor* NewOwner) override;
+	virtual UPEUseableComponent* GetUseableComponent() const override; // 사용 가능한 컴포넌트를 반환합니다
 };
 

@@ -6,7 +6,16 @@
 #include "Components/ActorComponent.h"
 #include "PEInventoryManagerComponent.generated.h"
 
-
+/*
+ *	인벤토리의 아이템을 관리하는 컴포넌트 클래스입니다.
+ *	구현되어야 하는 기능:
+ *	1. 아이템을 인벤토리에 추가하는 기능
+ *	2. 인벤토리에서 아이템을 제거하는 기능
+ *	3. 인벤토리에 있는 아이템을 반환하는 기능
+ *	4. 인벤토리에 아이템이 있는지 확인하는 기능
+ *	5. 인벤토리를 비우는 기능
+ *	
+ */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTESCAPE_API UPEInventoryManagerComponent : public UActorComponent
 {

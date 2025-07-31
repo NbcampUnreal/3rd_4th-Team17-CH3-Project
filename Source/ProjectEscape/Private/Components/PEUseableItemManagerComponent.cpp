@@ -27,7 +27,7 @@ void UPEUseableItemManagerComponent::SetHandItem(IPEUseable* NewItem)
 		CurrentItemComponent = Cast<UPEUseableComponent>(NewItem);
 		if (CurrentItemComponent)
 		{
-			UE_LOG(LogTemp, Log, TEXT("UPEUseableItemManagerComponent: Set current item to %s"), 
+			UE_LOG(LogTemp, Log, TEXT("UPEUseableItemManagerComponent: Set current item to %s"),
 				*CurrentItemComponent->GetOwner()->GetName());
 		}
 		else
@@ -46,13 +46,14 @@ void UPEUseableItemManagerComponent::SetHandItem(IPEUseable* NewItem)
 
 void UPEUseableItemManagerComponent::SetHandItem(UPEUseableComponent* NewItemComponent)
 {
+	// Todo: 아이템 해제를 분리하고, 분리된 함수를 SetHandItem에서 호출하도록 변경
 	// 현재 손에 아이템이 있다면 먼저 해제
 	if (CurrentItemComponent)
 	{
 		// 현재 아이템 해제 (필요한 경우 해제 로직 추가)
-		CurrentItemComponent->Release(OwnerActor);
+		CurrentItemComponent->Release();
 		CurrentItemComponent = nullptr;
-		
+
 		UE_LOG(LogTemp, Log, TEXT("UPEUseableItemManagerComponent: Unequipping current item"));
 	}
 
@@ -60,9 +61,9 @@ void UPEUseableItemManagerComponent::SetHandItem(UPEUseableComponent* NewItemCom
 	CurrentItemComponent = NewItemComponent;
 	if (CurrentItemComponent)
 	{
-		CurrentItemComponent->Hold(OwnerActor);
-		
-		UE_LOG(LogTemp, Log, TEXT("UPEUseableItemManagerComponent: Set current item component to %s"), 
+		CurrentItemComponent->Hold();
+
+		UE_LOG(LogTemp, Log, TEXT("UPEUseableItemManagerComponent: Set current item component to %s"),
 			*CurrentItemComponent->GetOwner()->GetName());
 	}
 	else
@@ -77,6 +78,14 @@ UPEUseableComponent* UPEUseableItemManagerComponent::GetCurrentItem() const
 	return CurrentItemComponent;
 }
 
+void UPEUseableItemManagerComponent::ReleaseHandItem()
+{
+	if (CurrentItemComponent)
+	{
+		CurrentItemComponent = nullptr; // 현재 아이템 컴포넌트를 해제
+	}
+}
+
 void UPEUseableItemManagerComponent::UseCurrentItem(AActor* Holder)
 {
 	if (CurrentItemComponent)
@@ -84,3 +93,4 @@ void UPEUseableItemManagerComponent::UseCurrentItem(AActor* Holder)
 		CurrentItemComponent->Use(Holder);
 	}
 }
+
