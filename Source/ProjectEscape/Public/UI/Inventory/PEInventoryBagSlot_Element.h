@@ -18,7 +18,7 @@ class PROJECTESCAPE_API UPEInventoryBagSlot_Element : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void SetSlot(FInventoryBagSlotInfo& ItemInfo);
+	void SetSlot(int32 Index, FInventoryBagSlotInfo& ItemInfo);
 	void ResetSlot();
 
 	void SetParentWidget(UPEInventoryHUD* Parent)

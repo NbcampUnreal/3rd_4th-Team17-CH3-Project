@@ -10,7 +10,7 @@ public class ProjectEscape : ModuleRules
 	
 		PublicDependencyModuleNames.AddRange(new string[] {
 			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
-            "GameplayTags", "Paper2D",
+            "GameplayTags", "Paper2D", "Slate", "SlateCore",
         });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

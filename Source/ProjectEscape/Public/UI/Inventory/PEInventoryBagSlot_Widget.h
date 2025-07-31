@@ -19,6 +19,7 @@ class PROJECTESCAPE_API UPEInventoryBagSlot_Widget : public UUserWidget
 
 public:
 	void CreateEmptyBagSlots();
+	void UpdateInventoryUI(FInventoryInfo& InInventoryInfo);
 
 	void SetParentWidget(UPEInventoryHUD* Parent)
 	{

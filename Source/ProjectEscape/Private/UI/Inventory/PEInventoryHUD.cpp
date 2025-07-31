@@ -18,45 +18,17 @@ void UPEInventoryHUD::NativeOnInitialized()
 	}
 }
 
-void UPEInventoryHUD::InitInventoryUI(FInventoryInfo InInventoryInfo)
+void UPEInventoryHUD::UpdateInventoryUI(UPARAM(ref) FInventoryInfo& InInventoryInfo)
 {
-	InventoryInfo = InInventoryInfo;
+	if (BagSlotWidget)
+	{
+		BagSlotWidget->UpdateInventoryUI(InInventoryInfo);
+	}
 
-	/*if (BagSlots.IsEmpty())
+	if (QuickSlotWidget)
 	{
-		CreateEmptyBagSlots();
+		//QuickSlotWidget->UpdateInventoryUI(InInventoryInfo);
 	}
-	else
-	{
-		ResetBagSlots();
-	}
-	InitBagSlots();
-
-	if (MainWeaponSlot)
-	{
-		MainWeaponSlot->InitEmpty(EInventoryItemCategory::MAIN_WEAPON);
-		MainWeaponSlot->InitSlot(InventoryInfo.MainWeapon);
-	}
-	if (SubWeaponSlot)
-	{
-		SubWeaponSlot->InitEmpty(EInventoryItemCategory::SUB_WEAPON);
-		SubWeaponSlot->InitSlot(InventoryInfo.SubWeapon);
-	}
-	if (MeleeWeaponSlot)
-	{
-		MeleeWeaponSlot->InitEmpty(EInventoryItemCategory::MELEE_WEAPON);
-		MeleeWeaponSlot->InitSlot(InventoryInfo.MeleeWeapon);
-	}
-	if (HealItemSlot)
-	{
-		HealItemSlot->InitEmpty(EInventoryItemCategory::HEAL_ITEM);
-		HealItemSlot->InitSlot(InventoryInfo.HealItem);
-	}
-	if (GrenadeSlot)
-	{
-		GrenadeSlot->InitEmpty(EInventoryItemCategory::GRENADE_ITEM);
-		GrenadeSlot->InitSlot(InventoryInfo.Grenade);
-	}*/
 }
 
 void UPEInventoryHUD::DropItemFromBagToLand(int32 Index)

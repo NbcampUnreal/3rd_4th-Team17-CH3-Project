@@ -19,7 +19,7 @@ public:
 	virtual void NativeOnInitialized() override;
 
 	UFUNCTION(BlueprintCallable)
-	void InitInventoryUI(FInventoryInfo InInventoryInfo);
+	void UpdateInventoryUI(UPARAM(ref) FInventoryInfo& InInventoryInfo);
 
 	UFUNCTION(BlueprintCallable)
 	void DropItemFromBagToLand(int32 Index);
@@ -49,6 +49,4 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UPEInventoryQuickSlot_Widget> QuickSlotWidget;
-
-	FInventoryInfo InventoryInfo;
 };

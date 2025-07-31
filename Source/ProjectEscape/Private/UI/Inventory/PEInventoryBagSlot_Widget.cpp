@@ -1,5 +1,6 @@
 #include "UI/Inventory/PEInventoryBagSlot_Widget.h"
 #include "UI/Inventory/PEInventoryBagSlot_Element.h"
+#include "UI/Inventory/PEInventoryType.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 
@@ -24,16 +25,46 @@ void UPEInventoryBagSlot_Widget::CreateEmptyBagSlots()
 	}
 }
 
-void UPEInventoryBagSlot_Widget::ResetBagSlots()
+void UPEInventoryBagSlot_Widget::UpdateInventoryUI(FInventoryInfo& InInventoryInfo)
 {
+	ResetBagSlots();
+
+	for (auto& BagInfo : InInventoryInfo.Bags)
+	{
+		int32 Index = BagInfo.Key;
+		FInventoryBagSlotInfo& ItemInfo = BagInfo.Value;
+
+		if (BagSlots.Contains(Index))
+		{
+			if (UPEInventoryBagSlot_Element* BagSlot = BagSlots[Index])
+			{
+				BagSlot->SetSlot(Index, ItemInfo);
+			}
+		}
+	}
 }
 
-void UPEInventoryBagSlot_Widget::InitBagSlots()
+void UPEInventoryBagSlot_Widget::ResetBagSlots()
 {
+	for (int Row = 0; Row < BagRowCount; Row++)
+	{
+		for (int Col = 0; Col < BagColCount; Col++)
+		{
+			int32 Index = Row * BagColCount + Col;
+			ResetSlot(Index);
+		}
+	}
 }
 
 void UPEInventoryBagSlot_Widget::ResetSlot(int32 Index)
 {
+	if (BagSlots.Contains(Index))
+	{
+		if (UPEInventoryBagSlot_Element* BagSlot = BagSlots[Index])
+		{
+			BagSlot->ResetSlot();
+		}
+	}
 }
 
 void UPEInventoryBagSlot_Widget::SwapSlot(int32 Index, int32 OtherIndex)
