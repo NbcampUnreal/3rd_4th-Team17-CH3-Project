@@ -1,43 +1,38 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Core/PEGameplayTags.h"
 #include "PEInventoryType.generated.h"
 
-UENUM(BlueprintType)
-enum class EInventoryItemCategory : uint8
-{
-	NONE,
-	MAIN_WEAPON,
-	SUB_WEAPON,
-	MELEE_WEAPON,
-	AMMO,
-	HEAL_ITEM,
-	GRENADE_ITEM,
-	KEY_ITEM,
-};
+class UTexture2D;
+class UPaperSprite;
+struct FSlateBrush;
 
 USTRUCT(BlueprintType)
-struct FInventoryItemInfoBase
+struct FInventoryInfoBase
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	TObjectPtr<UTexture2D> ItemImageTexture;
+	TObjectPtr<UTexture2D> ItemTexture;
+
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<UPaperSprite> ItemSprite;
 
 	UPROPERTY(BlueprintReadWrite)
 	FText ItemDescription;
+
+	UPROPERTY(BlueprintReadWrite, meta = ( Categories = "Item") )
+	FGameplayTag ItemTag;
 };
 
 USTRUCT(BlueprintType)
-struct FInventoryItemInfo : public FInventoryItemInfoBase
+struct FInventoryBagSlotInfo : public FInventoryInfoBase
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadWrite)
-	EInventoryItemCategory Category = EInventoryItemCategory::NONE;
-
 	UPROPERTY(BlueprintReadWrite)
 	int32 StackCount;
 
@@ -49,14 +44,11 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FInventoryRangeWeaponInfo : public FInventoryItemInfoBase
+struct FInventoryRangeWeaponInfo : public FInventoryInfoBase
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintReadWrite)
-	EInventoryItemCategory Category = EInventoryItemCategory::NONE;
-
 	UPROPERTY(BlueprintReadWrite)
 	int32 CurrentAmmo;
 
@@ -65,13 +57,25 @@ public:
 };
 
 USTRUCT(BlueprintType)
-struct FInventoryMeleeWeaponInfo : public FInventoryItemInfoBase
+struct FInventoryMeleeWeaponInfo : public FInventoryInfoBase
+{
+	GENERATED_BODY()
+};
+
+USTRUCT(BlueprintType)
+struct FInventoryUsableItemInfo : public FInventoryInfoBase
 {
 	GENERATED_BODY()
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	EInventoryItemCategory Category = EInventoryItemCategory::NONE;
+	int32 StackCount;
+
+	UPROPERTY(BlueprintReadWrite)
+	int32 MaxStackCount;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool IsStackable;
 };
 
 USTRUCT(BlueprintType)
@@ -81,7 +85,7 @@ struct FInventoryInfo
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	TMap<int32, FInventoryItemInfo> Bags;
+	TMap<int32, FInventoryBagSlotInfo> Bags;
 
 	UPROPERTY(BlueprintReadWrite)
 	FInventoryRangeWeaponInfo MainWeapon;
@@ -93,8 +97,8 @@ public:
 	FInventoryMeleeWeaponInfo MeleeWeapon;
 
 	UPROPERTY(BlueprintReadWrite)
-	FInventoryItemInfo HealItem;
+	FInventoryUsableItemInfo QuickHeal;
 
 	UPROPERTY(BlueprintReadWrite)
-	FInventoryItemInfo Grenade;
+	FInventoryUsableItemInfo QuickGrenade;
 };

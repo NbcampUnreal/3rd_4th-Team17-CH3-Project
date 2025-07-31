@@ -2,36 +2,38 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/UniformGridPanel.h"
 #include "UI/Inventory/PEInventoryType.h"
-#include "PEInventoryBagSlot.generated.h"
+#include "PEInventoryBagSlot_Element.generated.h"
 
 class UTextBlock;
 class UImage;
+class UPaperSprite;
 class UTexture2D;
 class UPEInventoryHUD;
 
 UCLASS()
-class PROJECTESCAPE_API UPEInventoryBagSlot : public UUserWidget
+class PROJECTESCAPE_API UPEInventoryBagSlot_Element : public UUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	virtual void NativeOnInitialized() override;
-
-	void InitEmpty(int32 InSlotIndex);
-	void InitSlot(int32 InSlotIndex, FInventoryItemInfo& ItemInfo);
-
+	void SetSlot(FInventoryBagSlotInfo& ItemInfo);
 	void ResetSlot();
-	void SetSlot(UTexture2D* Texture, int Count, bool Stackable);
-	void SwapSlot(UPEInventoryBagSlot* Other);
-	
+
 	void SetParentWidget(UPEInventoryHUD* Parent)
 	{
 		ParentWidget = Parent;
 	}
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
-	bool IsValid() const { return IsVaildSlot; };
+	bool IsValid() const { return IsVaildSlot; }
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetSlotIndex() const { return SlotIndex; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetSlotIndex(int32 InSlotIndex) { SlotIndex = InSlotIndex; }
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UTextBlock> StackCountText;
@@ -43,22 +45,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UPEInventoryHUD> ParentWidget;
 
-	UPROPERTY(BlueprintReadOnly)
 	int32 SlotIndex;
-
-	UPROPERTY()
-	UTexture2D* ItemTexture;
-
-	UPROPERTY()
-	int32 StackCount;
-
-	UPROPERTY()
-	bool IsStackable;
-
-	UPROPERTY()
 	bool IsVaildSlot;
 
 private:
-	void SetTexture(UTexture2D* Texture);
-	void SetStackCount(int Count, bool Stackable);
+	void SetImageFromTexture(UTexture2D* Texture);
+	void SetImageFromSprite(UPaperSprite* Sprite);
+	void SetStackCount(int Count, int MaxCount, bool Stackable);
 };
