@@ -77,7 +77,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UPEInventoryHUD> ParentWidget;
 
-	UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString ShortCutString;
 
 	UPROPERTY()
