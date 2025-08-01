@@ -18,9 +18,12 @@ void FPEGameplayTags::AddTag(FGameplayTag& OutTag, const ANSICHAR* TagName, cons
 
 void FPEGameplayTags::AddAllTags()
 {
-	AddTag(Item_Weapon_MainWeapon, "Item.Weapon.MainWeapon", "");
-	AddTag(Item_Weapon_SubWeapon, "Item.Weapon.SubWeapon", "");
+	AddTag(Item_Weapon, "Item.Weapon", "");
+	AddTag(Item_Weapon_RangeWeapon, "Item.Weapon.RangeWeapon", "");
 	AddTag(Item_Weapon_MeleeWeapon, "Item.Weapon.MeleeWeapon", "");
+	AddTag(Item_Weapon_RangeWeapon_MainWeapon, "Item.Weapon.RangeWeapon.MainWeapon", "");
+	AddTag(Item_Weapon_RangeWeapon_SubWeapon, "Item.Weapon.RangeWeapon.SubWeapon", "");
+	AddTag(Item_Things, "Item.Things", "");
 	AddTag(Item_Things_Ammo, "Item.Things.Ammo", "");
 	AddTag(Item_Things_Heal, "Item.Things.Heal", "");
 	AddTag(Item_Things_Grenade, "Item.Things.Grenade", "");
