@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "PETryInteract.generated.h"
+#include "PEInteractManagerHandler.generated.h"
 
 class IPEUseable;
 // This class does not need to be modified.
 UINTERFACE()
-class UPETryInteract : public UInterface
+class UPEInteractManagerHandler : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,7 +17,7 @@ class UPETryInteract : public UInterface
 /**
  * 
  */
-class PROJECTESCAPE_API IPETryInteract
+class PROJECTESCAPE_API IPEInteractManagerHandler
 {
 	GENERATED_BODY()
 

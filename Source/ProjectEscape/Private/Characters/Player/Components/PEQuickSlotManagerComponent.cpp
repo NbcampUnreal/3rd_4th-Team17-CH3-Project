@@ -3,7 +3,7 @@
 
 #include "Characters/Player/Components/PEQuickSlotManagerComponent.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
-#include "Characters/Player/Interface/PEQuickSlot.h"
+#include "Characters/Player/Interface/PEQuickSlotHandler.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 
 /*
@@ -58,7 +58,7 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 
 AActor* UPEQuickSlotManagerComponent::SelectEquipment(EPEEquipmentType EquipmentType)
 {
-	if (IPEQuickSlot* QuickSlotInterface = Cast<IPEQuickSlot>(EquipOwner))
+	if (IPEQuickSlotHandler* QuickSlotInterface = Cast<IPEQuickSlotHandler>(EquipOwner))
 	{
 		if (QuickSlotItems.Contains(EquipmentType) && QuickSlotItems[EquipmentType] != nullptr)
 		{

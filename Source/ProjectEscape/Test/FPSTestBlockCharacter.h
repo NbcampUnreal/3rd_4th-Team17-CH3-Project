@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Characters/Player/Interface/PEQuickSlot.h"
-#include "Characters/Player/Interface/PETryInteract.h"
+#include "Characters/Player/Interface/PEQuickSlotHandler.h"
+#include "Characters/Player/Interface/PEInteractManagerHandler.h"
 #include "Logging/LogMacros.h"
 #include "FPSTestBlockCharacter.generated.h"
 
@@ -21,7 +21,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AFPSTestBlockCharacter : public ACharacter, public IPETryInteract, public IPEQuickSlot
+class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler
 {
 	GENERATED_BODY()
 

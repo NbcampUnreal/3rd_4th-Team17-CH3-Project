@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "PEQuickSlot.generated.h"
+#include "PEQuickSlotHandler.generated.h"
 
 enum class EPEEquipmentType : uint8;
 // This class does not need to be modified.
 UINTERFACE()
-class UPEQuickSlot : public UInterface
+class UPEQuickSlotHandler : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,7 +17,7 @@ class UPEQuickSlot : public UInterface
 /**
  * 
  */
-class PROJECTESCAPE_API IPEQuickSlot
+class PROJECTESCAPE_API IPEQuickSlotHandler
 {
 	GENERATED_BODY()
 

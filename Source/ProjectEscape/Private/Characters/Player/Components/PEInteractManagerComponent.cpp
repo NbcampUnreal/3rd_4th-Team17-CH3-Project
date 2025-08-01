@@ -53,7 +53,7 @@ void UPEInteractManagerComponent::TryInteract()
 		// 상호작용 실행
 		if (CurrentInteractable->Interact(OwnerPawn))
 		{
-			if (IPETryInteract* TryInteractInterface = Cast<IPETryInteract>(OwnerPawn))
+			if (IPEInteractManagerHandler* TryInteractInterface = Cast<IPEInteractManagerHandler>(OwnerPawn))
 			{
 				TryInteractInterface->TryInteract(CurrentInteractable->GetOwner());
 				UE_LOG(LogTemp, Warning, TEXT("Interacted with: %s"), *CurrentInteractable->GetOwner()->GetName());
