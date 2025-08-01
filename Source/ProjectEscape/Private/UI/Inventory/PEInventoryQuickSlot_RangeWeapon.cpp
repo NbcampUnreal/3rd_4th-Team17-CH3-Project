@@ -7,8 +7,9 @@
 void UPEInventoryQuickSlotWidget_RangeWeapon::SetSlot(FInventoryRangeWeaponInfo& WeaponInfo)
 {
 	const FPEGameplayTags& ItemTags = FPEGameplayTags::Get();
-	//if (WeaponInfo.ItemTag == ItemTags.Item_Weapon_MainWeapon)
+	if (WeaponInfo.ItemTag.MatchesTag(ItemTags.Item_Weapon_RangeWeapon))
 	{
+		SetSlotTag(WeaponInfo.ItemTag);
 		if (WeaponInfo.ItemTexture)
 		{
 			SetImageFromTexture(WeaponInfo.ItemTexture);
@@ -31,7 +32,7 @@ void UPEInventoryQuickSlotWidget_RangeWeapon::ResetSlot()
 {
 	SetImageFromTexture(nullptr);
 	SetAmmoCount(-1, -1);
-	SetShortCutBoxVisiblity(true);
+	SetShortCutBoxVisiblity(false);
 	IsVaildSlot = false;
 }
 

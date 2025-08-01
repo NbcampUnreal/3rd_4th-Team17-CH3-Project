@@ -4,12 +4,10 @@
 #include "PaperSprite.h"
 
 
-void UPEInventoryBagSlot_Element::SetSlot(int32 Index, FInventoryBagSlotInfo& ItemInfo)
+void UPEInventoryBagSlot_Element::SetSlot(FInventoryBagSlotInfo& ItemInfo)
 {
-	SlotIndex = Index;
-
 	const FPEGameplayTags& ItemTags = FPEGameplayTags::Get();
-	//if (ItemInfo.ItemTag == ItemTags.Item_Things)
+	if (ItemInfo.ItemTag.MatchesTag(ItemTags.Item_Things))
 	{
 		if (ItemInfo.ItemTexture)
 		{

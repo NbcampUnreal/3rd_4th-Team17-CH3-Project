@@ -66,6 +66,12 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	bool IsValid() const { return IsVaildSlot; }
 
+	UFUNCTION(BlueprintCallable)
+	FGameplayTag GetSlotTag() const { return SlotTag; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetSlotTag(FGameplayTag InSlotTag) { SlotTag = InSlotTag; }
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UWidget> ShortCutBox;
 
@@ -82,7 +88,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FString ShortCutString;
 
-	UPROPERTY()
+	FGameplayTag SlotTag;
 	bool IsVaildSlot;
 
 	void SetImageFromTexture(UTexture2D* Texture);

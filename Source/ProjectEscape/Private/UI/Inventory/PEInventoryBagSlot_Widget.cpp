@@ -16,6 +16,7 @@ void UPEInventoryBagSlot_Widget::CreateEmptyBagSlots()
 				UPEInventoryBagSlot_Element* NewElement = CreateWidget<UPEInventoryBagSlot_Element>(this, BagSlotClass);
 				int32 Index = Row * BagColCount + Col;
 				NewElement->SetParentWidget(this->ParentWidget);
+				NewElement->SetSlotIndex(Index);
 
 				UniformGridPanel->AddChildToUniformGrid(NewElement, Row, Col);
 				BagSlots.Add(Index, NewElement);
@@ -37,7 +38,7 @@ void UPEInventoryBagSlot_Widget::UpdateInventoryUI(FInventoryInfo& InInventoryIn
 		{
 			if (UPEInventoryBagSlot_Element* BagSlot = BagSlots[Index])
 			{
-				BagSlot->SetSlot(Index, ItemInfo);
+				BagSlot->SetSlot(ItemInfo);
 			}
 		}
 	}

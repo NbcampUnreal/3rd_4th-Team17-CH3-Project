@@ -18,7 +18,7 @@ class PROJECTESCAPE_API UPEInventoryBagSlot_Element : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void SetSlot(int32 Index, FInventoryBagSlotInfo& ItemInfo);
+	void SetSlot(FInventoryBagSlotInfo& ItemInfo);
 	void ResetSlot();
 
 	void SetParentWidget(UPEInventoryHUD* Parent)
@@ -28,6 +28,12 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure = false)
 	bool IsValid() const { return IsVaildSlot; }
+
+	UFUNCTION(BlueprintCallable)
+	FGameplayTag GetSlotTag() const { return SlotTag; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetSlotTag(FGameplayTag InSlotTag) { SlotTag = InSlotTag; }
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetSlotIndex() const { return SlotIndex; }
@@ -45,6 +51,7 @@ protected:
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UPEInventoryHUD> ParentWidget;
 
+	FGameplayTag SlotTag;
 	int32 SlotIndex;
 	bool IsVaildSlot;
 
