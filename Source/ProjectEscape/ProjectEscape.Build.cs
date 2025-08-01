@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+﻿// Copyright Epic Games, Inc. All Rights Reserved.
 
 using UnrealBuildTool;
 
@@ -9,7 +9,7 @@ public class ProjectEscape : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] {
-			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
+      "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG",
       "GameplayTags", "AIModule", "NavigationSystem", "GameplayTasks",
     });
 
