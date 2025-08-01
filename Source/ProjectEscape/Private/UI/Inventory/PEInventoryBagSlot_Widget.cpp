@@ -25,6 +25,12 @@ void UPEInventoryBagSlot_Widget::CreateEmptyBagSlots()
 	}
 }
 
+void UPEInventoryBagSlot_Widget::CustomOnInitialized(UPEInventoryHUD* Parent)
+{
+	SetParentWidget(Parent);
+	CreateEmptyBagSlots();
+}
+
 void UPEInventoryBagSlot_Widget::UpdateInventoryUI(FInventoryInfo& InInventoryInfo)
 {
 	ResetBagSlots();

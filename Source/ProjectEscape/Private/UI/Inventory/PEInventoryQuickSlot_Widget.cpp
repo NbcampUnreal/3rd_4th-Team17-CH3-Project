@@ -5,29 +5,36 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "PaperSprite.h"
+#include "Core/PEGameplayTags.h"
 
-void UPEInventoryQuickSlot_Widget::NativeOnInitialized()
+void UPEInventoryQuickSlot_Widget::CustomOnInitialized(UPEInventoryHUD* Parent)
 {
-	Super::NativeOnInitialized();
+	const FPEGameplayTags& ItemTags = FPEGameplayTags::Get();
+	SetParentWidget(Parent);
 	if (MainWeaponSlot)
 	{
 		MainWeaponSlot->SetParentWidget(ParentWidget);
+		MainWeaponSlot->SetSlotTag(ItemTags.Item_Weapon_RangeWeapon_MainWeapon);
 	}
 	if (SubWeaponSlot)
 	{
 		SubWeaponSlot->SetParentWidget(ParentWidget);
+		SubWeaponSlot->SetSlotTag(ItemTags.Item_Weapon_RangeWeapon_SubWeapon);
 	}
 	if (MeleeWeaponSlot)
 	{
 		MeleeWeaponSlot->SetParentWidget(ParentWidget);
+		MeleeWeaponSlot->SetSlotTag(ItemTags.Item_Weapon_MeleeWeapon);
 	}
 	if (HealItemSlot)
 	{
 		HealItemSlot->SetParentWidget(ParentWidget);
+		HealItemSlot->SetSlotTag(ItemTags.Item_Things_Heal);
 	}
 	if (GrenadeSlot)
 	{
 		GrenadeSlot->SetParentWidget(ParentWidget);
+		GrenadeSlot->SetSlotTag(ItemTags.Item_Things_Grenade);
 	}
 }
 

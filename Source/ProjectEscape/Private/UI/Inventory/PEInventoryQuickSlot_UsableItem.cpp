@@ -7,9 +7,9 @@
 void UPEInventoryQuickSlotWidget_UsableItem::SetSlot(FInventoryUsableItemInfo& ItemInfo)
 {
 	const FPEGameplayTags& ItemTags = FPEGameplayTags::Get();
-	if (ItemInfo.ItemTag.MatchesTag(ItemTags.Item_Things_Heal) || ItemInfo.ItemTag.MatchesTag(ItemTags.Item_Things_Grenade))
+	//if (ItemInfo.ItemTag.MatchesTag(ItemTags.Item_Things_Heal) || ItemInfo.ItemTag.MatchesTag(ItemTags.Item_Things_Grenade))
+	if (ItemInfo.ItemTag.MatchesTag(SlotTag))
 	{
-		SetSlotTag(ItemInfo.ItemTag);
 		if (ItemInfo.ItemTexture)
 		{
 			SetImageFromTexture(ItemInfo.ItemTexture);

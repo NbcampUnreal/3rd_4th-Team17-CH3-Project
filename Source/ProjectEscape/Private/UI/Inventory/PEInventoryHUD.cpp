@@ -8,13 +8,12 @@ void UPEInventoryHUD::NativeOnInitialized()
 {
 	if (BagSlotWidget)
 	{
-		BagSlotWidget->SetParentWidget(this);
-		BagSlotWidget->CreateEmptyBagSlots();
+		BagSlotWidget->CustomOnInitialized(this);
 	}
 
 	if (QuickSlotWidget)
 	{
-		QuickSlotWidget->SetParentWidget(this);
+		QuickSlotWidget->CustomOnInitialized(this);
 	}
 }
 

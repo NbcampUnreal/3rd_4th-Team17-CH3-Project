@@ -21,7 +21,7 @@ class PROJECTESCAPE_API UPEInventoryQuickSlot_Widget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void NativeOnInitialized() override;
+	void CustomOnInitialized(UPEInventoryHUD* Parent);
 	void UpdateInventoryUI(FInventoryInfo& InInventoryInfo);
 
 	void SetParentWidget(UPEInventoryHUD* Parent)

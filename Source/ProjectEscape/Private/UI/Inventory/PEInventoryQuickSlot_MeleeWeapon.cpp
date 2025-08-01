@@ -7,9 +7,8 @@
 void UPEInventoryQuickSlotWidget_MeleeWeapon::SetSlot(FInventoryMeleeWeaponInfo& WeaponInfo)
 {
 	const FPEGameplayTags& ItemTags = FPEGameplayTags::Get();
-	if (WeaponInfo.ItemTag.MatchesTag(ItemTags.Item_Weapon_MeleeWeapon))
+	if (WeaponInfo.ItemTag.MatchesTag(SlotTag))
 	{
-		SetSlotTag(WeaponInfo.ItemTag);
 		if (WeaponInfo.ItemTexture)
 		{
 			SetImageFromTexture(WeaponInfo.ItemTexture);

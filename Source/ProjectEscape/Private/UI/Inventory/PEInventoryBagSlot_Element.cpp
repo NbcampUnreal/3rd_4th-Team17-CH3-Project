@@ -7,8 +7,8 @@
 void UPEInventoryBagSlot_Element::SetSlot(FInventoryBagSlotInfo& ItemInfo)
 {
 	const FPEGameplayTags& ItemTags = FPEGameplayTags::Get();
-	if (ItemInfo.ItemTag.MatchesTag(ItemTags.Item_Things))
 	{
+		SetSlotTag(ItemInfo.ItemTag);
 		if (ItemInfo.ItemTexture)
 		{
 			SetImageFromTexture(ItemInfo.ItemTexture);
