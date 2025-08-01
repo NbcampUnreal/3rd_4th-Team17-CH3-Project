@@ -39,5 +39,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	AActor* SelectRandomActorFromData();
-	
+	void GetRandomPointInBox(FVector& OUT Location);
+	void GetGroundPointUsingRaycast(FVector& OUT Location);
 };

@@ -21,7 +21,11 @@ void APESpawnArea::Spawn()
 	int32 SpawnCount = FMath::RandRange(MinSpawnCount, MaxSpawnCount);
 	for (int32 Count = 0; Count < SpawnCount; Count++)
 	{
+		FVector SpawnLocation;
 		AActor* SelectedActor = SelectRandomActorFromData();
+
+		GetRandomPointInBox(SpawnLocation);
+
 	}
 }
 
@@ -32,5 +36,22 @@ void APESpawnArea::BeginPlay()
 }
 
 AActor* APESpawnArea::SelectRandomActorFromData()
+{
+}
+
+void APESpawnArea::GetRandomPointInBox(FVector& OUT Location)
+{
+	FVector BoxExtent = SpawnArea->GetScaledBoxExtent();
+	FVector BoxOrigin = SpawnArea->GetComponentLocation();
+
+	float RandomX = FMath::FRandRange(-BoxExtent.X, BoxExtent.X);
+	float RandomY = FMath::FRandRange(-BoxExtent.Y, BoxExtent.Y);
+	float TopZ = BoxExtent.Z;
+
+	FVector Random(RandomX, RandomY, TopZ);
+	Location = BoxOrigin + Random;
+}
+
+void APESpawnArea::GetGroundPointUsingRaycast(FVector& OUT Location)
 {
 }
