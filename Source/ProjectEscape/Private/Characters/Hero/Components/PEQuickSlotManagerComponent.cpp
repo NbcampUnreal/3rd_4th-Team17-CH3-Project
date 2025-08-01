@@ -1,9 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/Player/Components/PEQuickSlotManagerComponent.h"
+#include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
-#include "Characters/Player/Interface/PEQuickSlotHandler.h"
+#include "Characters/Hero/Interface/PEQuickSlotHandler.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 
 /*

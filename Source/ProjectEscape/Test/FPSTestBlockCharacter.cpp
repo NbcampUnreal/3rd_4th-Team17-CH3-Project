@@ -10,11 +10,11 @@
 #include "InputActionValue.h"
 #include "ProjectEscape/Public/PEEquipmentType.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
-#include "Characters/Player/Components/PEQuickSlotManagerComponent.h"
-#include "Characters/Player/Components/PEUseableItemManagerComponent.h"
+#include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
+#include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Items/Interface/PEUseable.h"
-#include "Characters/Player/Components/PEInteractManagerComponent.h"
+#include "Characters/Hero/Components/PEInteractManagerComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);

@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Characters/Player/Interface/PEQuickSlotHandler.h"
-#include "Characters/Player/Interface/PEInteractManagerHandler.h"
+#include "Characters/Hero/Interface/PEQuickSlotHandler.h"
+#include "Characters/Hero/Interface/PEInteractManagerHandler.h"
 #include "Logging/LogMacros.h"
 #include "FPSTestBlockCharacter.generated.h"
 

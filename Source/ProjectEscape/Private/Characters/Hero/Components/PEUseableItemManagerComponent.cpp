@@ -1,7 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/Player/Components/PEUseableItemManagerComponent.h"
+#include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 
 

@@ -1,14 +1,14 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Characters/Player/Components/PEInteractManagerComponent.h"
+#include "Characters/Hero/Components/PEInteractManagerComponent.h"
 #include "Items/Components/PEInteractableComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
-#include "Characters/Player/Interface/PETryInteract.h"
+#include "Characters/Hero/Interface/PEInteractManagerHandler.h"
 
 UPEInteractManagerComponent::UPEInteractManagerComponent()
 {
