@@ -27,14 +27,17 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SwapItemInBag(int32 Index, int32 OhterIndex);
 
-	//UFUNCTION(BlueprintCallable)
-	//void UnequipWeaponAndDropToLand(EInventoryQuickSlotCategory WeaponCategory);
+	UFUNCTION(BlueprintCallable)
+	void UnequipWeaponAndDropToLand(FGameplayTag WeaponTag);
 
-	//UFUNCTION(BlueprintCallable)
-	//void AddItemToQuickSlot();
+	UFUNCTION(BlueprintCallable)
+	void RemoveItemFromQucikSlotAndDropToLand(FGameplayTag WeaponTag);
 
-	//UFUNCTION(BlueprintCallable)
-	//void RemoveItemFromQuickSlot();
+	UFUNCTION(BlueprintCallable)
+	void AddItemFromBagToQuickSlot(FGameplayTag ItemTag, int32 FromSlotIndex);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveItemFromQuickSlotToBag(FGameplayTag ItemTag, int32 ToSlotIndex);
 
 	// Interface, To be confirmed.
 	UPROPERTY(BlueprintReadOnly)
