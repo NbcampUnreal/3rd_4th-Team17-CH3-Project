@@ -2,7 +2,7 @@
 
 
 #include "Items/PEItemBase.h"
-#include "Components/PEInteractableComponent.h"
+#include "Items/Components/PEInteractableComponent.h"
 
 APEItemBase::APEItemBase()
 {

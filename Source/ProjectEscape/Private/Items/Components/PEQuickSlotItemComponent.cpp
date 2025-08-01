@@ -1,10 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Components/PEQuickSlotItemComponent.h"
+#include "Items/Components/PEQuickSlotItemComponent.h"
 
 #include "PEEquipmentType.h"
-#include "Interface/PEQuickSlotItem.h"
+#include "Items/Interface/PEQuickSlotItem.h"
 
 UPEQuickSlotItemComponent::UPEQuickSlotItemComponent()
 {

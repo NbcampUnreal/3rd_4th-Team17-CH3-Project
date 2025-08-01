@@ -45,4 +45,3 @@ public:
 	void ReleaseHandItem();
 	void UseCurrentItem(AActor* Holder);
 };
-

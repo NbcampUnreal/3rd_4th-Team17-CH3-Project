@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Components/PEInteractableComponent.h"
-#include "Interface/PEInteractable.h"
+#include "Items/Components/PEInteractableComponent.h"
+#include "Items/Interface/PEInteractable.h"
 
 UPEInteractableComponent::UPEInteractableComponent()
 {

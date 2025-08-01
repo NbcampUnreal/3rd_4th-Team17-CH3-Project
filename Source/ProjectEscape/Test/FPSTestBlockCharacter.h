@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "ProjectEscape/Public/Interface/PEQuickSlot.h"
-#include "ProjectEscape/Public/Interface/PETryInteract.h"
+#include "Characters/Player/Interface/PEQuickSlot.h"
+#include "Characters/Player/Interface/PETryInteract.h"
 #include "Logging/LogMacros.h"
 #include "FPSTestBlockCharacter.generated.h"
 

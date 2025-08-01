@@ -1,6 +1,6 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Components/PEInventoryManagerComponent.h"
+#include "Characters/Player/Components/PEInventoryManagerComponent.h"
 #include "Items/PEItemBase.h"
 
 UPEInventoryManagerComponent::UPEInventoryManagerComponent()

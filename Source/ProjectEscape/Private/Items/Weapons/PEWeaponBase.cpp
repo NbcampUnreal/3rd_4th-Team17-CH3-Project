@@ -4,9 +4,9 @@
 #include "Items/Weapons/PEWeaponBase.h"
 
 #include "PEEquipmentType.h"
-#include "Components/PEQuickSlotItemComponent.h"
-#include "Components/PEUseableComponent.h"
-#include "Components/PEInteractableComponent.h"
+#include "Items/Components/PEQuickSlotItemComponent.h"
+#include "Items/Components/PEUseableComponent.h"
+#include "Items/Components/PEInteractableComponent.h"
 
 APEWeaponBase::APEWeaponBase()
 {

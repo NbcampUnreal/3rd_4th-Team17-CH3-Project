@@ -29,6 +29,7 @@ class PROJECTESCAPE_API UPEInteractManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
+	/* Lifecycle 관련 섹션 */
 public:
 	UPEInteractManagerComponent();
 
@@ -39,45 +40,36 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType,
 	                           FActorComponentTickFunction* ThisTickFunction) override;
 
+	/* Interact 관련 섹션 */
 protected:
-	// 상호작용 가능한 거리
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float InteractionRange = 300.0f;
 
-	// 상호작용 입력 액션
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
 	TObjectPtr<UInputAction> InteractAction;
 
-	// 현재 감지된 상호작용 컴포넌트
 	UPROPERTY()
 	TObjectPtr<UPEInteractableComponent> CurrentInteractable;
 
-	// 소유자 캐릭터 캐시
 	UPROPERTY()
 	TObjectPtr<class APawn> OwnerPawn;
 
 public:
-	// 상호작용 실행 함수
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void TryInteract();
 
-	// Ray 캐스팅을 통한 상호작용 대상 검사
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void CheckForInteractable();
+	void CheckAndSetForInteractable();
 
-	// 현재 상호작용 가능한 대상이 있는지 확인
 	UFUNCTION(BlueprintPure, Category = "Interaction")
 	bool HasInteractable() const { return CurrentInteractable != nullptr; }
 
-	// 상호작용 범위 설정
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	void SetInteractionRange(float NewRange) { InteractionRange = NewRange; }
 
-	// InteractAction 설정
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	void SetInteractAction(UInputAction* NewInteractAction);
 
-	// 입력 바인딩 설정
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	void SetupInputBindings();
 

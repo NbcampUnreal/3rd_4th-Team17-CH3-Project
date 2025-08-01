@@ -1,14 +1,14 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Components/PEInteractManagerComponent.h"
-#include "Components/PEInteractableComponent.h"
+#include "Characters/Player/Components/PEInteractManagerComponent.h"
+#include "Items/Components/PEInteractableComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Engine/World.h"
 #include "DrawDebugHelpers.h"
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
-#include "Interface/PETryInteract.h"
+#include "Characters/Player/Interface/PETryInteract.h"
 
 UPEInteractManagerComponent::UPEInteractManagerComponent()
 {
@@ -40,14 +40,13 @@ void UPEInteractManagerComponent::TickComponent(float DeltaTime, ELevelTick Tick
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	// 매 프레임마다 상호작용 대상 검사를 제거
-	// 이제 버튼을 눌렀을 때만 Ray 캐스팅을 실행합니다
+	// Todo: 상호작용 가능 UI 호출
 }
 
 void UPEInteractManagerComponent::TryInteract()
 {
 	// 상호작용 시도 시 Ray 캐스팅 실행
-	CheckForInteractable();
+	CheckAndSetForInteractable();
 	
 	if (CurrentInteractable)
 	{
@@ -71,7 +70,7 @@ void UPEInteractManagerComponent::TryInteract()
 	}
 }
 
-void UPEInteractManagerComponent::CheckForInteractable()
+void UPEInteractManagerComponent::CheckAndSetForInteractable()
 {
 	if (!OwnerPawn)
 	{
@@ -149,6 +148,7 @@ void UPEInteractManagerComponent::CheckForInteractable()
 	}
 }
 
+//Todo: 해당 코드를 없애고, 캐릭터가 상호작용 함수 자체를 호출하도록 변경
 void UPEInteractManagerComponent::SetupInputBindings()
 {
 	if (!OwnerPawn)

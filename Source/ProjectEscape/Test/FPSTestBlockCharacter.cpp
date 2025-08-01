@@ -9,14 +9,13 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "ProjectEscape/Public/PEEquipmentType.h"
-#include "ProjectEscape/Public/Components/PEQuickSlotItemComponent.h"
-#include "ProjectEscape/Public/Components/PEQuickSlotManagerComponent.h"
-#include "ProjectEscape/Public/Components/PEUseableItemManagerComponent.h"
+#include "Items/Components/PEQuickSlotItemComponent.h"
+#include "Characters/Player/Components/PEQuickSlotManagerComponent.h"
+#include "Characters/Player/Components/PEUseableItemManagerComponent.h"
 #include "Engine/LocalPlayer.h"
-#include "Interface/PEQuickSlotItem.h"
-#include "ProjectEscape/Public/Interface/PEUseable.h"
-#include "ProjectEscape/Public/Components/PEInteractManagerComponent.h"
-#include "ProjectEscape/Public/Components/PEUseableComponent.h"
+#include "Items/Interface/PEUseable.h"
+#include "Characters/Player/Components/PEInteractManagerComponent.h"
+#include "Items/Components/PEUseableComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 

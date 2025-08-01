@@ -1,11 +1,10 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Components/PEQuickSlotManagerComponent.h"
-
-#include "Components/PEQuickSlotItemComponent.h"
-#include "Interface/PEQuickSlot.h"
-#include "Interface/PEQuickSlotItem.h"
+#include "Characters/Player/Components/PEQuickSlotManagerComponent.h"
+#include "Items/Components/PEQuickSlotItemComponent.h"
+#include "Characters/Player/Interface/PEQuickSlot.h"
+#include "Items/Interface/PEQuickSlotItem.h"
 
 /*
  * 퀵슬롯에서 필요한 기능

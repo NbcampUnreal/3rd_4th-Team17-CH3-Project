@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interface/PEQuickSlotItem.h"
-#include "Interface/PEInteractable.h"
-#include "Interface/PEUseable.h"
+#include "Items/Interface/PEQuickSlotItem.h"
+#include "Items/Interface/PEInteractable.h"
+#include "Items/Interface/PEUseable.h"
 #include "PEWeaponBase.generated.h"
 
 class UPEQuickSlotItemComponent;

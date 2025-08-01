@@ -1,9 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Components/PEUseableComponent.h"
+#include "Items/Components/PEUseableComponent.h"
 
-#include "Interface/PEUseable.h"
+#include "Items/Interface/PEUseable.h"
 
 
 // Sets default values for this component's properties

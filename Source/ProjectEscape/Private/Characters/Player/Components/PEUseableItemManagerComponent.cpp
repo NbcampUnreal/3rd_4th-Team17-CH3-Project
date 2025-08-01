@@ -1,9 +1,8 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Components/PEUseableItemManagerComponent.h"
-#include "Interface/PEUseable.h"
-#include "Components/PEUseableComponent.h"
+#include "Characters/Player/Components/PEUseableItemManagerComponent.h"
+#include "Items/Components/PEUseableComponent.h"
 
 
 UPEUseableItemManagerComponent::UPEUseableItemManagerComponent()
@@ -93,4 +92,3 @@ void UPEUseableItemManagerComponent::UseCurrentItem(AActor* Holder)
 		CurrentItemComponent->Use(Holder);
 	}
 }
-
