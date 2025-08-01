@@ -16,7 +16,7 @@ APEAICharacter::APEAICharacter()
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
 	Movement->MaxWalkSpeed = WalkSpeed; 
 	Movement->bOrientRotationToMovement = true; 
-	Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f); 
+	Movement->RotationRate = RotateSpeed; 
 	Movement->AirControl = AirControl; 
 }
 
