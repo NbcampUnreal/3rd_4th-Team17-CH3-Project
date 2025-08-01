@@ -8,7 +8,10 @@ public class ProjectEscape : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "GameplayTags", "AIModule", "NavigationSystem", "GameplayTasks" });
+		PublicDependencyModuleNames.AddRange(new string[] {
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
+      "GameplayTags", "AIModule", "NavigationSystem", "GameplayTasks",
+    });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
