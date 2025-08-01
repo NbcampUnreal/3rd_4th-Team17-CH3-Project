@@ -6,17 +6,18 @@
 
 #include "GameFramework/CharacterMovementComponent.h"
 
-// Sets default values
 APEAICharacter::APEAICharacter()
 {
-	AIControllerClass = APEAIController::StaticClass(); // Set this character to use the custom AI controller class
-	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned; // Automatically possess this AI character when placed in the world or spawned 
+	// AIController class setup
+	AIControllerClass = APEAIController::StaticClass(); 
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned; 
 
+	// variable initialization
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	Movement->MaxWalkSpeed = WalkSpeed; // Set the default walk speed for the AI character
-	Movement->bOrientRotationToMovement = true; // Make the character face the direction of movement
-	Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f); // 회전 속도 부드럽게 설정
-	Movement->AirControl = 0.2f; // Set air control for the character
+	Movement->MaxWalkSpeed = WalkSpeed; 
+	Movement->bOrientRotationToMovement = true; 
+	Movement->RotationRate = FRotator(0.0f, 540.0f, 0.0f); 
+	Movement->AirControl = AirControl; 
 }
 
 // Called when the game starts or when spawned

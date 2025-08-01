@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 #pragma once
 
 #include "CoreMinimal.h"
@@ -12,16 +10,18 @@ class PROJECTESCAPE_API APEAICharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	APEAICharacter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float WalkSpeed = 300.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	FRotator RotateSpeed = FRotator(0.0f, 540.0f, 0.0f);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	float AirControl = 0.2f;
 
 	void SetMovementSpeed(float NewSpeed);
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 public:	

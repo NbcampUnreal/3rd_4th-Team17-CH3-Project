@@ -9,21 +9,25 @@
 
 APEAIController::APEAIController()
 {
+	// AIPerception 컴포넌트를 생성하고 이 AI에 붙이는 역할을 수행
 	AIPerception = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AIPerception"));
 	SetPerceptionComponent(*AIPerception);
 
+	//시야 감지(Sight) 설정을 위한 환경 센스 구성요소를 생성하고, 각종 탐지 반경과 시야각 및 인식 지속 시간 등의 주요 설정 값을 지정.
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 1500.0f; // Set the sight radius for the AI
-	SightConfig->LoseSightRadius = 2000.0f; // Set the lose sight radius
-	SightConfig->PeripheralVisionAngleDegrees = 90.0f; // Set the peripheral vision angle
-	SightConfig->SetMaxAge(5.0f); // Set the maximum age of the perception data
+	SightConfig->SightRadius = SightRadius; 
+	SightConfig->LoseSightRadius = LoseSightRadius; 
+	SightConfig->PeripheralVisionAngleDegrees = SightAngle; 
+	SightConfig->SetMaxAge(SightDuration);
 
-	SightConfig->DetectionByAffiliation.bDetectEnemies = true; // Allow detection of enemies
-	SightConfig->DetectionByAffiliation.bDetectNeutrals = true; // Allow detection of neutrals
-	SightConfig->DetectionByAffiliation.bDetectFriendlies = true; // Allow detection of friendlies
+	// AI의 시야가 적(Enemies), 중립(Neutrals), 아군(Friendlies) 모두를 인식하도록 설정. 추후 수정 예정
+	SightConfig->DetectionByAffiliation.bDetectEnemies = true; 
+	SightConfig->DetectionByAffiliation.bDetectNeutrals = true; 
+	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
 
-	AIPerception->ConfigureSense(*SightConfig); // Configure the perception component with the sight configuration
-	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); // Set the dominant sense to sight
+	// 위에서 설정한 시야 감지 구성요소(SightConfig)를 AI Perception에 적용
+	AIPerception->ConfigureSense(*SightConfig); 
+	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); 
 }
 
 void APEAIController::BeginPlay()
@@ -32,11 +36,21 @@ void APEAIController::BeginPlay()
 
 	if(AIPerception)
 	{
-		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &APEAIController::OnPerceptionUpdated); // Bind the perception update event
+		UE_LOG(LogTemp, Warning, TEXT("바인딩"));
+		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &APEAIController::OnPerceptionUpdated);
 	}
+	
+	GetWorld()->GetTimerManager().SetTimer(RandomMoveTimer, this, &APEAIController::MoveToRandomLocation, PatrolCycle, true);
+}
 
-	// Set a timer to move to a random location every 3 seconds
-	GetWorld()->GetTimerManager().SetTimer(RandomMoveTimer, this, &APEAIController::MoveToRandomLocation, 3.0f, true);
+void APEAIController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (GetWorld())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(RandomMoveTimer);
+	}
 }
 
 void APEAIController::OnPossess(APawn* InPawn)
@@ -45,7 +59,6 @@ void APEAIController::OnPossess(APawn* InPawn)
 
 	if (InPawn)
 	{
-		// Custom logic for AIController when it possesses a pawn
 		UE_LOG(LogTemp, Warning, TEXT("AIController has possessed: %s"), *InPawn->GetName());
 	}
 	else
@@ -73,7 +86,7 @@ void APEAIController::MoveToRandomLocation()
 
 	FNavLocation RandomLocation; // Variable to hold the random navigable location
 
-	bool bFoundLocation = NavSystem->GetRandomPointInNavigableRadius(MyPawn->GetActorLocation(), MoveRadius, RandomLocation); // Get a random navigable point within the specified radius
+	bool bFoundLocation = NavSystem->GetRandomPointInNavigableRadius(MyPawn->GetActorLocation(), MoveRadius, RandomLocation);
 
 	if (bFoundLocation)
 	{
@@ -89,26 +102,30 @@ void APEAIController::MoveToRandomLocation()
 
 void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+	APawn* MyPawn = GetPawn();
+	if (!MyPawn) return;
+	FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
+
 	if (Stimulus.WasSuccessfullySensed())
 	{
 		DrawDebugString(GetWorld(),
-			Actor->GetActorLocation() + FVector(0, 0, 100),
+			DisplayLocation + FVector(0, 0, 100),
 			FString::Printf(TEXT("발견: %s"), *Actor->GetName()),
 			nullptr,
 			FColor::Green,
 			2.0f,
 			true);
-		// Implement logic for when the AI perceives an actor
+
 	}
 	else
 	{
 		DrawDebugString(GetWorld(),
-			Actor->GetActorLocation() + FVector(0, 0, 100),
+			DisplayLocation + FVector(0, 0, 100),
 			FString::Printf(TEXT("놓침: %s"), *Actor->GetName()),
 			nullptr,
 			FColor::Red,
 			2.0f,
 			true);
-		// Implement logic for when the AI loses sight of an actor
+	
 	}
 }

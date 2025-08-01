@@ -18,17 +18,30 @@ class PROJECTESCAPE_API APEAIController : public AAIController
 public:
 	APEAIController();
 
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
-	UAIPerceptionComponent* AIPerception;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
+	float SightRadius = 1500.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
+	float LoseSightRadius = 2000.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
+	float SightAngle = 90.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
+	float SightDuration = 5.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	float PatrolCycle = 3.0f;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
+	UAIPerceptionComponent* AIPerception;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
 	UAISenseConfig_Sight* SightConfig;
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
 	void MoveToRandomLocation();
