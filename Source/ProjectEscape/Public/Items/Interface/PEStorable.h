@@ -22,5 +22,7 @@ class PROJECTESCAPE_API IPEStorable
 
 public:
 	virtual void OnPickedUp() = 0;
-	virtual bool OnDropToWorld(const FVector& Location, const FRotator& Rotation) = 0;
+	virtual void OnDropToWorld(const FVector& Location, const FRotator& Rotation) = 0;
+	virtual int32 GetItemCount() const = 0;
+	virtual void AddItemCount(int32 Count) = 0;
 };

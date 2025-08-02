@@ -9,6 +9,8 @@
 #include "Logging/LogMacros.h"
 #include "FPSTestBlockCharacter.generated.h"
 
+class UPEInventoryManagerComponent;
+class UPEUseableItemManagerComponent;
 class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
@@ -89,7 +91,7 @@ public:
 
 	/* Interact 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	UPEInteractManagerComponent* InteractManagerComponent;
 
 public:
@@ -98,14 +100,14 @@ public:
 
 	/* 장비 사용 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-	class UPEUseableItemManagerComponent* UseableItemManagerComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UseItem", meta = (AllowPrivateAccess = "true"))
+	UPEUseableItemManagerComponent* UseableItemManagerComponent;
 	
 	virtual void Use();
 	
 	/* Quick Slot 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickSlot, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEQuickSlotManagerComponent> QuickSlotManagerComponent;
 	
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
@@ -117,4 +119,9 @@ public:
 	virtual void HandMelee();
 	virtual void HandThrowable();
 	virtual void HandUseable();
+
+	/* Inventroy 관련 섹션 */
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickSlot, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPEInventoryManagerComponent> InventoryManagerComponent;
 };

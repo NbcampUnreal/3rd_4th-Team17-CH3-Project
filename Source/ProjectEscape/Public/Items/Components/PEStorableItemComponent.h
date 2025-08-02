@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
+#include "Core/PEGameplayTags.h"
 #include "PEStorableItemComponent.generated.h"
 
 /*
@@ -15,6 +16,8 @@
  *	3. 아이템을 떨어뜨릴 때 호출되는 함수
  *	
  */
+
+class UPEStorable;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTESCAPE_API UPEStorableItemComponent : public UActorComponent
@@ -37,12 +40,11 @@ protected:
 	FGameplayTag ItemTag;
 
 public:
-	UFUNCTION(BlueprintPure, Category = "Item")
 	FGameplayTag GetItemTag() const { return ItemTag; }
-
-	UFUNCTION(BlueprintCallable, Category = "Item") 
 	void SetItemTag(const FGameplayTag& NewTag) { ItemTag = NewTag; }
 
-	void OnItemPickedUp();
-	void OnItemDropped(const FVector& Location, const FRotator& Rotation);
+	void OnItemPickedUp() const;
+	void OnItemDropped(const FVector& Location, const FRotator& Rotation) const;
+	void AddItemCount(int32 Count) const;
+	int32 GetItemCount() const;
 };

@@ -15,6 +15,8 @@
 #include "Engine/LocalPlayer.h"
 #include "Items/Interface/PEUseable.h"
 #include "Characters/Hero/Components/PEInteractManagerComponent.h"
+#include "Characters/Hero/Components/PEInventoryManagerComponent.h"
+#include "Items/Components/PEStorableItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -49,6 +51,9 @@ AFPSTestBlockCharacter::AFPSTestBlockCharacter()
 
 	// Create Quick Slot Component
 	QuickSlotManagerComponent = CreateDefaultSubobject<UPEQuickSlotManagerComponent>(TEXT("QuickSlotManagerComponent"));
+
+	// Create Inventory Manager Component
+	InventoryManagerComponent = CreateDefaultSubobject<UPEInventoryManagerComponent>(TEXT("InventoryManagerComponent"));
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -132,9 +137,25 @@ void AFPSTestBlockCharacter::Look(const FInputActionValue& Value)
 
 void AFPSTestBlockCharacter::TryInteract(AActor* TargetActor)
 {
-	//Todo: 우선순위 설정 필요 (인벤토리 > 퀵슬롯)
-
-	if (UPEQuickSlotItemComponent* QuickSlotItemComponent = TargetActor->FindComponentByClass<UPEQuickSlotItemComponent>())
+	/*
+	 * 우선순위
+	 * 1. StorableItemComponent가 있는 경우 - 인벤토리 아이템 상호작용
+	 * 2. QuickSlotItemComponent가 있는 경우 - 퀵슬롯 아이템 상호작용
+	 */
+	if (UPEStorableItemComponent* StorableItemComponent = TargetActor->FindComponentByClass<UPEStorableItemComponent>())
+	{
+		if (InteractManagerComponent && InteractManagerComponent->HasInteractable())
+		{
+			// 인벤토리 아이템 상호작용
+			InventoryManagerComponent->AddItemToInventory(StorableItemComponent);
+			UE_LOG(LogTemp, Warning, TEXT("StorableItemComponent found and interacted with %s"), *GetNameSafe(TargetActor));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No interactable component found for %s"), *GetNameSafe(TargetActor));
+		}
+	}
+	else if (UPEQuickSlotItemComponent* QuickSlotItemComponent = TargetActor->FindComponentByClass<UPEQuickSlotItemComponent>())
 	{
 		QuickSlotItemComponent->OnItemPickedUp();
 		QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), TargetActor);

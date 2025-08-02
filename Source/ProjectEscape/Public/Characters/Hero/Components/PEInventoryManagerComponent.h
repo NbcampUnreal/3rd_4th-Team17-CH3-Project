@@ -3,10 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "PEInventoryManagerComponent.generated.h"
 
-struct FPEGameplayTags;
 class UPEStorableItemComponent;
 /*
  *	인벤토리의 아이템을 관리하는 컴포넌트 클래스입니다.
@@ -32,21 +32,19 @@ protected:
 
 	/* Inventory 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, Category= "Inventory")
-	TArray<TObjectPtr<UPEStorableItemComponent>> InventoryItems; // 인벤토리에 있는 아이템들
+	//UPROPERTY(VisibleAnywhere, Category= "Inventory")
+	TMap<FGameplayTag, TObjectPtr<UPEStorableItemComponent>> InventoryItems; 
 
 	UPROPERTY(EditAnywhere, Category= "Inventory")
-	int32 MaxInventorySize = 10; // 인벤토리 최대 크기
+	int32 MaxInventorySize = 10;
 
 public:
 	void AddItemToInventory(UPEStorableItemComponent* Item);
 	void RemoveItemFromInventory(UPEStorableItemComponent* Item);
 	bool IsItemInInventory(UPEStorableItemComponent* Item) const;
+	bool IsItemInInventoryByTag(const FGameplayTag &Tag) const;
 	void ClearInventory();
-	UPEStorableItemComponent* GetItemByTag(const FPEGameplayTags &Tag);
-	
-	TArray<TObjectPtr<UPEStorableItemComponent>> GetInventoryItems() const;
-
+	UPEStorableItemComponent* GetItemByTag(const FGameplayTag &Tag);
 protected:
 	//void AddItemStack(); // 동일한 아이템이 있는 경우 스택 추가
 	void SortInventory();

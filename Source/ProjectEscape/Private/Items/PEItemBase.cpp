@@ -3,16 +3,24 @@
 
 #include "Items/PEItemBase.h"
 #include "Items/Components/PEInteractableComponent.h"
+#include "Items/Components/PEStorableItemComponent.h"
 
 APEItemBase::APEItemBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	// InteractableComponent 생성 및 설정
 	InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->SetupAttachment(RootComponent);
 	InteractableComponent->SetHiddenInGame(false);
 
+	// Inventroy 관련 컴포넌트 생성 및 설정
+	StorableItemComponent = CreateDefaultSubobject<UPEStorableItemComponent>(TEXT("StorableItemComponent"));
+	
 	ItemOwnerActor = nullptr;
+	ItemCount = 1; // 기본 아이템 개수 설정
+	StackCount = 1;
+	MaxStackCount = 64;
 }
 
 void APEItemBase::BeginPlay()
@@ -43,47 +51,27 @@ bool APEItemBase::IsInteractable() const
 	return true;
 }
 
-bool APEItemBase::CanBeStored() const
+void APEItemBase::OnPickedUp()
 {
-	return true;
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	UE_LOG(LogTemp, Warning, TEXT("APEItemBase::OnPickedUp called on %s"), *GetName());
 }
 
-bool APEItemBase::StoreItem(class AActor* Inventory)
+void APEItemBase::OnDropToWorld(const FVector& Location, const FRotator& Rotation)
 {
-	return true;
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	UE_LOG(LogTemp, Warning, TEXT("APEItemBase::OnDropToWorld called on %s"), *GetName());
 }
 
-bool APEItemBase::RemoveFromStorage(class AActor* Inventory)
+int32 APEItemBase::GetItemCount() const
 {
-	return true;
+	return ItemCount;
 }
 
-int32 APEItemBase::GetStackSize() const
+void APEItemBase::AddItemCount(int32 Count)
 {
-	return 0;
-}
-
-int32 APEItemBase::GetMaxStackSize() const
-{
-	return 0;
-}
-
-bool APEItemBase::AddToStack(int32 Amount)
-{
-	return true;
-}
-
-FString APEItemBase::GetItemID() const
-{
-	return FString(TEXT("DefaultItemID"));
-}
-
-bool APEItemBase::IsStackable() const
-{
-	return true;
-}
-
-bool APEItemBase::DropToWorld(const FVector& Location, const FRotator& Rotation)
-{
-	return true;
+	ItemCount += Count;
+	StackCount = 1 + (ItemCount / MaxStackCount);
 }

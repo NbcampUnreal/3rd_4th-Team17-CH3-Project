@@ -8,26 +8,21 @@
 UPEStorableItemComponent::UPEStorableItemComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
-
+	
 }
 
 
 void UPEStorableItemComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	ComponentOwnerActor = GetOwner();
 }
 
-void UPEStorableItemComponent::OnItemPickedUp()
+void UPEStorableItemComponent::OnItemPickedUp() const
 {
 	if (ComponentOwnerActor)
 	{
-		// 아이템을 보이지 않게 설정
-		ComponentOwnerActor->SetActorHiddenInGame(true);
-		
-		// 콜리전도 비활성화 (선택사항)
-		ComponentOwnerActor->SetActorEnableCollision(false);
-		
 		if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
 		{
 			StorableInterface->OnPickedUp();
@@ -39,16 +34,10 @@ void UPEStorableItemComponent::OnItemPickedUp()
 	}
 }
 
-void UPEStorableItemComponent::OnItemDropped(const FVector& Location, const FRotator& Rotation)
+void UPEStorableItemComponent::OnItemDropped(const FVector& Location, const FRotator& Rotation) const
 {
 	if (ComponentOwnerActor)
 	{
-		// 아이템을 다시 보이게 설정
-		ComponentOwnerActor->SetActorHiddenInGame(false);
-		
-		// 콜리전도 다시 활성화
-		ComponentOwnerActor->SetActorEnableCollision(true);
-		
 		if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
 		{
 			StorableInterface->OnDropToWorld(Location, Rotation);
@@ -58,6 +47,23 @@ void UPEStorableItemComponent::OnItemDropped(const FVector& Location, const FRot
 			UE_LOG(LogTemp, Warning, TEXT("PEStorableItemComponent: Owner %s does not implement IPEStorable interface!"), *ComponentOwnerActor->GetName());
 		}
 	}
+}
+
+void UPEStorableItemComponent::AddItemCount(int32 Count) const
+{
+	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
+	{
+		StorableInterface->AddItemCount(Count);
+	}
+}
+
+int32 UPEStorableItemComponent::GetItemCount() const
+{
+	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
+	{
+		return StorableInterface->GetItemCount();
+	}
+	return 0; // 기본값 반환
 }
 
 
