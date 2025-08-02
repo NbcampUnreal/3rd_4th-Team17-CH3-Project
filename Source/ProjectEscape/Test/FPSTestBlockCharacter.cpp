@@ -215,3 +215,18 @@ void AFPSTestBlockCharacter::HandSecondary()
 {
 	HandEquipment(EPEEquipmentType::Secondary);
 }
+
+void AFPSTestBlockCharacter::HandMelee()
+{
+	HandEquipment(EPEEquipmentType::Melee);
+}
+
+void AFPSTestBlockCharacter::HandThrowable()
+{
+	HandEquipment(EPEEquipmentType::Throwable);
+}
+
+void AFPSTestBlockCharacter::HandUseable()
+{
+	
+}

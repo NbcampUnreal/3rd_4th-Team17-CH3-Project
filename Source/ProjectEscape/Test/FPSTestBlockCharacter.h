@@ -111,6 +111,10 @@ protected:
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 
 public:
+	// Quickslot Wrappers
 	virtual void HandPrimary();
 	virtual void HandSecondary();
+	virtual void HandMelee();
+	virtual void HandThrowable();
+	virtual void HandUseable();
 };
