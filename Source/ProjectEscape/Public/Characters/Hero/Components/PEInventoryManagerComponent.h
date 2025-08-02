@@ -32,15 +32,18 @@ protected:
 
 	/* Inventory 관련 섹션 */
 protected:
-	//UPROPERTY(VisibleAnywhere, Category= "Inventory")
+	UPROPERTY(VisibleAnywhere, Category= "Inventory")
 	TMap<FGameplayTag, TObjectPtr<UPEStorableItemComponent>> InventoryItems; 
 
 	UPROPERTY(EditAnywhere, Category= "Inventory")
-	int32 MaxInventorySize = 10;
+	int32 MaxInventorySize;
 
+	UPROPERTY(VisibleAnywhere, Category= "Inventory")
+	int32 CurrentItemInInventroyCount;
+	
 public:
 	void AddItemToInventory(UPEStorableItemComponent* Item);
-	void RemoveItemFromInventory(UPEStorableItemComponent* Item);
+	void RemoveItemFromInventory(int32 Count, UPEStorableItemComponent* Item);
 	bool IsItemInInventory(UPEStorableItemComponent* Item) const;
 	bool IsItemInInventoryByTag(const FGameplayTag &Tag) const;
 	void ClearInventory();
@@ -48,4 +51,8 @@ public:
 protected:
 	//void AddItemStack(); // 동일한 아이템이 있는 경우 스택 추가
 	void SortInventory();
+	void UpdateCurrentItemCount();
+
+public:
+	void ItemDropTest(); // 아이템 버리기 테스트용 코드
 };

@@ -101,6 +101,9 @@ void AFPSTestBlockCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(HandPrimaryAction, ETriggerEvent::Triggered, this, &AFPSTestBlockCharacter::HandPrimary);
 		EnhancedInputComponent->BindAction(HandSecondaryAction, ETriggerEvent::Triggered, this, &AFPSTestBlockCharacter::HandSecondary);
 
+		// Inventory Item Drop Test
+		EnhancedInputComponent->BindAction(InventroyItemDropTestAction, ETriggerEvent::Triggered, this, &AFPSTestBlockCharacter::InventroyDropTest);
+
 	}
 	else
 	{
@@ -250,4 +253,12 @@ void AFPSTestBlockCharacter::HandThrowable()
 void AFPSTestBlockCharacter::HandUseable()
 {
 	
+}
+
+void AFPSTestBlockCharacter::InventroyDropTest()
+{
+	if (InventoryManagerComponent)
+	{
+		InventoryManagerComponent->ItemDropTest();
+	}
 }

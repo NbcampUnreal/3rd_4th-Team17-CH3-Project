@@ -51,6 +51,11 @@ bool APEItemBase::IsInteractable() const
 	return true;
 }
 
+void APEItemBase::OnDuplicated()
+{
+	
+}
+
 void APEItemBase::OnPickedUp()
 {
 	SetActorHiddenInGame(true);
@@ -60,6 +65,8 @@ void APEItemBase::OnPickedUp()
 
 void APEItemBase::OnDropToWorld(const FVector& Location, const FRotator& Rotation)
 {
+	SetActorLocation(Location);
+	SetActorRotation(Rotation);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
 	UE_LOG(LogTemp, Warning, TEXT("APEItemBase::OnDropToWorld called on %s"), *GetName());
@@ -70,8 +77,49 @@ int32 APEItemBase::GetItemCount() const
 	return ItemCount;
 }
 
+int32 APEItemBase::GetItemStackCount() const
+{
+	return StackCount;
+}
+
 void APEItemBase::AddItemCount(int32 Count)
 {
 	ItemCount += Count;
 	StackCount = 1 + (ItemCount / MaxStackCount);
+}
+
+void APEItemBase::ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation)
+{
+	if (Count >= ItemCount)
+	{
+		OnDropToWorld(Location, Rotation);
+	}
+	else
+	{
+		// 아이템 개수를 감소시킴
+		ItemCount -= Count;
+		StackCount = 1 + ((ItemCount - 1) / MaxStackCount);
+		
+		// 복제된 아이템을 생성
+		if (GetWorld())
+		{
+			APEItemBase* DuplicatedItem = GetWorld()->SpawnActor<APEItemBase>(GetClass(), Location, Rotation);
+			if (DuplicatedItem)
+			{
+				// 복제된 아이템의 속성을 설정
+				DuplicatedItem->ItemCount = Count;
+				DuplicatedItem->StackCount = 1 + ((Count - 1) / MaxStackCount);
+				DuplicatedItem->MaxStackCount = MaxStackCount;
+				DuplicatedItem->ItemOwnerActor = nullptr;
+				
+				// OnDuplicated 이벤트 호출
+				DuplicatedItem->OnDuplicated();
+				
+				// 복제된 아이템을 월드에 드롭
+				DuplicatedItem->OnDropToWorld(Location, Rotation);
+				
+				UE_LOG(LogTemp, Warning, TEXT("Item duplicated: Original count %d, Duplicated count %d"), ItemCount, Count);
+			}
+		}
+	}
 }

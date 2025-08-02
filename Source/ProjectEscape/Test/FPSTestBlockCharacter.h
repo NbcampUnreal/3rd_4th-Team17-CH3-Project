@@ -59,13 +59,16 @@ class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandl
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* UseAction;
 	
-	/** Use Input Action */
+	/** Use Hand Item Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* HandPrimaryAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* HandSecondaryAction;
-	
+
+	/** Use Inventory Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InventroyItemDropTestAction;
 	
 public:
 	AFPSTestBlockCharacter();
@@ -92,7 +95,7 @@ public:
 	/* Interact 관련 섹션 */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
-	UPEInteractManagerComponent* InteractManagerComponent;
+	TObjectPtr<UPEInteractManagerComponent> InteractManagerComponent;
 
 public:
 	UPEInteractManagerComponent* GetInteractManagerComponent() const;
@@ -101,7 +104,7 @@ public:
 	/* 장비 사용 관련 섹션 */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UseItem", meta = (AllowPrivateAccess = "true"))
-	UPEUseableItemManagerComponent* UseableItemManagerComponent;
+	TObjectPtr<UPEUseableItemManagerComponent> UseableItemManagerComponent;
 	
 	virtual void Use();
 	
@@ -124,4 +127,6 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickSlot, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEInventoryManagerComponent> InventoryManagerComponent;
+
+	void InventroyDropTest(); // 인벤토리 드랍 테스트용 함수
 };

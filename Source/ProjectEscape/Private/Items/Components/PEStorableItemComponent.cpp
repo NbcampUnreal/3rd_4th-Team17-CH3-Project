@@ -34,7 +34,7 @@ void UPEStorableItemComponent::OnItemPickedUp() const
 	}
 }
 
-void UPEStorableItemComponent::OnItemDropped(const FVector& Location, const FRotator& Rotation) const
+void UPEStorableItemComponent::OnItemDropped(int32 Count, const FVector& Location, const FRotator& Rotation) const
 {
 	if (ComponentOwnerActor)
 	{
@@ -57,6 +57,14 @@ void UPEStorableItemComponent::AddItemCount(int32 Count) const
 	}
 }
 
+void UPEStorableItemComponent::ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation) const
+{
+	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
+	{
+		StorableInterface->ReduceItemCount(Count, Location, Rotation);
+	}
+}
+
 int32 UPEStorableItemComponent::GetItemCount() const
 {
 	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
@@ -64,6 +72,16 @@ int32 UPEStorableItemComponent::GetItemCount() const
 		return StorableInterface->GetItemCount();
 	}
 	return 0; // 기본값 반환
+}
+
+int32 UPEStorableItemComponent::GetStackCount() const
+{
+	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
+	{
+		return StorableInterface->GetItemStackCount();
+	}
+	return 0; // 기본값 반환
+	
 }
 
 
