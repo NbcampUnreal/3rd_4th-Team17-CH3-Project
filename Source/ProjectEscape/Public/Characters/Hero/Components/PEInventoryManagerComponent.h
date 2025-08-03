@@ -43,16 +43,15 @@ protected:
 	
 public:
 	void AddItemToInventory(UPEStorableItemComponent* Item);
-	void RemoveItemFromInventory(int32 Count, UPEStorableItemComponent* Item);
-	bool IsItemInInventory(UPEStorableItemComponent* Item) const;
+	void DropItemFromInventoryByTag(const int32 &Count, const FGameplayTag &Tag);
 	bool IsItemInInventoryByTag(const FGameplayTag &Tag) const;
 	void ClearInventory();
 	UPEStorableItemComponent* GetItemByTag(const FGameplayTag &Tag);
+	
 protected:
-	//void AddItemStack(); // 동일한 아이템이 있는 경우 스택 추가
 	void SortInventory();
 	void UpdateCurrentItemCount();
 
 public:
-	void ItemDropTest(); // 아이템 버리기 테스트용 코드
+	void ItemDropTest();
 };

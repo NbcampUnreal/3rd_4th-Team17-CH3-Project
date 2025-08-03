@@ -18,7 +18,7 @@ APEItemBase::APEItemBase()
 	StorableItemComponent = CreateDefaultSubobject<UPEStorableItemComponent>(TEXT("StorableItemComponent"));
 	
 	ItemOwnerActor = nullptr;
-	ItemCount = 1; // 기본 아이템 개수 설정
+	ItemCount = 30; // 기본 아이템 개수 설정
 	StackCount = 1;
 	MaxStackCount = 64;
 }

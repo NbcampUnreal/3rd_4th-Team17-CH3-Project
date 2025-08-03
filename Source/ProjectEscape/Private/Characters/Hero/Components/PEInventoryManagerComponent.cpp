@@ -2,6 +2,7 @@
 
 #include "Characters/Hero/Components/PEInventoryManagerComponent.h"
 
+#include "NativeGameplayTags.h"
 #include "Core/PEGameplayTags.h"
 #include "Core/PELogChannels.h"
 #include "Items/Components/PEStorableItemComponent.h"
@@ -68,28 +69,20 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 	// 테스트 코드 끝
 }
 
-void UPEInventoryManagerComponent::RemoveItemFromInventory(int32 Count, UPEStorableItemComponent* Item)
+void UPEInventoryManagerComponent::DropItemFromInventoryByTag(const int32& Count, const FGameplayTag& Tag)
 {
-	FGameplayTag ItemTag = Item->GetItemTag();
-	
-	if (UPEStorableItemComponent* ContainItem = GetItemByTag(ItemTag))
+	if (const auto& DropItem = GetItemByTag(Tag))
 	{
-		//Todo: 아이템 개수가 Count보다 많을 경우 아이템 개수를 감소 시키고
-		//       아이템을 복제해서 바닥에 떨어뜨리는 로직을 추가
-		const FVector	&Location = Item->GetOwner()->GetActorLocation();
-		const FRotator	&Rotation = Item->GetOwner()->GetActorRotation();
-		ContainItem->OnItemDropped(Count, Location, Rotation);
+		if (DropItem->GetItemCount() <= Count)
+		{
+			InventoryItems.Remove(DropItem->GetItemTag());
+		}
+		DropItem->ReduceItemCount(Count, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
 	}
 	else
 	{
-		UE_LOG(LogPE, Warning, TEXT("Item not found in inventory: %s"), *Item->GetOwner()->GetName());
-		return;
+		UE_LOG(LogPE, Log, TEXT("Item not found"));
 	}
-}
-
-bool UPEInventoryManagerComponent::IsItemInInventory(UPEStorableItemComponent* Item) const
-{
-	return true;
 }
 
 bool UPEInventoryManagerComponent::IsItemInInventoryByTag(const FGameplayTag &Tag) const
@@ -148,20 +141,11 @@ void UPEInventoryManagerComponent::ItemDropTest()
 {
 	//Todo: 마지막 아이템이 버려질 때, 아이템이 주울 수 있는 상태로 바뀌어야 함
 	//		RemoveItemFromInventory과 병합 필요 (해당 함수가 미완성)
-	if (InventoryItems.Num() == 0) return;
-	UPEStorableItemComponent* DropItem = InventoryItems.begin()->Value;
-	if (DropItem)
+	if (InventoryItems.Num() == 0)
 	{
-		if (DropItem->GetItemCount() == 1)
-		{
-			InventoryItems.Remove(DropItem->GetItemTag());
-		}
-		DropItem->ReduceItemCount(1,
-			GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
-		
+		UE_LOG(LogPE, Warning, TEXT("No items in inventory to drop!"));
+		return;
 	}
-	else
-	{
-		UE_LOG(LogPE, Log, TEXT("Item not found"));
-	}
+	FGameplayTag Tag = InventoryItems.begin()->Key;
+	DropItemFromInventoryByTag(60, Tag);
 }
