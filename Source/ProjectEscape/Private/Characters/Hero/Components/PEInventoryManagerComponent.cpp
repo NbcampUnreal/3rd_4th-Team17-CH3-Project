@@ -42,16 +42,17 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 		Item->DestoryItem(); //아이템이 주워졌을 때 이미 있는 아이템이면 제거
 		ContainItem->AddItemCount(Item->GetItemCount());
 		UpdateCurrentItemCount();
-		UE_LOG(LogPE, Log, TEXT("Contain Item! Item count increased: %d"), ContainItem->GetItemCount());
-		return;		
+		UE_LOG(LogPE, Log, TEXT("Contained Item! Item count increased: %d"), ContainItem->GetItemCount());
+	}
+	else
+	{
+		InventoryItems.Add(ItemTag, Item);
+		Item->OnItemPickedUp();
+		UpdateCurrentItemCount();
+		UE_LOG(LogPE, Log, TEXT("New item added to Inventory"));
 	}
 
-	InventoryItems.Add(ItemTag, Item);
-	Item->OnItemPickedUp();
-	UpdateCurrentItemCount();
-	UE_LOG(LogPE, Log, TEXT("Item added to Inventory"));
-
-	// 인벤토리에 있는 모든 아이템을 로그에 출력 (테스트용 코드)
+	// 인벤토리에 있는 모든 아이템을 로그에 출력 (테스트용 코드, UI 연결 시 삭제)
 	UE_LOG(LogPE, Log, TEXT("Current Inventory Items (%d/%d):"), InventoryItems.Num(), MaxInventorySize);
 	for (const auto &ItemPair : InventoryItems)
 	{
@@ -64,7 +65,7 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 			UE_LOG(LogPE, Warning, TEXT(" - Item is null!"));
 		}
 	}
-	//
+	// 테스트 코드 끝
 }
 
 void UPEInventoryManagerComponent::RemoveItemFromInventory(int32 Count, UPEStorableItemComponent* Item)

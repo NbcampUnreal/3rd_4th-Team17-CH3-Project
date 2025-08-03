@@ -69,6 +69,8 @@ void APEItemBase::OnDropToWorld(const FVector& Location, const FRotator& Rotatio
 	SetActorRotation(Rotation);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
+	ItemOwnerActor = nullptr;
+	
 	UE_LOG(LogTemp, Warning, TEXT("APEItemBase::OnDropToWorld called on %s"), *GetName());
 }
 
