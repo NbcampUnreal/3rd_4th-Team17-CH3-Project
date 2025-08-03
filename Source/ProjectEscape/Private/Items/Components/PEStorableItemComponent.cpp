@@ -17,6 +17,7 @@ void UPEStorableItemComponent::BeginPlay()
 	Super::BeginPlay();
 
 	ComponentOwnerActor = GetOwner();
+	ComponentOwnerInterface = GetOwner();
 }
 
 void UPEStorableItemComponent::OnItemPickedUp() const
@@ -62,6 +63,14 @@ void UPEStorableItemComponent::ReduceItemCount(int32 Count, const FVector& Locat
 	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
 	{
 		StorableInterface->ReduceItemCount(Count, Location, Rotation);
+	}
+}
+
+void UPEStorableItemComponent::DestoryItem() const
+{
+	if (ComponentOwnerInterface)
+	{
+		ComponentOwnerInterface->DestoryItem();
 	}
 }
 

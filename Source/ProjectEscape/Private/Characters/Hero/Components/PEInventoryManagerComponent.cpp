@@ -38,7 +38,8 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 	// 동일한 아이템이 있는 경우 스택 추가
 	if (UPEStorableItemComponent* ContainItem = GetItemByTag(ItemTag))
 	{
-		Item-> OnItemPickedUp(); //Todo: 아이템이 주워졌을 때 이미 있는 아이템이면 제거하도록 변경
+		Item-> OnItemPickedUp(); 
+		Item->DestoryItem(); //아이템이 주워졌을 때 이미 있는 아이템이면 제거
 		ContainItem->AddItemCount(Item->GetItemCount());
 		UpdateCurrentItemCount();
 		UE_LOG(LogPE, Log, TEXT("Contain Item! Item count increased: %d"), ContainItem->GetItemCount());

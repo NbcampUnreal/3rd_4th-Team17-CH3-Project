@@ -123,3 +123,18 @@ void APEItemBase::ReduceItemCount(int32 Count, const FVector& Location, const FR
 		}
 	}
 }
+
+void APEItemBase::DestoryItem()
+{
+	//NOTE: Timer나 델리게이트 처럼 다른 곳에서 이 아이템을 참조하고 있다면,
+	//DestoryItem() 호출 시점에 따라 문제가 발생할 수 있음
+	if (GetWorld())
+	{
+		GetWorld()->DestroyActor(this);
+		UE_LOG(LogTemp, Warning, TEXT("APEItemBase::DestoryItem called on %s"), *GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("APEItemBase::DestoryItem failed: World is null"));
+	}
+}

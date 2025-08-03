@@ -54,4 +54,5 @@ public:
 	virtual int32 GetItemStackCount() const override;
 	virtual void AddItemCount(int32 Count) override;
 	virtual void ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation) override;
+	virtual void DestoryItem() override;
 };

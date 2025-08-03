@@ -27,4 +27,5 @@ public:
 	virtual int32 GetItemStackCount() const = 0;
 	virtual void AddItemCount(int32 Count) = 0;
 	virtual void ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation) = 0;
+	virtual void DestoryItem() = 0;
 };

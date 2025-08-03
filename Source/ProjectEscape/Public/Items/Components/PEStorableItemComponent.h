@@ -17,6 +17,7 @@
  *	
  */
 
+class IPEStorable;
 class UPEStorable;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -36,6 +37,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TObjectPtr<AActor> ComponentOwnerActor;
 	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
+	TScriptInterface<IPEStorable> ComponentOwnerInterface;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (Categories = "Item"))
 	FGameplayTag ItemTag;
 
@@ -47,6 +51,7 @@ public:
 	void OnItemDropped(int32 Count, const FVector& Location, const FRotator& Rotation) const;
 	void AddItemCount(int32 Count) const;
 	void ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation) const;
+	void DestoryItem() const;
 	int32 GetItemCount() const;
 	int32 GetStackCount() const;
 };
