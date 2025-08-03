@@ -3,6 +3,7 @@
 
 #include "Items/Components/PEStorableItemComponent.h"
 
+#include "Core/PELogChannels.h"
 #include "Items/Interface/PEStorable.h"
 
 UPEStorableItemComponent::UPEStorableItemComponent()
@@ -16,53 +17,46 @@ void UPEStorableItemComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ComponentOwnerActor = GetOwner();
 	ComponentOwnerInterface = GetOwner();
 }
 
 void UPEStorableItemComponent::OnItemPickedUp() const
 {
-	if (ComponentOwnerActor)
+	if (ComponentOwnerInterface)
 	{
-		if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
-		{
-			StorableInterface->OnPickedUp();
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PEStorableItemComponent: Owner %s does not implement IPEStorable interface!"), *ComponentOwnerActor->GetName());
-		}
+		ComponentOwnerInterface->OnPickedUp();
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("PEStorableItemComponent: Owner %s does not implement IPEStorable interface!"), *GetOwner()->GetName());
 	}
 }
 
 void UPEStorableItemComponent::OnItemDropped(int32 Count, const FVector& Location, const FRotator& Rotation) const
 {
-	if (ComponentOwnerActor)
+	if (ComponentOwnerInterface)
 	{
-		if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
-		{
-			StorableInterface->OnDropToWorld(Location, Rotation);
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PEStorableItemComponent: Owner %s does not implement IPEStorable interface!"), *ComponentOwnerActor->GetName());
-		}
+		ComponentOwnerInterface->OnDropToWorld(Location, Rotation);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PEStorableItemComponent: Owner %s does not implement IPEStorable interface!"), *GetOwner()->GetName());
 	}
 }
 
 void UPEStorableItemComponent::AddItemCount(int32 Count) const
 {
-	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
+	if (ComponentOwnerInterface)
 	{
-		StorableInterface->AddItemCount(Count);
+		ComponentOwnerInterface->AddItemCount(Count);
 	}
 }
 
 void UPEStorableItemComponent::ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation) const
 {
-	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
+	if (ComponentOwnerInterface)
 	{
-		StorableInterface->ReduceItemCount(Count, Location, Rotation);
+		ComponentOwnerInterface->ReduceItemCount(Count, Location, Rotation);
 	}
 }
 
@@ -76,21 +70,20 @@ void UPEStorableItemComponent::DestoryItem() const
 
 int32 UPEStorableItemComponent::GetItemCount() const
 {
-	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
+	if (ComponentOwnerInterface)
 	{
-		return StorableInterface->GetItemCount();
+		return ComponentOwnerInterface->GetItemCount();
 	}
 	return 0; // 기본값 반환
 }
 
 int32 UPEStorableItemComponent::GetStackCount() const
 {
-	if (IPEStorable* StorableInterface = Cast<IPEStorable>(ComponentOwnerActor))
+	if (ComponentOwnerInterface)
 	{
-		return StorableInterface->GetItemStackCount();
+		return ComponentOwnerInterface->GetItemStackCount();
 	}
 	return 0; // 기본값 반환
-	
 }
 
 

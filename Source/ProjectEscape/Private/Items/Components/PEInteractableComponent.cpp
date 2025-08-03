@@ -15,14 +15,7 @@ void UPEInteractableComponent::BeginPlay()
 	Super::BeginPlay();
 	
 	// 소유자 액터가 IPEInteractable 인터페이스를 구현하는지 확인
-	if (AActor* Owner = GetOwner())
-	{
-		ComponentOwner = Cast<IPEInteractable>(Owner);
-		if (!ComponentOwner)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PEInteractableComponent: Owner %s does not implement IPEInteractable interface!"), *Owner->GetName());
-		}
-	}
+	SetComponentOwnerInterface(GetOwner());
 }
 
 bool UPEInteractableComponent::Interact(AActor* Interactor)
@@ -44,4 +37,18 @@ bool UPEInteractableComponent::Interact(AActor* Interactor)
 
 	}
 	return true;
+}
+
+void UPEInteractableComponent::SetComponentOwnerInterface(UObject* NewOwner)
+{
+	if (NewOwner && NewOwner->Implements<UPEInteractable>())
+	{
+		ComponentOwner.SetObject(NewOwner);
+		ComponentOwner.SetInterface(Cast<IPEInteractable>(NewOwner));
+	}
+	else
+	{
+		ComponentOwner.SetObject(nullptr);
+		ComponentOwner.SetInterface(nullptr);
+	}
 }

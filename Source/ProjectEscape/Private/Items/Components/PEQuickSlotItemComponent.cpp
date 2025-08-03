@@ -4,6 +4,7 @@
 #include "Items/Components/PEQuickSlotItemComponent.h"
 
 #include "PEEquipmentType.h"
+#include "Core/PELogChannels.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 
 UPEQuickSlotItemComponent::UPEQuickSlotItemComponent()
@@ -17,49 +18,60 @@ void UPEQuickSlotItemComponent::BeginPlay()
 	Super::BeginPlay();
 
 	ComponentOwnerActor = GetOwner();
+	SetComponentInterface(ComponentOwnerActor);
 }
 
-void UPEQuickSlotItemComponent::OnItemPickedUp()
+void UPEQuickSlotItemComponent::OnItemPickedUp() const
 {
 	if (ComponentOwnerActor)
 	{
-		// 아이템을 보이지 않게 설정
 		ComponentOwnerActor->SetActorHiddenInGame(true);
-		
-		// 콜리전도 비활성화 (선택사항)
 		ComponentOwnerActor->SetActorEnableCollision(false);
 	}
 }
 
-void UPEQuickSlotItemComponent::OnItemDropped()
+void UPEQuickSlotItemComponent::OnItemDropped() const
 {
 	if (ComponentOwnerActor)
 	{
-		// 아이템을 다시 보이게 설정
 		ComponentOwnerActor->SetActorHiddenInGame(false);
-		
-		// 콜리전도 다시 활성화
 		ComponentOwnerActor->SetActorEnableCollision(true);
-
-		if (IPEQuickSlotItem* QuickSlotItemInterface = Cast<IPEQuickSlotItem>(ComponentOwnerActor))
-		{
-			QuickSlotItemInterface->OnDropped();
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PEQuickSlotItemComponent: Owner %s does not implement IPEQuickSlotItem interface!"), *ComponentOwnerActor->GetName());
-		}
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("PEQuickSlotItemComponent: Owner actor is null!"));
+	}
+	
+	if (ComponentOwnerActorInterface)
+	{
+		ComponentOwnerActorInterface->OnDropped();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PEQuickSlotItemComponent: Owner %s does not implement IPEQuickSlotItem interface!"), *ComponentOwnerActor->GetName());
 	}
 }
 
-EPEEquipmentType UPEQuickSlotItemComponent::GetEquipmentType()
+EPEEquipmentType UPEQuickSlotItemComponent::GetEquipmentType() const
 {
-	if (ComponentOwnerActor)
+	if (ComponentOwnerActorInterface)
 	{
-		if (IPEQuickSlotItem* QuickSlotItemInterface = Cast<IPEQuickSlotItem>(ComponentOwnerActor))
-		{
-			return QuickSlotItemInterface->GetEquipmentType();
-		}
+		return ComponentOwnerActorInterface->GetEquipmentType();
 	}
 	return EPEEquipmentType::None; // 기본값 반환
+}
+
+void UPEQuickSlotItemComponent::SetComponentInterface(UObject* NewOwner)
+{
+	
+	if (NewOwner && NewOwner->Implements<UPEQuickSlotItem>())
+	{
+		ComponentOwnerActorInterface.SetObject(NewOwner);
+		ComponentOwnerActorInterface.SetInterface(Cast<IPEQuickSlotItem>(NewOwner));
+	}
+	else
+	{
+		ComponentOwnerActorInterface.SetObject(nullptr);
+		ComponentOwnerActorInterface.SetInterface(nullptr);
+	}
 }

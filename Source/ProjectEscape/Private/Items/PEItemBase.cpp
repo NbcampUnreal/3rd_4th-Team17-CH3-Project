@@ -33,7 +33,7 @@ void APEItemBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
-	InteractableComponent->SetComponentOwner(this);
+	InteractableComponent->SetComponentOwnerInterface(this);
 }
 
 void APEItemBase::Interact(AActor* Interactor)

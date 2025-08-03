@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
-#include "Core/PEGameplayTags.h"
 #include "PEStorableItemComponent.generated.h"
 
 /*
@@ -34,9 +33,6 @@ protected:
 
 	/* Storable Item 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
-	TObjectPtr<AActor> ComponentOwnerActor;
-	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TScriptInterface<IPEStorable> ComponentOwnerInterface;
 	
