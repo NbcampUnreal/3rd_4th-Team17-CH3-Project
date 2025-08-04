@@ -24,20 +24,15 @@ void APESpawnArea::Spawn()
 	{
 		if (TSubclassOf<AActor> SelectedActorClass = SelectRandomActorFromData())
 		{
-			FVector SpawnLocation;
-			GetRandomPointInBox(SpawnLocation);
-			GetGroundPointUsingRaycast(SpawnLocation);
-
-			FRotator SpawnRotator = FRotator::ZeroRotator;
-			GetRandomYawRotation(SpawnRotator);
-
+			FVector SpawnLocation = GetRandomPointInBox();
+			FRotator SpawnRotator = GetRandomYawRotation();
 			FActorSpawnParameters SpawnParams;
 
 			if (UWorld* World = GetWorld())
 			{
 				if (AActor* SpawnedActor = World->SpawnActor<AActor>(SelectedActorClass, SpawnLocation, SpawnRotator, SpawnParams))
 				{
-					// ºÎÈ÷È÷
+					MoveActorOnGround(SpawnedActor);
 				}
 			}	
 		}
@@ -75,7 +70,7 @@ TSubclassOf<AActor> APESpawnArea::SelectRandomActorFromData() const
 	return ActorClassToSpawn;
 }
 
-void APESpawnArea::GetRandomPointInBox(FVector& OUT Location) const
+FVector APESpawnArea::GetRandomPointInBox() const
 {
 	FVector BoxExtent = SpawnArea->GetScaledBoxExtent();
 	FVector BoxOrigin = SpawnArea->GetComponentLocation();
@@ -85,14 +80,57 @@ void APESpawnArea::GetRandomPointInBox(FVector& OUT Location) const
 	float TopZ = BoxExtent.Z;
 
 	FVector Random(RandomX, RandomY, TopZ);
-	Location = BoxOrigin + Random;
+	return BoxOrigin + Random;
 }
 
-void APESpawnArea::GetGroundPointUsingRaycast(FVector& OUT Location) const
+FRotator APESpawnArea::GetRandomYawRotation() const
 {
+	float RandomYaw = FMath::FRandRange(-90.0f, 90.0f);
+	return FRotator(0, RandomYaw, 0);
 }
 
-void APESpawnArea::GetRandomYawRotation(FRotator& OUT Rotator) const
+void APESpawnArea::MoveActorOnGround(AActor* SpawnedActor)
 {
-	Rotator.Yaw = FMath::FRandRange(-90.0f, 90.0f);
+	check(SpawnedActor);
+
+	FVector BoxOrigin;
+	FVector BoxExtent;
+	SpawnedActor->GetActorBounds(true, BoxOrigin, BoxExtent);
+
+	FCollisionShape BoxCollision = FCollisionShape::MakeBox(BoxExtent);
+	FVector OldLocation = SpawnedActor->GetActorLocation();
+	FVector NewLocation = GetGroundPointUsingRaycast(SpawnedActor, BoxCollision);
+	NewLocation.Z += BoxExtent.Z;
+	SpawnedActor->SetActorLocation(NewLocation);
 }
+
+FVector APESpawnArea::GetGroundPointUsingRaycast(AActor* SpawnedActor, FCollisionShape& BoxCollision) const
+{
+	check(SpawnedActor);
+	check(SpawnArea);
+
+	static const FVector FallDirection = FVector(0, 0, -1.0f);
+	static const float DefaultCheckDistance = 1000.0f;
+	float BoxHalfHeight = SpawnArea->GetScaledBoxExtent().Z;
+
+	FVector Start = SpawnedActor->GetActorLocation();
+	FVector Result = Start;
+
+	if (UWorld* World = GetWorld())
+	{
+		float CheckDistance = DefaultCheckDistance + (BoxHalfHeight * 2);
+		FVector End = Start + FallDirection * (CheckDistance);
+		FQuat Rot;
+		FHitResult HitResult;
+		
+		FCollisionQueryParams Params;
+		Params.AddIgnoredActor(SpawnedActor);
+
+		if (World->SweepSingleByChannel(HitResult, Start, End, Rot, ECC_Visibility, BoxCollision, Params))
+		{
+			Result.Z = HitResult.ImpactPoint.Z;
+		}
+	}
+	return Result;
+}
+

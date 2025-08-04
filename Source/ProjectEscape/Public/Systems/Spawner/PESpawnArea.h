@@ -39,7 +39,9 @@ protected:
 	virtual void BeginPlay() override;
 
 	TSubclassOf<AActor> SelectRandomActorFromData() const;
-	void GetRandomPointInBox(FVector& OUT Location) const;
-	void GetGroundPointUsingRaycast(FVector& OUT Location) const;
-	void GetRandomYawRotation(FRotator& OUT Rotator) const;
+	FVector GetRandomPointInBox() const;
+	FRotator GetRandomYawRotation() const;
+
+	void MoveActorOnGround(AActor* SpawnedActor);
+	FVector GetGroundPointUsingRaycast(AActor* SpawnedActor, FCollisionShape& BoxCollision) const;
 };
