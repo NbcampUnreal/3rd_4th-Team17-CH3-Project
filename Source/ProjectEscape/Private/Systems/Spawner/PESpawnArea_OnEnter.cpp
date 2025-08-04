@@ -20,6 +20,7 @@ void APESpawnArea_OnEnter::OnCompBeginOverlap(UPrimitiveComponent* Comp, AActor*
 {
 	if (!IsActivated)
 	{
+		// TODO: Other is PECharacter?
 		Spawn();
 	}
 	IsActivated = true;
