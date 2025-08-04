@@ -2,7 +2,7 @@
 #include "Systems/Spawner/PESpawnArea_OnEvent.h"
 #include "Kismet/GameplayStatics.h"
 
-void UPESpawnerAreaManager::TriggerSpawnAreaAround(const UObject* WorldContextObject)
+void UPESpawnerAreaManager::TriggerSpawnAreaAround(const UObject* WorldContextObject, UPARAM(ref)FVector& Origin, float Radius, FGameplayTag Tag)
 {
 	if (WorldContextObject)
 	{
@@ -13,7 +13,13 @@ void UPESpawnerAreaManager::TriggerSpawnAreaAround(const UObject* WorldContextOb
 		{
 			if (APESpawnArea_OnEvent* SpawnArea = Cast<APESpawnArea_OnEvent>(Actor))
 			{
-				SpawnArea->OnTriggered();
+				FVector Delta = Origin - SpawnArea->GetActorLocation();
+				bool DistanceCheck = Radius < 0 || Delta.Length() <= Radius;
+				bool TagCheck = (Tag == FGameplayTag()) || (Tag.MatchesTag(SpawnArea->SpawnAreaTag));
+				if (DistanceCheck && TagCheck)
+				{
+					SpawnArea->OnTriggered();
+				}
 			}
 		}
 	}
