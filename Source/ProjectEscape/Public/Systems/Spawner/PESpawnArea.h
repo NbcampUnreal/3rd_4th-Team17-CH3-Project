@@ -35,9 +35,6 @@ public:
 	int32 MaxSpawnCount;
 
 protected:
-	virtual void BeginPlay() override;
-	virtual void OnBeginPlay();
-
 	TSubclassOf<AActor> SelectRandomActorFromData() const;
 	FVector GetRandomPointInBox() const;
 	FRotator GetRandomYawRotation() const;
@@ -45,3 +42,15 @@ protected:
 	void PlaceActorOnGround(AActor* SpawnedActor);
 	FVector GetGroundPointUsingSweep(AActor* SpawnedActor, FCollisionShape& BoxCollision) const;
 };
+
+
+UCLASS()
+class PROJECTESCAPE_API APESpawnArea_OnBeginPlay : public APESpawnArea
+{
+	GENERATED_BODY()
+
+
+protected:
+	virtual void BeginPlay() override;
+};
+

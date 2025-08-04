@@ -17,11 +17,6 @@ void APESpawnArea_OnEnter::BeginPlay()
 	EnterTriggerBox->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnCompBeginOverlap);
 }
 
-void APESpawnArea_OnEnter::OnBeginPlay()
-{
-	// Disable Spawn when BeginPlay()
-}
-
 void APESpawnArea_OnEnter::OnCompBeginOverlap(UPrimitiveComponent* Comp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& HitResult)
 {
 	if (!IsActivated)
