@@ -9,6 +9,8 @@
 #include "Logging/LogMacros.h"
 #include "FPSTestBlockCharacter.generated.h"
 
+class UPEInventoryManagerComponent;
+class UPEUseableItemManagerComponent;
 class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
@@ -57,13 +59,16 @@ class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandl
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* UseAction;
 	
-	/** Use Input Action */
+	/** Use Hand Item Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* HandPrimaryAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* HandSecondaryAction;
-	
+
+	/** Use Inventory Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InventroyItemDropTestAction;
 	
 public:
 	AFPSTestBlockCharacter();
@@ -89,8 +94,8 @@ public:
 
 	/* Interact 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
-	UPEInteractManagerComponent* InteractManagerComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPEInteractManagerComponent> InteractManagerComponent;
 
 public:
 	UPEInteractManagerComponent* GetInteractManagerComponent() const;
@@ -98,19 +103,30 @@ public:
 
 	/* 장비 사용 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-	class UPEUseableItemManagerComponent* UseableItemManagerComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UseItem", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPEUseableItemManagerComponent> UseableItemManagerComponent;
 	
 	virtual void Use();
 	
 	/* Quick Slot 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickSlot, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEQuickSlotManagerComponent> QuickSlotManagerComponent;
 	
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 
 public:
+	// Quickslot Wrappers
 	virtual void HandPrimary();
 	virtual void HandSecondary();
+	virtual void HandMelee();
+	virtual void HandThrowable();
+	virtual void HandUseable();
+
+	/* Inventroy 관련 섹션 */
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickSlot, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPEInventoryManagerComponent> InventoryManagerComponent;
+
+	void InventroyDropTest(); // 인벤토리 드랍 테스트용 함수
 };

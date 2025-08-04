@@ -30,12 +30,13 @@ protected:
 
 	/* Interact 관련 섹션 */
 protected:
-	IPEInteractable* ComponentOwner;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
+	TScriptInterface<IPEInteractable> ComponentOwner;
 
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	bool Interact(AActor* Interactor);
 
-	FORCEINLINE void SetComponentOwner(IPEInteractable* NewOwner) { ComponentOwner = NewOwner; }
+	void SetComponentOwnerInterface(UObject* NewOwner);
 };
 

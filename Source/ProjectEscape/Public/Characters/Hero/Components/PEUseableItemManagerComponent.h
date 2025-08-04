@@ -37,7 +37,7 @@ protected:
 	TObjectPtr<UPEUseableComponent> CurrentItemComponent; // 현재 손에 들고 있는 아이템
 	
 	UPROPERTY(VisibleAnywhere, Category = "Useable")
-	TObjectPtr<AActor> OwnerActor; // 현재 손에 들고 있는 아이템
+	TObjectPtr<AActor> OwnerActor; // 컴포넌트 소유 액터
 
 public:
 	void SetHandItem(UPEUseableComponent* NewItemComponent);

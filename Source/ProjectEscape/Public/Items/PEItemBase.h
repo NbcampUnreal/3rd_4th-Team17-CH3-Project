@@ -8,10 +8,11 @@
 #include "Interface/PEInteractable.h"
 #include "PEItemBase.generated.h"
 
+class UPEStorableItemComponent;
 class UPEInteractableComponent;
 
 UCLASS()
-class PROJECTESCAPE_API APEItemBase : public AActor, public IPEInteractable
+class PROJECTESCAPE_API APEItemBase : public AActor, public IPEInteractable, public IPEStorable
 {
 	GENERATED_BODY()
 	
@@ -34,14 +35,25 @@ public:
 	virtual void Interact(AActor* Interactor) override;
 	virtual bool IsInteractable() const override;
 
-	/* IPEStorable 인터페이스 선언 */
-	virtual bool	CanBeStored() const;
-	virtual bool	StoreItem(class AActor* Inventory);
-	virtual bool	RemoveFromStorage(class AActor* Inventory);
-	virtual int32	GetStackSize() const;
-	virtual int32	GetMaxStackSize() const;
-	virtual bool	AddToStack(int32 Amount);
-	virtual FString GetItemID() const;
-	virtual bool	IsStackable() const;
-	virtual bool	DropToWorld(const FVector& Location, const FRotator& Rotation);
+	/* Storable 관련 섹션 */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	TObjectPtr<UPEStorableItemComponent> StorableItemComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
+	int32 MaxStackCount;
+	
+	int32 ItemCount;
+	int32 StackCount; // 아이템의 스택 개수(e.g. 최대 64개까지 스택 가능한 아이템이 90개 있을 경우 StackCount는 2가 됌)
+
+	virtual void OnDuplicated();
+public:
+	virtual void OnPickedUp() override;
+	virtual void OnDropToWorld(const FVector& Location, const FRotator& Rotation) override;
+	virtual int32 GetItemCount() const override;
+	virtual int32 GetItemStackCount() const override;
+	virtual void AddItemCount(int32 Count) override;
+	virtual void OnDropToWorld(int32 Count, const FVector& Location, const FRotator& Rotation) override;
+	virtual void SplitAndDropItem(int32 Count, const FVector& Location, const FRotator& Rotation) override;
+	virtual void DestoryItem() override;
 };

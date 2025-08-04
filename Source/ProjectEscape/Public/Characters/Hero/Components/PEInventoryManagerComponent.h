@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "PEInventoryManagerComponent.generated.h"
 
+class UPEStorableItemComponent;
 /*
  *	인벤토리의 아이템을 관리하는 컴포넌트 클래스입니다.
  *	구현되어야 하는 기능:
@@ -31,25 +33,24 @@ protected:
 	/* Inventory 관련 섹션 */
 protected:
 	UPROPERTY(VisibleAnywhere, Category= "Inventory")
-	TArray<TObjectPtr<class APEItemBase>> InventoryItems; // 인벤토리에 있는 아이템들
+	TMap<FGameplayTag, TObjectPtr<UPEStorableItemComponent>> InventoryItems; 
 
 	UPROPERTY(EditAnywhere, Category= "Inventory")
-	int32 MaxInventorySize = 10; // 인벤토리 최대 크기
+	int32 MaxInventorySize;
+
+	UPROPERTY(VisibleAnywhere, Category= "Inventory")
+	int32 CurrentItemInInventroyCount;
 	
 public:
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void AddItemToInventory(class APEItemBase* Item);
-	
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	void RemoveItemFromInventory(class APEItemBase* Item);
-	
-	TArray<TObjectPtr<class APEItemBase>> GetInventoryItems() const;
-	
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
-	bool IsItemInInventory(class APEItemBase* Item) const;
-	
-	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void AddItemToInventory(UPEStorableItemComponent* Item);
+	void DropItemFromInventoryByTag(const int32 &Count, const FGameplayTag &Tag);
 	void ClearInventory();
+	UPEStorableItemComponent* GetItemByTag(const FGameplayTag &Tag) const;
 	
-	
+protected:
+	void SortInventory();
+	void UpdateCurrentItemCount();
+
+public:
+	void ItemDropTest();
 };

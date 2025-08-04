@@ -52,7 +52,7 @@ protected:
 	TObjectPtr<UPEInteractableComponent> CurrentInteractable;
 
 	UPROPERTY()
-	TObjectPtr<class APawn> OwnerPawn;
+	TObjectPtr<APawn> OwnerPawn;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
