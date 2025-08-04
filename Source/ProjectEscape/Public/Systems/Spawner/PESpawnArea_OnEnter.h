@@ -14,7 +14,6 @@ class PROJECTESCAPE_API APESpawnArea_OnEnter : public APESpawnArea
 public:
 	APESpawnArea_OnEnter();
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnArea")
 	TObjectPtr<UBoxComponent> EnterTriggerBox;
 

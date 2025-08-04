@@ -1,6 +1,5 @@
 #include "Systems/Spawner/PESpawnArea_OnEnter.h"
 #include "Components/BoxComponent.h"
-#include "Components/BoxComponent.h"
 
 
 APESpawnArea_OnEnter::APESpawnArea_OnEnter()
