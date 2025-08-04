@@ -2,17 +2,17 @@
 
 #include "CoreMinimal.h"
 #include "Systems/Spawner/PESpawnArea.h"
-#include "MyPESpawnArea_OnEnter.generated.h"
+#include "PESpawnArea_OnEnter.generated.h"
 
 class UBoxComponent;
 
 UCLASS()
-class PROJECTESCAPE_API AMyPESpawnArea_OnEnter : public APESpawnArea
+class PROJECTESCAPE_API APESpawnArea_OnEnter : public APESpawnArea
 {
 	GENERATED_BODY()
 	
 public:
-	AMyPESpawnArea_OnEnter();
+	APESpawnArea_OnEnter();
 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnArea")
