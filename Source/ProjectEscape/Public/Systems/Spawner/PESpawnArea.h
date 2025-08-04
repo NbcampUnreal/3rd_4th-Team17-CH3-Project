@@ -26,19 +26,20 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnArea")
 	TObjectPtr<UBoxComponent> SpawnArea;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnArea")
-	TSubclassOf<UPESpawnDataAsset> SpawnData;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SpawnArea")
+	TObjectPtr<UPESpawnDataAsset> SpawnData;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnArea")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SpawnArea")
 	int32 MinSpawnCount;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "SpawnArea")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "SpawnArea")
 	int32 MaxSpawnCount;
 
 protected:
 	virtual void BeginPlay() override;
 
-	AActor* SelectRandomActorFromData();
-	void GetRandomPointInBox(FVector& OUT Location);
-	void GetGroundPointUsingRaycast(FVector& OUT Location);
+	TSubclassOf<AActor> SelectRandomActorFromData() const;
+	void GetRandomPointInBox(FVector& OUT Location) const;
+	void GetGroundPointUsingRaycast(FVector& OUT Location) const;
+	void GetRandomYawRotation(FRotator& OUT Rotator) const;
 };

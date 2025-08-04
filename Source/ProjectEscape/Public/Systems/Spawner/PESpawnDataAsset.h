@@ -16,7 +16,7 @@ public:
 	int32 SpawnWeight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpawnData")
-	TSubclassOf<AActor> SpawnedActorClass;
+	TSubclassOf<AActor> ActorClassToSpawn;
 };
 
 UCLASS()
