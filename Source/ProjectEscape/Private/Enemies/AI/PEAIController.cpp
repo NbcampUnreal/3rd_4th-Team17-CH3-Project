@@ -6,6 +6,8 @@
 #include "Enemies/AI/PEAICharacter.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
+#include "Kismet/GameplayStatics.h"
+#include "Enemies/AI/PEAICharacter.h"
 
 APEAIController::APEAIController()
 {
@@ -102,6 +104,12 @@ void APEAIController::MoveToRandomLocation()
 
 void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
+	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
+	if(Actor != PlayerPawn)
+	{
+		return; // Ignore perception updates for non-player actors
+	}
+
 	APawn* MyPawn = GetPawn();
 	if (!MyPawn) return;
 	FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
@@ -116,6 +124,7 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 			2.0f,
 			true);
 
+		StartChasing(Actor);
 	}
 	else
 	{
@@ -127,5 +136,56 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 			2.0f,
 			true);
 	
+		StopChasing();
 	}
+}
+
+void APEAIController::StartChasing(AActor* Target)
+{
+	if (bIsChasing && CurrentTarget == Target)
+	{
+		return;
+	}
+	bIsChasing = true;
+	CurrentTarget = Target;
+
+	GetWorldTimerManager().ClearTimer(RandomMoveTimer); // 기존 순회(패트롤) 타이머 정리
+	
+	if(APEAICharacter* AICharacter = Cast<APEAICharacter>(GetPawn()))
+	{
+		AICharacter->SetMovementSpeed(AICharacter->RunSpeed); // 추적 중이면 RunSpeed로 이동 속도 설정
+	}
+
+	UpdateChase();
+
+	GetWorldTimerManager().SetTimer(ChaseTimer, this, &APEAIController::UpdateChase, 0.25f, true); // 주기적으로 플레이어 추적 경로 갱신
+
+}
+
+void APEAIController::UpdateChase()
+{
+	if (!bIsChasing || !CurrentTarget)
+	{
+		return;
+	}
+	// 현재 타겟 위치로 이동
+	MoveToActor(CurrentTarget, ChaseDistance);
+}
+
+void APEAIController::StopChasing()
+{
+	if (!bIsChasing)
+	{
+		return; // 추적 중이 아닌 경우
+	}
+	bIsChasing = false;
+	CurrentTarget = nullptr;
+	GetWorldTimerManager().ClearTimer(ChaseTimer); // 추적 타이머 정리
+	StopMovement(); // AI의 이동 중지
+
+	if (APEAICharacter* AICharacter = Cast<APEAICharacter>(GetPawn()))
+	{
+		AICharacter->SetMovementSpeed(AICharacter->WalkSpeed); // 순회(패트롤) 속도로 되돌리기
+	}
+	GetWorldTimerManager().SetTimer(RandomMoveTimer, this, &APEAIController::MoveToRandomLocation, PatrolCycle, true, PatrolRepeatTime); // 순회(패트롤) 타이머 재설정
 }

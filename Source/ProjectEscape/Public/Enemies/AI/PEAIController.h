@@ -27,8 +27,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
 	float SightDuration = 5.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
 	float PatrolCycle = 3.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
+	float PatrolRepeatTime = 2.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Chase")
+	float ChaseDistance = 100.0f; // 추적 완료처리되는 플레이어와의 거리
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
@@ -50,5 +55,14 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = "AI")
 	float MoveRadius = 1000.0f;
-	
+
+	UPROPERTY()
+	AActor* CurrentTarget = nullptr;
+
+	bool bIsChasing = false;
+	FTimerHandle ChaseTimer;
+
+	void StartChasing(AActor* Target);
+	void StopChasing();
+	void UpdateChase();
 };

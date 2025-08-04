@@ -15,6 +15,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float WalkSpeed = 300.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	float RunSpeed = 600.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	FRotator RotateSpeed = FRotator(0.0f, 540.0f, 0.0f);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float AirControl = 0.2f;
