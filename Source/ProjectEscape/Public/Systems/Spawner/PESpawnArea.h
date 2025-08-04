@@ -19,7 +19,6 @@ public:
 	UFUNCTION()
 	void Spawn();
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GIZMO")
 	TObjectPtr<UBillboardComponent> ActorIcon;
 
@@ -37,6 +36,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void OnBeginPlay();
 
 	TSubclassOf<AActor> SelectRandomActorFromData() const;
 	FVector GetRandomPointInBox() const;

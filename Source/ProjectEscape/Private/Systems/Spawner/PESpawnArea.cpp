@@ -42,6 +42,11 @@ void APESpawnArea::Spawn()
 void APESpawnArea::BeginPlay()
 {
 	Super::BeginPlay();
+	OnBeginPlay();
+}
+
+void APESpawnArea::OnBeginPlay()
+{
 	Spawn();
 }
 
