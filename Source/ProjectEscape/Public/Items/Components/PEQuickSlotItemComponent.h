@@ -40,10 +40,10 @@ protected:
 public:
 	// 아이템이 주워졌을 때 호출
 	UFUNCTION()
-	void OnItemPickedUp() const;
+	void OnItemPickedUp();
 
 	UFUNCTION()
-	void OnItemDropped() const;
+	void OnItemDropped();
 
 	UFUNCTION()
 	EPEEquipmentType GetEquipmentType() const;

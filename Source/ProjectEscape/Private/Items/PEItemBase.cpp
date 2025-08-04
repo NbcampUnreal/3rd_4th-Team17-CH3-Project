@@ -90,7 +90,7 @@ void APEItemBase::AddItemCount(int32 Count)
 	StackCount = 1 + (ItemCount / MaxStackCount);
 }
 
-void APEItemBase::ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation)
+void APEItemBase::OnDropToWorld(int32 Count, const FVector& Location, const FRotator& Rotation)
 {
 	if (Count >= ItemCount)
 	{
@@ -98,36 +98,43 @@ void APEItemBase::ReduceItemCount(int32 Count, const FVector& Location, const FR
 	}
 	else
 	{
-		// 아이템 개수를 감소시킴
-		ItemCount -= Count;
-		StackCount = 1 + ((ItemCount - 1) / MaxStackCount);
+		SplitAndDropItem(Count, Location, Rotation);
+	}
+}
+
+void APEItemBase::SplitAndDropItem(int32 Count, const FVector& Location, const FRotator& Rotation)
+{
+	// 아이템 개수를 감소시킴
+	ItemCount -= Count;
+	StackCount = 1 + ((ItemCount - 1) / MaxStackCount);
 		
-		// 복제된 아이템을 생성
-		if (GetWorld())
+	// 복제된 아이템을 생성
+	if (GetWorld())
+	{
+		APEItemBase* DuplicatedItem = GetWorld()->SpawnActor<APEItemBase>(GetClass(), Location, Rotation);
+		if (DuplicatedItem)
 		{
-			APEItemBase* DuplicatedItem = GetWorld()->SpawnActor<APEItemBase>(GetClass(), Location, Rotation);
-			if (DuplicatedItem)
-			{
-				// 복제된 아이템의 속성을 설정
-				// NOTE: 아이템 데이터 구조가 확정되지 않아 임시로 구현
-				DuplicatedItem->ItemCount = Count;
-				DuplicatedItem->StackCount = 1 + ((Count - 1) / MaxStackCount);
-				DuplicatedItem->MaxStackCount = MaxStackCount;
-				DuplicatedItem->ItemOwnerActor = nullptr;
+			// 복제된 아이템의 속성을 설정
+			// NOTE: 아이템 데이터 구조가 확정되지 않아 임시로 구현
+			DuplicatedItem->ItemCount = Count;
+			DuplicatedItem->StackCount = 1 + ((Count - 1) / MaxStackCount);
+			DuplicatedItem->MaxStackCount = MaxStackCount;
+			DuplicatedItem->ItemOwnerActor = nullptr;
 				
-				DuplicatedItem->OnDuplicated();
-				DuplicatedItem->OnDropToWorld(Location, Rotation);
+			DuplicatedItem->OnDuplicated();
+			DuplicatedItem->OnDropToWorld(Location, Rotation);
 				
-				UE_LOG(LogTemp, Warning, TEXT("Item duplicated: Original count %d, Duplicated count %d"), ItemCount, Count);
-			}
+			UE_LOG(LogTemp, Warning, TEXT("Item duplicated: Original count %d, Duplicated count %d"), ItemCount, Count);
 		}
 	}
 }
 
 void APEItemBase::DestoryItem()
 {
-	//NOTE: Timer나 델리게이트 처럼 다른 곳에서 이 아이템을 참조하고 있다면,
-	//DestoryItem() 호출 시점에 따라 문제가 발생할 수 있음
+	/*
+	 *	NOTE: Timer나 델리게이트 처럼 다른 곳에서 이 아이템을 참조하고 있다면,
+	 *	DestoryItem() 호출 시점에 따라 문제가 발생할 수 있음
+	 */
 	if (GetWorld())
 	{
 		GetWorld()->DestroyActor(this);

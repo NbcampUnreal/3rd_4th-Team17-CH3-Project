@@ -32,7 +32,7 @@ void UPEStorableItemComponent::OnItemPickedUp() const
 	}
 }
 
-void UPEStorableItemComponent::OnItemDropped(int32 Count, const FVector& Location, const FRotator& Rotation) const
+void UPEStorableItemComponent::OnItemDropped(const FVector& Location, const FRotator& Rotation) const
 {
 	if (ComponentOwnerInterface)
 	{
@@ -52,15 +52,15 @@ void UPEStorableItemComponent::AddItemCount(int32 Count) const
 	}
 }
 
-void UPEStorableItemComponent::ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation) const
+void UPEStorableItemComponent::OnItemDropped(int32 Count, const FVector& Location, const FRotator& Rotation) const
 {
 	if (ComponentOwnerInterface)
 	{
-		ComponentOwnerInterface->ReduceItemCount(Count, Location, Rotation);
+		ComponentOwnerInterface->OnDropToWorld(Count, Location, Rotation);
 	}
 }
 
-void UPEStorableItemComponent::DestoryItem() const
+void UPEStorableItemComponent::DestroyItem() const
 {
 	if (ComponentOwnerInterface)
 	{

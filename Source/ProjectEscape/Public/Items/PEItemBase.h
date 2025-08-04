@@ -53,6 +53,7 @@ public:
 	virtual int32 GetItemCount() const override;
 	virtual int32 GetItemStackCount() const override;
 	virtual void AddItemCount(int32 Count) override;
-	virtual void ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation) override;
+	virtual void OnDropToWorld(int32 Count, const FVector& Location, const FRotator& Rotation) override;
+	virtual void SplitAndDropItem(int32 Count, const FVector& Location, const FRotator& Rotation) override;
 	virtual void DestoryItem() override;
 };

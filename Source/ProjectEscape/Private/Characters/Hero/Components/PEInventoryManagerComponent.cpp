@@ -3,7 +3,6 @@
 #include "Characters/Hero/Components/PEInventoryManagerComponent.h"
 
 #include "NativeGameplayTags.h"
-#include "Core/PEGameplayTags.h"
 #include "Core/PELogChannels.h"
 #include "Items/Components/PEStorableItemComponent.h"
 
@@ -23,24 +22,35 @@ void UPEInventoryManagerComponent::BeginPlay()
 
 void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* Item)
 {
-	
+	if (!Item)
+    {
+        UE_LOG(LogPE, Warning, TEXT("AddItemToInventory: Item is null!"));
+        return;
+    }
+
+	/*
+	 *	TODO: 아이템 습득 시 추가 예외처리 필요
+	 *	1. 새로운 아이템을 습득한 경우
+	 *	2. 이미 인벤토리에 있는 아이템을 습득한 경우
+	 *	3. 인벤토리가 가득 찬 경우
+	 *	4. 이미 인벤토리에 있는 아이템이며, 기존 아이템에 스택은 가능하지만, 스택을 더 늘릴 수 없는 경우
+	 *		(e.g. 이미 인벤토리에 10칸 차지,
+	 *		아이템 최대 스택이 10인 아이템 A를 9개 갖고 있고, 재차 습득한 아이템 A의 개수가 2개 이상인 경우)
+	 *	5. 
+	 */
 	if (InventoryItems.Num() > MaxInventorySize) 
 	{
 		UE_LOG(LogPE, Warning, TEXT("Inventory is full!"));
 		return;
 	}
 
-	FGameplayTag ItemTag;
-	if (Item)
-	{
-		ItemTag = Item->GetItemTag();
-	}
+	FGameplayTag ItemTag = Item->GetItemTag();
 	
 	// 동일한 아이템이 있는 경우 스택 추가
 	if (UPEStorableItemComponent* ContainItem = GetItemByTag(ItemTag))
 	{
 		Item-> OnItemPickedUp(); 
-		Item->DestoryItem(); //아이템이 주워졌을 때 이미 있는 아이템이면 제거
+		Item->DestroyItem(); //아이템이 주워졌을 때 이미 있는 아이템이면 제거
 		ContainItem->AddItemCount(Item->GetItemCount());
 		UpdateCurrentItemCount();
 		UE_LOG(LogPE, Log, TEXT("Contained Item! Item count increased: %d"), ContainItem->GetItemCount());
@@ -71,30 +81,19 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 
 void UPEInventoryManagerComponent::DropItemFromInventoryByTag(const int32& Count, const FGameplayTag& Tag)
 {
-	if (const auto& DropItem = GetItemByTag(Tag))
+	if (UPEStorableItemComponent* DropItem = GetItemByTag(Tag))
 	{
 		if (DropItem->GetItemCount() <= Count)
 		{
 			InventoryItems.Remove(DropItem->GetItemTag());
 		}
-		DropItem->ReduceItemCount(Count, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
+		int32 DropCount = FMath::Clamp(Count, 0, DropItem->GetItemCount());
+		DropItem->OnItemDropped(DropCount, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
 	}
 	else
 	{
 		UE_LOG(LogPE, Log, TEXT("Item not found"));
 	}
-}
-
-bool UPEInventoryManagerComponent::IsItemInInventoryByTag(const FGameplayTag &Tag) const
-{
-	for (const auto &Item: InventoryItems)
-	{
-		if (Item.Value && Item.Value->GetItemTag() == Tag)
-		{
-			return true;
-		}
-	}
-	return false;
 }
 
 void UPEInventoryManagerComponent::ClearInventory()
@@ -103,16 +102,13 @@ void UPEInventoryManagerComponent::ClearInventory()
 	UE_LOG(LogPE, Log, TEXT("Inventory cleared"));
 }
 
-UPEStorableItemComponent* UPEInventoryManagerComponent::GetItemByTag(const FGameplayTag& Tag)
+UPEStorableItemComponent* UPEInventoryManagerComponent::GetItemByTag(const FGameplayTag& Tag) const
 {
-	for (const auto &Item: InventoryItems)
+	if (InventoryItems.Contains(Tag))
 	{
-		if (Item.Value && Item.Value->GetItemTag() == Tag)
-		{
-			return Item.Value;
-		}
+		return InventoryItems[Tag];
 	}
-	UE_LOG(LogPE, Log, TEXT("Item not found"));
+	UE_LOG(LogPE, Warning, TEXT("Item with tag %s not found in inventory"), *Tag.ToString());
 	return nullptr;
 }
 

@@ -44,9 +44,8 @@ protected:
 public:
 	void AddItemToInventory(UPEStorableItemComponent* Item);
 	void DropItemFromInventoryByTag(const int32 &Count, const FGameplayTag &Tag);
-	bool IsItemInInventoryByTag(const FGameplayTag &Tag) const;
 	void ClearInventory();
-	UPEStorableItemComponent* GetItemByTag(const FGameplayTag &Tag);
+	UPEStorableItemComponent* GetItemByTag(const FGameplayTag &Tag) const;
 	
 protected:
 	void SortInventory();

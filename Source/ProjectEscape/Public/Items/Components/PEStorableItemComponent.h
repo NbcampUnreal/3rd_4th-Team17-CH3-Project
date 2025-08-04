@@ -44,10 +44,10 @@ public:
 	void SetItemTag(const FGameplayTag& NewTag) { ItemTag = NewTag; }
 
 	void OnItemPickedUp() const;
-	void OnItemDropped(int32 Count, const FVector& Location, const FRotator& Rotation) const;
+	void OnItemDropped(const FVector& Location, const FRotator& Rotation) const;
 	void AddItemCount(int32 Count) const;
-	void ReduceItemCount(int32 Count, const FVector& Location, const FRotator& Rotation) const;
-	void DestoryItem() const;
+	void OnItemDropped(int32 Count, const FVector& Location, const FRotator& Rotation) const;
+	void DestroyItem() const;
 	int32 GetItemCount() const;
 	int32 GetStackCount() const;
 };

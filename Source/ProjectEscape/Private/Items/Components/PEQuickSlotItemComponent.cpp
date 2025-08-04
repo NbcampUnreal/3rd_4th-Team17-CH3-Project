@@ -21,7 +21,7 @@ void UPEQuickSlotItemComponent::BeginPlay()
 	SetComponentInterface(ComponentOwnerActor);
 }
 
-void UPEQuickSlotItemComponent::OnItemPickedUp() const
+void UPEQuickSlotItemComponent::OnItemPickedUp()
 {
 	if (ComponentOwnerActor)
 	{
@@ -30,7 +30,7 @@ void UPEQuickSlotItemComponent::OnItemPickedUp() const
 	}
 }
 
-void UPEQuickSlotItemComponent::OnItemDropped() const
+void UPEQuickSlotItemComponent::OnItemDropped()
 {
 	if (ComponentOwnerActor)
 	{
