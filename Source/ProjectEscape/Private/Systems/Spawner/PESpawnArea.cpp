@@ -32,7 +32,7 @@ void APESpawnArea::Spawn()
 			{
 				if (AActor* SpawnedActor = World->SpawnActor<AActor>(SelectedActorClass, SpawnLocation, SpawnRotator, SpawnParams))
 				{
-					MoveActorOnGround(SpawnedActor);
+					PlaceActorOnGround(SpawnedActor);
 				}
 			}	
 		}
@@ -89,7 +89,7 @@ FRotator APESpawnArea::GetRandomYawRotation() const
 	return FRotator(0, RandomYaw, 0);
 }
 
-void APESpawnArea::MoveActorOnGround(AActor* SpawnedActor)
+void APESpawnArea::PlaceActorOnGround(AActor* SpawnedActor)
 {
 	check(SpawnedActor);
 
@@ -99,12 +99,12 @@ void APESpawnArea::MoveActorOnGround(AActor* SpawnedActor)
 
 	FCollisionShape BoxCollision = FCollisionShape::MakeBox(BoxExtent);
 	FVector OldLocation = SpawnedActor->GetActorLocation();
-	FVector NewLocation = GetGroundPointUsingRaycast(SpawnedActor, BoxCollision);
-	NewLocation.Z += BoxExtent.Z;
+	FVector NewLocation = GetGroundPointUsingSweep(SpawnedActor, BoxCollision);
+	NewLocation.Z += BoxExtent.Z; // add height/2 of actor to impact point of sweep result
 	SpawnedActor->SetActorLocation(NewLocation);
 }
 
-FVector APESpawnArea::GetGroundPointUsingRaycast(AActor* SpawnedActor, FCollisionShape& BoxCollision) const
+FVector APESpawnArea::GetGroundPointUsingSweep(AActor* SpawnedActor, FCollisionShape& BoxCollision) const
 {
 	check(SpawnedActor);
 	check(SpawnArea);

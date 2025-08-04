@@ -42,6 +42,6 @@ protected:
 	FVector GetRandomPointInBox() const;
 	FRotator GetRandomYawRotation() const;
 
-	void MoveActorOnGround(AActor* SpawnedActor);
-	FVector GetGroundPointUsingRaycast(AActor* SpawnedActor, FCollisionShape& BoxCollision) const;
+	void PlaceActorOnGround(AActor* SpawnedActor);
+	FVector GetGroundPointUsingSweep(AActor* SpawnedActor, FCollisionShape& BoxCollision) const;
 };
