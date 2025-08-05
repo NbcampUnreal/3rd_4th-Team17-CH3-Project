@@ -4,6 +4,8 @@
 #include "GameFramework/Character.h"
 #include "PEAICharacter.generated.h"
 
+class UAnimMontage;
+
 UCLASS()
 class PROJECTESCAPE_API APEAICharacter : public ACharacter
 {
@@ -23,6 +25,15 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> AttackAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> HitAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> DeadAnimMontage;
 
 public:	
 
