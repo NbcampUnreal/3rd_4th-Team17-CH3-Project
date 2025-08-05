@@ -4,6 +4,7 @@
 #include "Items/Weapons/PEWeaponBase.h"
 
 #include "PEEquipmentType.h"
+#include "Combat/Components/PEAttackComponentBase.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 #include "Items/Components/PEInteractableComponent.h"
@@ -41,12 +42,22 @@ void APEWeaponBase::Interact(AActor* Interactor)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Interact called on %s by %s"), *GetName(), *Interactor->GetName());
 	
-	OwnerActor = Interactor;
+	WeaponOwnerActor = Interactor;
+	if (IPEAttackable* AttackableInterface = Cast<IPEAttackable>(Interactor))
+	{
+		AttackComponent->SetAttackStartPoint(AttackableInterface->GetAttackStartPoint());
+		UE_LOG(LogTemp, Log, TEXT("AttackableInterface found and AttackStartPoint set for %s"), *GetNameSafe(Interactor));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Interactor does not implement IPEAttackable interface"));
+	}
 }
 
 void APEWeaponBase::Use(AActor* Holder)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Use called on %s by %s"), *GetName(), *Holder->GetName());
+	// NOTE: 실제 사용 로직은 자식 클래스에서 구현해야 합니다.
 }
 
 void APEWeaponBase::OnHand(AActor* NewOwner)
@@ -56,7 +67,7 @@ void APEWeaponBase::OnHand(AActor* NewOwner)
 
 bool APEWeaponBase::IsInteractable() const
 {
-	if (OwnerActor) // 현재 주인이 있으면 상호작용 불가
+	if (WeaponOwnerActor) // 현재 주인이 있으면 상호작용 불가
 	{
 		return false;
 	}
@@ -70,12 +81,12 @@ UPEUseableComponent* APEWeaponBase::GetUseableComponent() const
 
 AActor* APEWeaponBase::GetItemOwner() const
 {
-	return OwnerActor;
+	return WeaponOwnerActor;
 }
 
 void APEWeaponBase::OnDropped()
 {
-	OwnerActor = nullptr;
+	WeaponOwnerActor = nullptr;
 }
 
 UPEQuickSlotItemComponent* APEWeaponBase::GetQuickSlotItemComponent() const
