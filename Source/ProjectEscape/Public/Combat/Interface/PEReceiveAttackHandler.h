@@ -14,12 +14,12 @@ class UPEReceiveAttackHandler : public UInterface
 };
 
 /**
- * 
+ *	액터가 공격받을 때 처리를 위한 인터페이스입니다.
+ *	현재는 TakeDamage같은 함수가 존재하기 때문에 사용하지 않습니다.
  */
 class PROJECTESCAPE_API IPEReceiveAttackHandler
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 };

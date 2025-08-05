@@ -21,5 +21,11 @@ protected:
 
 	/* Receive Attack 관련 섹션 */
 public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Receive Attack")
+	TObjectPtr<AActor> DamageTarget; // 공격을 받는 액터
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Receive Attack")
+	float DamageMultiplier;
+	
 	void ReceiveDamage(float DamageAmount, const FVector& HitLocation, const FVector& HitNormal, AActor* Instigator);
 };

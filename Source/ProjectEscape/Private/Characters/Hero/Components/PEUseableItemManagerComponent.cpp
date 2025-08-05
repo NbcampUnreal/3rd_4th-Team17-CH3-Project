@@ -14,7 +14,7 @@ UPEUseableItemManagerComponent::UPEUseableItemManagerComponent()
 void UPEUseableItemManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	OwnerActor = GetOwner();
+	ComponentOwnerActor = GetOwner();
 }
 
 void UPEUseableItemManagerComponent::SetHandItem(UPEUseableComponent* NewItemComponent)

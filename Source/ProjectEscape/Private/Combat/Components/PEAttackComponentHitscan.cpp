@@ -11,8 +11,6 @@
 UPEAttackComponentHitscan::UPEAttackComponentHitscan()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
-	//OwnerActorInterface = TScriptInterface<IPEAttackable>(GetOwner());
 }
 
 void UPEAttackComponentHitscan::BeginPlay()
