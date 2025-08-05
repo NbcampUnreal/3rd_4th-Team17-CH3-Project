@@ -19,19 +19,19 @@ public:
 
 
 	UFUNCTION(BlueprintCallable)
-	void StartGame();
+	void OnClickStartGame();
 	UFUNCTION(BlueprintCallable)
 	void PauseMenu();
 	UFUNCTION(BlueprintCallable)
-	void ResumeGame();
+	void OnClickResume();
 	UFUNCTION(BlueprintCallable)
-	void ShowCredit();
+	void OnClickCredit();
 	UFUNCTION(BlueprintCallable)
-	void ShowHelper();
+	void OnClickHelper();
 	UFUNCTION(BlueprintCallable)
-	void BackMainMenu();
+	void OnClickBackMainMenu();
 	UFUNCTION(BlueprintCallable)
-	void ClearAllUIWidget();
+	void ClearAllWidget();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")

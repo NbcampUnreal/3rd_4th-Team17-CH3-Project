@@ -8,16 +8,12 @@ void APEUITestPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	BackMainMenu();
+	OnClickBackMainMenu();
 }
 
-void APEUITestPlayerController::StartGame()
+void APEUITestPlayerController::OnClickStartGame()
 {
-	if (MainMenuWidget)
-	{
-		MainMenuWidget->RemoveFromParent();
-		MainMenuWidget = nullptr;
-	}
+	ClearAllWidget();
 
 	if (HUDWidgetClass)
 	{
@@ -56,19 +52,13 @@ void APEUITestPlayerController::PauseMenu()
 	SetPause(true);
 }
 
-void APEUITestPlayerController::ResumeGame()
+void APEUITestPlayerController::OnClickResume()
 {
-	UE_LOG(LogTemp, Warning, TEXT("active"));
-	if (PauseMenuWidget)
-	{
-		PauseMenuWidget->RemoveFromParent();
-		PauseMenuWidget = nullptr;
-		UE_LOG(LogTemp, Warning, TEXT("pause Remove"));
-	}
+	ClearAllWidget();
+
 	if (HUDWidget && !HUDWidget->IsInViewport())
 	{
 		HUDWidget->AddToViewport();
-		UE_LOG(LogTemp, Warning, TEXT("HUD Addtov"));
 	}
 
 	SetInputMode(FInputModeGameOnly());
@@ -77,13 +67,9 @@ void APEUITestPlayerController::ResumeGame()
 
 }
 
-void APEUITestPlayerController::ShowCredit()
+void APEUITestPlayerController::OnClickCredit()
 {
-	if (MainMenuWidget)
-	{
-		MainMenuWidget->RemoveFromParent();
-		MainMenuWidget = nullptr;
-	}
+	ClearAllWidget();
 
 	if (!CreditWidget && CreditWidgetClass)
 	{
@@ -100,13 +86,9 @@ void APEUITestPlayerController::ShowCredit()
 
 }
 
-void APEUITestPlayerController::ShowHelper()
+void APEUITestPlayerController::OnClickHelper()
 {
-	if (MainMenuWidget)
-	{
-		MainMenuWidget->RemoveFromParent();
-		MainMenuWidget = nullptr;
-	}
+	ClearAllWidget();
 
 	if (!HelperWidget && HelperWidgetClass)
 	{
@@ -123,9 +105,9 @@ void APEUITestPlayerController::ShowHelper()
 
 }
 
-void APEUITestPlayerController::BackMainMenu()
+void APEUITestPlayerController::OnClickBackMainMenu()
 {
-	ClearAllUIWidget();
+	ClearAllWidget();
 
 	if (!MainMenuWidget && MainMenuWidgetClass)
 	{
@@ -142,7 +124,7 @@ void APEUITestPlayerController::BackMainMenu()
 
 }
 
-void APEUITestPlayerController::ClearAllUIWidget()
+void APEUITestPlayerController::ClearAllWidget()
 {
 	if (CreditWidget)
 	{
@@ -154,12 +136,6 @@ void APEUITestPlayerController::ClearAllUIWidget()
 	{
 		PauseMenuWidget->RemoveFromParent();
 		PauseMenuWidget = nullptr;
-	}
-
-	if (HUDWidget)
-	{
-		HUDWidget->RemoveFromParent();
-		HUDWidget = nullptr;
 	}
 
 	if (MainMenuWidget)
