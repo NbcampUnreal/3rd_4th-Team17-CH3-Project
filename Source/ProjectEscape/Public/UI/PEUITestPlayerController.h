@@ -24,7 +24,14 @@ public:
 	void PauseMenu();
 	UFUNCTION(BlueprintCallable)
 	void ResumeGame();
-
+	UFUNCTION(BlueprintCallable)
+	void ShowCredit();
+	UFUNCTION(BlueprintCallable)
+	void ShowHelper();
+	UFUNCTION(BlueprintCallable)
+	void BackMainMenu();
+	UFUNCTION(BlueprintCallable)
+	void ClearAllUIWidget();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -36,12 +43,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> CreditWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HelperWidgetClass;
+
 	UPROPERTY()
 	UUserWidget* HUDWidget;
 	UPROPERTY()
 	UUserWidget* MainMenuWidget;
 	UPROPERTY()
 	UUserWidget* PauseMenuWidget;
+	UPROPERTY()
+	UUserWidget* CreditWidget;
+	UPROPERTY()
+	UUserWidget* HelperWidget;
 
 	bool bIsPause = false;
 };
