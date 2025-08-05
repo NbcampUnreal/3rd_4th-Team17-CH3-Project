@@ -16,12 +16,12 @@ class PROJECTESCAPE_API APEUITestPlayerController : public APlayerController
 
 public:
 	virtual void BeginPlay() override;
-
-
+	UFUNCTION(BlueprintCallable)
+	void ShowMainMenu();
 	UFUNCTION(BlueprintCallable)
 	void OnClickStartGame();
 	UFUNCTION(BlueprintCallable)
-	void PauseMenu();
+	void PauseGameAndShowPauseMenu();
 	UFUNCTION(BlueprintCallable)
 	void OnClickResume();
 	UFUNCTION(BlueprintCallable)

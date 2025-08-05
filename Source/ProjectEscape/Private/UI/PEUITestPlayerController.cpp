@@ -8,7 +8,23 @@ void APEUITestPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	OnClickBackMainMenu();
+	ShowMainMenu();
+}
+
+void APEUITestPlayerController::ShowMainMenu()
+{
+	if (!MainMenuWidget && MainMenuWidgetClass)
+	{
+		MainMenuWidget = CreateWidget<UUserWidget>(this, MainMenuWidgetClass);
+	}
+
+	if (MainMenuWidget && !MainMenuWidget->IsInViewport())
+	{
+		MainMenuWidget->AddToViewport();
+		SetInputMode(FInputModeUIOnly());
+		bShowMouseCursor = true;
+		SetPause(true);
+	}
 }
 
 void APEUITestPlayerController::OnClickStartGame()
@@ -30,7 +46,7 @@ void APEUITestPlayerController::OnClickStartGame()
 
 }
 
-void APEUITestPlayerController::PauseMenu()
+void APEUITestPlayerController::PauseGameAndShowPauseMenu()
 {
 	if (!PauseMenuWidget && PauseMenuWidgetClass)
 	{
