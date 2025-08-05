@@ -7,7 +7,7 @@
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Kismet/GameplayStatics.h"
-#include "Enemies/AI/PEAICharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
 
 APEAIController::APEAIController()
 {
@@ -30,11 +30,23 @@ APEAIController::APEAIController()
 	// 위에서 설정한 시야 감지 구성요소(SightConfig)를 AI Perception에 적용
 	AIPerception->ConfigureSense(*SightConfig); 
 	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation()); 
+
+	BlackboardComp = CreateDefaultSubobject<UBlackboardComponent>(TEXT("Blackboard"));
 }
 
 void APEAIController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if(BlackboardComp)
+	{
+		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), false); // 블랙보드 값 초기화
+		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), false);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("블랙보드 컴포넌트 생성되지 않음"));
+	}
 
 	if(AIPerception)
 	{
@@ -124,6 +136,10 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 			2.0f,
 			true);
 
+		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor); // 블랙보드에 타겟 액터 설정
+		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), true);
+		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnowLocation"), Actor->GetActorLocation());
+
 		StartChasing(Actor);
 	}
 	else
@@ -136,6 +152,9 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 			2.0f,
 			true);
 	
+		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), false);
+		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), false);
+
 		StopChasing();
 	}
 }

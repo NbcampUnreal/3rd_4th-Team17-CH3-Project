@@ -18,6 +18,11 @@ class PROJECTESCAPE_API APEAIController : public AAIController
 public:
 	APEAIController();
 
+	FORCEINLINE UBlackboardComponent* GetBlackboardComponent() const // 블랙보드 컴포넌트를 반환하는 강제 인라인 함수
+	{
+		return BlackboardComp;
+	}
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
 	float SightRadius = 1500.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
@@ -41,6 +46,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
 	UAISenseConfig_Sight* SightConfig;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Blackboard")
+	UBlackboardComponent* BlackboardComp;
+
 	UFUNCTION()
 	void OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 
