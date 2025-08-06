@@ -30,12 +30,9 @@ void UPEAttackComponentHitscan::PerformAttack(const FPEAttackStats& AttackStats,
 	}
 	
 	UE_LOG(LogPE, Log, TEXT("HitScan Attack Performed!"));
-	// 임시 값들 (요구사항에 따라 새 변수 대신 임시 숫자 사용)
-	float AttackRange = 1000.0f;  // 공격 사거리
-	float DamageAmount = 25.0f;   // 공격 데미지
 	
 	// LineTrace 설정
-	FVector EndLocation = StartLocation + (Direction * AttackRange);
+	FVector EndLocation = StartLocation + (Direction * AttackStats.AttackRange);
 	FHitResult HitResult;
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(GetOwner()); // 자기 자신은 무시
@@ -45,7 +42,7 @@ void UPEAttackComponentHitscan::PerformAttack(const FPEAttackStats& AttackStats,
 		HitResult,
 		StartLocation,
 		EndLocation,
-		ECC_Visibility,  // 가시성 채널로 트레이스
+		AttackStats.CollisionChannel, 
 		QueryParams
 	);
 	
@@ -54,11 +51,10 @@ void UPEAttackComponentHitscan::PerformAttack(const FPEAttackStats& AttackStats,
 		AActor* HitActor = HitResult.GetActor();
 		
 		// PEReceiveAttackComponent를 찾아서 데미지 전달
-		UPEReceiveAttackComponent* ReceiveAttackComponent = HitActor->FindComponentByClass<UPEReceiveAttackComponent>();
-		if (ReceiveAttackComponent)
+		if (UPEReceiveAttackComponent* ReceiveAttackComponent = HitActor->FindComponentByClass<UPEReceiveAttackComponent>())
 		{
 			ReceiveAttackComponent->ReceiveDamage(
-				DamageAmount,
+				AttackStats.DamageAmount,
 				HitResult.Location,
 				HitResult.Normal,
 				GetOwner()

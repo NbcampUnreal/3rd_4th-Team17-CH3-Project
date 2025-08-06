@@ -27,6 +27,7 @@ void APEWeaponHitscan::Use(AActor* Holder)
 	// 테스트용 임시 스탯 설정
 	AttackStats.AttackRange = 1000.0f;
 	AttackStats.DamageAmount = 17.0f;
+	AttackStats.CollisionChannel = ECC_Visibility;
 	AttackComponent->ExcuteAttack(AttackStats);
 }
 

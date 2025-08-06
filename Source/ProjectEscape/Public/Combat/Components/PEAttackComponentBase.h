@@ -12,9 +12,9 @@ struct PROJECTESCAPE_API FPEAttackStats
 {
 	GENERATED_BODY()
 
-	float DamageAmount = 10.0f; // 기본 공격력
-	float AttackRange = 1000.0f; // 기본 공격 범위
-	
+	float DamageAmount = 10.0f; 
+	float AttackRange = 1000.0f; 
+	ECollisionChannel CollisionChannel = ECC_Pawn;
 };
 
 /*
