@@ -9,7 +9,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "PEWeaponBase.generated.h"
 
-class UPEAttackComponentBase;
+class UPEAttackBaseComponent;
 class UPEQuickSlotItemComponent;
 enum class EPEEquipmentType : uint8;
 class UPEUseableComponent;
@@ -74,8 +74,8 @@ public:
 	/* Combat(Attack) 관련 섹션 */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Hitscan")
-	TObjectPtr<UPEAttackComponentBase> AttackComponent;
+	TObjectPtr<UPEAttackBaseComponent> AttackComponent;
 
-	virtual UPEAttackComponentBase* CreateAttackComponent();
+	virtual UPEAttackBaseComponent* CreateAttackComponent();
 };
 

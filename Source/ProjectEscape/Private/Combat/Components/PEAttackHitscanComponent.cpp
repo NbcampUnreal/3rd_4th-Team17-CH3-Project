@@ -1,25 +1,25 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Combat/Components/PEAttackComponentHitscan.h"
+#include "Combat/Components/PEAttackHitscanComponent.h"
 #include "Combat/Components/PEReceiveAttackComponent.h"
 #include "Engine/World.h"
 #include "Components/ActorComponent.h"
 #include "Core/PELogChannels.h"
 #include "DrawDebugHelpers.h"
 
-UPEAttackComponentHitscan::UPEAttackComponentHitscan()
+UPEAttackHitscanComponent::UPEAttackHitscanComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UPEAttackComponentHitscan::BeginPlay()
+void UPEAttackHitscanComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-void UPEAttackComponentHitscan::PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
+void UPEAttackHitscanComponent::PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
 	
 	// 히트스캔 공격 구현

@@ -3,18 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PEAttackComponentBase.h"
-#include "PEAttackComponentHitscan.generated.h"
+#include "PEAttackBaseComponent.h"
+#include "PEAttackHitscanComponent.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class PROJECTESCAPE_API UPEAttackComponentHitscan : public UPEAttackComponentBase
+class PROJECTESCAPE_API UPEAttackHitscanComponent : public UPEAttackBaseComponent
 {
 	GENERATED_BODY()
 
 	/* LIfecycle 관련 섹션 */
 public:
-	UPEAttackComponentHitscan();
+	UPEAttackHitscanComponent();
 
 protected:
 	virtual void BeginPlay() override;

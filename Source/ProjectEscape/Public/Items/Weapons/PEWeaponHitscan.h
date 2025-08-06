@@ -6,7 +6,7 @@
 #include "PEWeaponBase.h"
 #include "PEWeaponHitscan.generated.h"
 
-class UPEAttackComponentHitscan;
+class UPEAttackHitscanComponent;
 
 UCLASS()
 class PROJECTESCAPE_API APEWeaponHitscan : public APEWeaponBase
@@ -23,5 +23,5 @@ protected:
 	/* Hitscan 관련 섹션 */	
 public:
 	virtual void Use(AActor* Holder) override;
-	virtual UPEAttackComponentBase* CreateAttackComponent() override;
+	virtual UPEAttackBaseComponent* CreateAttackComponent() override;
 };

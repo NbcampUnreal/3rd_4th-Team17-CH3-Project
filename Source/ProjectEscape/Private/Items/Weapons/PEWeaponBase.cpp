@@ -4,7 +4,7 @@
 #include "Items/Weapons/PEWeaponBase.h"
 
 #include "PEEquipmentType.h"
-#include "Combat/Components/PEAttackComponentBase.h"
+#include "Combat/Components/PEAttackBaseComponent.h"
 #include "Core/PELogChannels.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
@@ -114,8 +114,8 @@ EPEEquipmentType APEWeaponBase::GetEquipmentType() const
 	return EquipmentType;
 }
 
-UPEAttackComponentBase* APEWeaponBase::CreateAttackComponent()
+UPEAttackBaseComponent* APEWeaponBase::CreateAttackComponent()
 {
 	UE_LOG(LogPE, Warning, TEXT("APEWeaponBase::CreateAttackComponent() called"));
-    return NewObject<UPEAttackComponentBase>(this);
+    return NewObject<UPEAttackBaseComponent>(this);
 }

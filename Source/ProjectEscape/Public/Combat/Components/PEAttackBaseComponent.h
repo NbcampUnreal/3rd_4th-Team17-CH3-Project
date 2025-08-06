@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Combat/Interface/PEAttackable.h"
 #include "Components/ActorComponent.h"
-#include "PEAttackComponentBase.generated.h"
+#include "PEAttackBaseComponent.generated.h"
 
 USTRUCT()
 struct PROJECTESCAPE_API FPEAttackStats
@@ -23,13 +23,13 @@ struct PROJECTESCAPE_API FPEAttackStats
  *	공격 쿨타임같은 기타 로직은 각 액터에서 구현해야 합니다.
  */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class PROJECTESCAPE_API UPEAttackComponentBase : public UActorComponent
+class PROJECTESCAPE_API UPEAttackBaseComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 	/* Lifecycle 관련 섹션 */
 public:
-	UPEAttackComponentBase();
+	UPEAttackBaseComponent();
 
 protected:
 	virtual void BeginPlay() override;

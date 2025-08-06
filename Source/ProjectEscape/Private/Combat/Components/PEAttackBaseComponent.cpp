@@ -1,22 +1,22 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Combat/Components/PEAttackComponentBase.h"
+#include "Combat/Components/PEAttackBaseComponent.h"
 
 #include "Core/PELogChannels.h"
 
-UPEAttackComponentBase::UPEAttackComponentBase()
+UPEAttackBaseComponent::UPEAttackBaseComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UPEAttackComponentBase::BeginPlay()
+void UPEAttackBaseComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-bool UPEAttackComponentBase::ExcuteAttack(const FPEAttackStats& AttackStats)
+bool UPEAttackBaseComponent::ExcuteAttack(const FPEAttackStats& AttackStats)
 {
 	if (!AttackStartPoint)
 	{
@@ -32,13 +32,13 @@ bool UPEAttackComponentBase::ExcuteAttack(const FPEAttackStats& AttackStats)
 	return true;
 }
 
-bool UPEAttackComponentBase::ExcuteAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
+bool UPEAttackBaseComponent::ExcuteAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
 	PerformAttack(AttackStats, StartLocation, Direction);
 	return true;
 }
 
-void UPEAttackComponentBase::SetAttackStartPoint(USceneComponent* NewStartPoint)
+void UPEAttackBaseComponent::SetAttackStartPoint(USceneComponent* NewStartPoint)
 {
 	if (NewStartPoint)
 	{
@@ -50,7 +50,7 @@ void UPEAttackComponentBase::SetAttackStartPoint(USceneComponent* NewStartPoint)
 	}
 }
 
-void UPEAttackComponentBase::PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
+void UPEAttackBaseComponent::PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
 	// NOTE: 실제 구현은 자식 클래스에 작성해야 합니다.
 	UE_LOG(LogPE, Warning, TEXT("PEAttackComponentBase::PerformAttack: This function should be overridden in derived classes."));

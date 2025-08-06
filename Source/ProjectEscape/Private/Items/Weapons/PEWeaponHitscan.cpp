@@ -3,7 +3,7 @@
 
 #include "Items/Weapons/PEWeaponHitscan.h"
 
-#include "Combat/Components/PEAttackComponentHitscan.h"
+#include "Combat/Components/PEAttackHitscanComponent.h"
 #include "Combat/Interface/PEAttackable.h"
 #include "Core/PELogChannels.h"
 
@@ -31,8 +31,8 @@ void APEWeaponHitscan::Use(AActor* Holder)
 	AttackComponent->ExcuteAttack(AttackStats);
 }
 
-UPEAttackComponentBase* APEWeaponHitscan::CreateAttackComponent()
+UPEAttackBaseComponent* APEWeaponHitscan::CreateAttackComponent()
 {
 	UE_LOG(LogPE, Warning, TEXT("APEWeaponHitscan::CreateAttackComponent() called!!!"));
-	return NewObject<UPEAttackComponentHitscan>(this);
+	return NewObject<UPEAttackHitscanComponent>(this);
 }
