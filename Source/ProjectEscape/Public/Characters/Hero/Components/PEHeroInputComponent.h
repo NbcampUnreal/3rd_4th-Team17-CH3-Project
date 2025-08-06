@@ -30,6 +30,12 @@ public:
 	void OnInputStartJump(const FInputActionValue& Value);
 	void OnInputStopJump(const FInputActionValue& Value);
 	void OnInputToggleCrouch(const FInputActionValue& Value);
+	void OnInputQuickSlotNumber(const FInputActionValue& Value, int32 SlotNumber);
+	void OnInputReload(const FInputActionValue& Value);
+	void OnInputPrimaryActionTriggered(const FInputActionValue& Value);
+	void OnInputPrimaryActionCompleted(const FInputActionValue& Value);
+	void OnInputSecondaryActionTriggered(const FInputActionValue& Value);
+	void OnInputSecondaryActionCompleted(const FInputActionValue& Value);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> MoveInputAction;
@@ -45,6 +51,18 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> CrouchInputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TArray<TObjectPtr<UInputAction>> QuickSlotInputActions;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> ReloadInputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> PrimayActionInputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> SecondaryActionInputAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Mapping")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;

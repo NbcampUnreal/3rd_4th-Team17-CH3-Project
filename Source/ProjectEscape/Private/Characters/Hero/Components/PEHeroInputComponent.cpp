@@ -52,7 +52,30 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 			}
 			if (CrouchInputAction)
 			{
-				EIC->BindAction(CrouchInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputToggleCrouch);
+				EIC->BindAction(CrouchInputAction, ETriggerEvent::Started, this, &ThisClass::OnInputToggleCrouch);
+			}
+			for (int32 Index = 0; Index < QuickSlotInputActions.Num(); Index++)
+			{
+				UInputAction* QuickSlotInputAction = QuickSlotInputActions[Index];
+				if (QuickSlotInputAction)
+				{
+					// To make it easier to understand, counting starts from 1 rather than 0.
+					EIC->BindAction(QuickSlotInputAction, ETriggerEvent::Started, this, &ThisClass::OnInputQuickSlotNumber, Index + 1);
+				}
+			}
+			if (ReloadInputAction)
+			{
+				EIC->BindAction(ReloadInputAction, ETriggerEvent::Started, this, &ThisClass::OnInputReload);
+			}
+			if (PrimayActionInputAction)
+			{
+				EIC->BindAction(PrimayActionInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputPrimaryActionTriggered);
+				EIC->BindAction(PrimayActionInputAction, ETriggerEvent::Completed, this, &ThisClass::OnInputPrimaryActionCompleted);
+			}
+			if (SecondaryActionInputAction)
+			{
+				EIC->BindAction(SecondaryActionInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputSecondaryActionTriggered);
+				EIC->BindAction(SecondaryActionInputAction, ETriggerEvent::Completed, this, &ThisClass::OnInputSecondaryActionCompleted);
 			}
 		}
 		
@@ -89,7 +112,7 @@ void UPEHeroInputComponent::OnInputLook(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputStartSprint(const FInputActionValue& Value)
 {
-	// TODO: 스태미너
+	// TODO: 스태미너 관련 기능 구현...
 	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
 	{
 		MovementComponent->MaxWalkSpeed = SprintSpeed;
@@ -135,6 +158,67 @@ void UPEHeroInputComponent::OnInputToggleCrouch(const FInputActionValue& Value)
 		}
 	}
 }
+
+void UPEHeroInputComponent::OnInputQuickSlotNumber(const FInputActionValue& Value, int32 SlotNumber)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("SlotNumber: %d"), SlotNumber));
+	}
+#endif
+}
+
+void UPEHeroInputComponent::OnInputReload(const FInputActionValue& Value)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Reload")));
+	}
+#endif
+}
+
+void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValue& Value)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Primary Action Triggered!!")));
+	}
+#endif
+}
+
+void UPEHeroInputComponent::OnInputPrimaryActionCompleted(const FInputActionValue& Value)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Black, FString::Printf(TEXT("On Input Primary Action Complete...")));
+	}
+#endif
+}
+
+void UPEHeroInputComponent::OnInputSecondaryActionTriggered(const FInputActionValue& Value)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Secondary Action Triggered!!")));
+	}
+#endif
+}
+
+void UPEHeroInputComponent::OnInputSecondaryActionCompleted(const FInputActionValue& Value)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Black, FString::Printf(TEXT("On Input Secondary Action Complete...")));
+	}
+#endif
+}
+
 
 ACharacter* UPEHeroInputComponent::GetOwnerCharacter()
 {
