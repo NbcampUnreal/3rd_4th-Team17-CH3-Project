@@ -7,7 +7,9 @@
 #include "PEUITestPlayerController.generated.h"
 
 class UUserWidget;
+class UProgressBar;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDamageTaken, float, DCCurrentHealth, float, DCMaxHealth);
 
 UCLASS()
 class PROJECTESCAPE_API APEUITestPlayerController : public APlayerController
@@ -34,6 +36,25 @@ public:
 	void ClearAllWidget();
 
 protected:
+	// 테스트용 TakeDamage / heatlh
+	virtual float TakeDamage(
+		float DamageAmount,
+		struct FDamageEvent const& DamageEvnet,
+		AController* EventInstigator,
+		AActor* DamageCauser) override;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	float MaxHealth;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
+	float Health;
+	UPROPERTY()
+	UProgressBar* HealthBar;
+
+	UPROPERTY(BlueprintAssignable, Category = "Event")
+	FOnDamageTaken OnDamage;
+
+	UFUNCTION()
+	void HandleHealthChanged(float DCCurrentHealth, float DCMaxHealth);
+
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> HUDWidgetClass;
 

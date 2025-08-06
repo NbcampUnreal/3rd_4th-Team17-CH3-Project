@@ -2,11 +2,16 @@
 
 
 #include "UI/PEUITestPlayerController.h"
+#include "Components\ProgressBar.h"
 #include "Blueprint\UserWidget.h"
 
 void APEUITestPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+	MaxHealth = 300;
+	Health = MaxHealth;
+
+	OnDamage.AddDynamic(this, &APEUITestPlayerController::HandleHealthChanged);
 
 	ShowMainMenu();
 }
@@ -164,5 +169,40 @@ void APEUITestPlayerController::ClearAllWidget()
 	{
 		HelperWidget->RemoveFromParent();
 		HelperWidget = nullptr;
+	}
+}
+
+float APEUITestPlayerController::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvnet, AController* EventInstigator, AActor* DamageCauser)
+{
+	Super::TakeDamage(DamageAmount, DamageEvnet, EventInstigator, DamageCauser);
+	Health = FMath::Clamp(Health - DamageAmount, 0.0f, MaxHealth);
+
+	OnDamage.Broadcast(Health, MaxHealth);
+
+
+
+	return DamageAmount;
+}
+// 테스트용 이게 실제로 잘 적용될지는 모르겠음. 
+void APEUITestPlayerController::HandleHealthChanged(float DCCurrentHealth, float DCMaxHealth)
+{
+	if (HUDWidget)
+	{
+		UFunction* DamageFunc = HUDWidget->FindFunction(FName("PlayDamageAnim"));
+		if (DamageFunc)
+		{
+			HUDWidget->ProcessEvent(DamageFunc, nullptr);
+		}
+	}
+	if (HUDWidget)
+	{
+		if (!HealthBar)
+		{
+			HealthBar = Cast<UProgressBar>(HUDWidget->GetWidgetFromName(TEXT("HealthBar")));
+		}
+		if (HealthBar)
+		{
+			HealthBar->SetPercent(DCCurrentHealth / DCMaxHealth);
+		}
 	}
 }
