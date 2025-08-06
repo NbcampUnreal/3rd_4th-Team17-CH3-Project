@@ -2,6 +2,7 @@
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UPEHeroInputComponent::UPEHeroInputComponent()
 {
@@ -10,6 +11,10 @@ UPEHeroInputComponent::UPEHeroInputComponent()
 
 void UPEHeroInputComponent::InputConfiguration()
 {
+	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
+	{
+		MovementComponent->MaxWalkSpeed = NormalSpeed;
+	}
 }
 
 void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputComponent)
@@ -62,8 +67,8 @@ void UPEHeroInputComponent::OnInputMove(const FInputActionValue& Value)
 		if (!FMath::IsNearlyZero(MoveVector.Length()))
 		{
 			FVector MovementVector = FVector::ZeroVector;
-			MovementVector += Hero->GetActorForwardVector() * MovementVector.X;
-			MovementVector += Hero->GetActorRightVector() * MovementVector.Y;
+			MovementVector += Hero->GetActorForwardVector() * MoveVector.X;
+			MovementVector += Hero->GetActorRightVector() * MoveVector.Y;
 			Hero->AddMovementInput(MovementVector);
 		}
 	}
@@ -84,22 +89,51 @@ void UPEHeroInputComponent::OnInputLook(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputStartSprint(const FInputActionValue& Value)
 {
+	// TODO: 스태미너
+	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
+	{
+		MovementComponent->MaxWalkSpeed = SprintSpeed;
+	}
 }
 
 void UPEHeroInputComponent::OnInputStopSprint(const FInputActionValue& Value)
 {
+	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
+	{
+		MovementComponent->MaxWalkSpeed = NormalSpeed;
+	}
 }
 
 void UPEHeroInputComponent::OnInputStartJump(const FInputActionValue& Value)
 {
+	if (ACharacter* Hero = GetOwnerCharacter())
+	{
+		Hero->Jump();
+	}
 }
 
 void UPEHeroInputComponent::OnInputStopJump(const FInputActionValue& Value)
 {
+	if (ACharacter* Hero = GetOwnerCharacter())
+	{
+		Hero->StopJumping();
+	}
+
 }
 
 void UPEHeroInputComponent::OnInputToggleCrouch(const FInputActionValue& Value)
 {
+	if (ACharacter* Hero = GetOwnerCharacter())
+	{
+		if (Hero->CanCrouch())
+		{
+			Hero->Crouch();
+		}
+		else
+		{
+			Hero->UnCrouch();
+		}
+	}
 }
 
 ACharacter* UPEHeroInputComponent::GetOwnerCharacter()
@@ -107,6 +141,18 @@ ACharacter* UPEHeroInputComponent::GetOwnerCharacter()
 	if (ACharacter* Hero = Cast<ACharacter>(GetOwner()))
 	{
 		return Hero;
+	}
+	return nullptr;
+}
+
+UCharacterMovementComponent* UPEHeroInputComponent::GetOwnerMovementComponent()
+{
+	if (ACharacter* Hero = GetOwnerCharacter())
+	{
+		if (UCharacterMovementComponent* MovementComponent = Cast<UCharacterMovementComponent>(Hero->GetMovementComponent()))
+		{
+			return MovementComponent;
+		}
 	}
 	return nullptr;
 }
