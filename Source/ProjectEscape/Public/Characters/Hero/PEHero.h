@@ -20,7 +20,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<UPEHeroInputComponent> HeroInputComponent;
 
-
 protected:
 	virtual void BeginPlay() override;
 };

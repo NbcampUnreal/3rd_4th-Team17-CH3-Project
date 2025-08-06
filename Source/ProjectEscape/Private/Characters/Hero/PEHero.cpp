@@ -13,6 +13,10 @@ void APEHero::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (HeroInputComponent)
+	{
+		HeroInputComponent->InputConfiguration();
+	}
 }
 
 void APEHero::Tick(float DeltaTime)
@@ -25,5 +29,9 @@ void APEHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (HeroInputComponent)
+	{
+		HeroInputComponent->SetupEnhancedInput(PlayerInputComponent);
+	}
 }
 
