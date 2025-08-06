@@ -14,6 +14,7 @@ void UPEHeroInputComponent::InputConfiguration()
 	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
 	{
 		MovementComponent->MaxWalkSpeed = NormalSpeed;
+		MovementComponent->NavAgentProps.bCanCrouch = bCanCrouch;
 	}
 }
 

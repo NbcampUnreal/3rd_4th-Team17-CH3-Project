@@ -73,6 +73,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Configuration")
 	float SprintSpeed = 800.0f;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Configuration")
+	bool bCanCrouch = true;
+
 protected:
 	ACharacter* GetOwnerCharacter();
 	UCharacterMovementComponent* GetOwnerMovementComponent();
