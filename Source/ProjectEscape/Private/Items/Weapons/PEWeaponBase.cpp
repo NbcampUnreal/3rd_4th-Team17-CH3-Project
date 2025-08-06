@@ -5,6 +5,7 @@
 
 #include "PEEquipmentType.h"
 #include "Combat/Components/PEAttackComponentBase.h"
+#include "Core/PELogChannels.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 #include "Items/Components/PEInteractableComponent.h"
@@ -23,7 +24,7 @@ APEWeaponBase::APEWeaponBase()
 
 	// 퀵슬롯 아이템 컴포넌트 생성 및 설정
 	QuickSlotItemComponent = CreateDefaultSubobject<UPEQuickSlotItemComponent>(TEXT("QuickSlotItemComponent"));
-	
+
 	bIsInHand = false;
 }
 
@@ -36,21 +37,35 @@ void APEWeaponBase::BeginPlay()
 void APEWeaponBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	if (!AttackComponent)
+	{
+		AttackComponent = CreateAttackComponent();
+		if (AttackComponent)
+		{
+			AttackComponent->RegisterComponent();
+			UE_LOG(LogPE, Log, TEXT("AttackComponent created and registered for %s"), *GetName());
+		}
+		else
+		{
+			UE_LOG(LogPE, Error, TEXT("Failed to create AttackComponent for %s"), *GetName());
+		}
+	}
 }
 
 void APEWeaponBase::Interact(AActor* Interactor)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Interact called on %s by %s"), *GetName(), *Interactor->GetName());
+	UE_LOG(LogPE, Warning, TEXT("Interact called on %s by %s"), *GetName(), *Interactor->GetName());
 	
 	WeaponOwnerActor = Interactor;
 	if (IPEAttackable* AttackableInterface = Cast<IPEAttackable>(Interactor))
 	{
 		AttackComponent->SetAttackStartPoint(AttackableInterface->GetAttackStartPoint());
-		UE_LOG(LogTemp, Log, TEXT("AttackableInterface found and AttackStartPoint set for %s"), *GetNameSafe(Interactor));
+		UE_LOG(LogPE, Log, TEXT("AttackableInterface found and AttackStartPoint set for %s"), *GetNameSafe(Interactor));
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Interactor does not implement IPEAttackable interface"));
+		UE_LOG(LogPE, Warning, TEXT("Interactor does not implement IPEAttackable interface"));
 	}
 }
 
@@ -99,3 +114,8 @@ EPEEquipmentType APEWeaponBase::GetEquipmentType() const
 	return EquipmentType;
 }
 
+UPEAttackComponentBase* APEWeaponBase::CreateAttackComponent()
+{
+	UE_LOG(LogPE, Warning, TEXT("APEWeaponBase::CreateAttackComponent() called"));
+    return NewObject<UPEAttackComponentBase>(this);
+}

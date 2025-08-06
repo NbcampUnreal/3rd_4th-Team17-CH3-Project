@@ -75,5 +75,7 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Hitscan")
 	TObjectPtr<UPEAttackComponentBase> AttackComponent;
+
+	virtual UPEAttackComponentBase* CreateAttackComponent();
 };
 

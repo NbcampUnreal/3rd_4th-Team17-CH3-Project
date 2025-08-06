@@ -5,16 +5,12 @@
 
 #include "Combat/Components/PEAttackComponentHitscan.h"
 #include "Combat/Interface/PEAttackable.h"
+#include "Core/PELogChannels.h"
 
 
 APEWeaponHitscan::APEWeaponHitscan()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	AttackComponent = CreateDefaultSubobject<UPEAttackComponentHitscan>(TEXT("AttackComponent"));
-	if (IPEAttackable* AttackableInterface = Cast<IPEAttackable>(WeaponOwnerActor))
-	{
-		AttackComponent->SetAttackStartPoint(AttackableInterface->GetAttackStartPoint());
-	}
 }
 
 void APEWeaponHitscan::BeginPlay()
@@ -27,5 +23,15 @@ void APEWeaponHitscan::Use(AActor* Holder)
 {
 	Super::Use(Holder);
 
-	AttackComponent->ExcuteAttack();
+	FPEAttackStats AttackStats;
+	// 테스트용 임시 스탯 설정
+	AttackStats.AttackRange = 1000.0f;
+	AttackStats.DamageAmount = 17.0f;
+	AttackComponent->ExcuteAttack(AttackStats);
+}
+
+UPEAttackComponentBase* APEWeaponHitscan::CreateAttackComponent()
+{
+	UE_LOG(LogPE, Warning, TEXT("APEWeaponHitscan::CreateAttackComponent() called!!!"));
+	return NewObject<UPEAttackComponentHitscan>(this);
 }

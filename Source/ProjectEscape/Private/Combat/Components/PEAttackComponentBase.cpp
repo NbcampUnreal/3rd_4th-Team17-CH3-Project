@@ -16,7 +16,7 @@ void UPEAttackComponentBase::BeginPlay()
 	
 }
 
-bool UPEAttackComponentBase::ExcuteAttack()
+bool UPEAttackComponentBase::ExcuteAttack(const FPEAttackStats& AttackStats)
 {
 	if (!AttackStartPoint)
 	{
@@ -28,13 +28,13 @@ bool UPEAttackComponentBase::ExcuteAttack()
 	const FRotator& StartRotation = AttackStartPoint->GetComponentRotation();
 	const FVector& Direction = StartRotation.Vector();
 
-	PerformAttack(StartLocation, Direction);
+	PerformAttack(AttackStats, StartLocation, Direction);
 	return true;
 }
 
-bool UPEAttackComponentBase::ExcuteAttack(const FVector& StartLocation, const FVector& Direction)
+bool UPEAttackComponentBase::ExcuteAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
-	PerformAttack(StartLocation, Direction);
+	PerformAttack(AttackStats, StartLocation, Direction);
 	return true;
 }
 
@@ -50,7 +50,7 @@ void UPEAttackComponentBase::SetAttackStartPoint(USceneComponent* NewStartPoint)
 	}
 }
 
-void UPEAttackComponentBase::PerformAttack(const FVector& StartLocation, const FVector& Direction)
+void UPEAttackComponentBase::PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
 	// NOTE: 실제 구현은 자식 클래스에 작성해야 합니다.
 	UE_LOG(LogPE, Warning, TEXT("PEAttackComponentBase::PerformAttack: This function should be overridden in derived classes."));

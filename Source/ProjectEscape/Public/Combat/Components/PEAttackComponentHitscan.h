@@ -21,5 +21,5 @@ protected:
 
 	/* Hitscan 공격을 위한 섹션 */
 protected:
-	virtual void PerformAttack(const FVector& StartLocation, const FVector& Direction) override;
+	virtual void PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction) override;
 };

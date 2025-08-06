@@ -12,6 +12,8 @@ struct PROJECTESCAPE_API FPEAttackStats
 {
 	GENERATED_BODY()
 
+	float DamageAmount = 10.0f; // 기본 공격력
+	float AttackRange = 1000.0f; // 기본 공격 범위
 	
 };
 
@@ -38,11 +40,11 @@ protected:
 	TObjectPtr<USceneComponent> AttackStartPoint;
 	
 public:
-	virtual bool ExcuteAttack();	//AttackStartPoint 기준으로 공격을 실행합니다. (카메라같은 기준 액터를 사용할 때)
-	virtual bool ExcuteAttack(const FVector& StartLocation, const FVector& Direction);
+	virtual bool ExcuteAttack(const FPEAttackStats& AttackStats);	//AttackStartPoint 기준으로 공격을 실행합니다. (카메라같은 기준 액터를 사용할 때)
+	virtual bool ExcuteAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
 
 	void SetAttackStartPoint(USceneComponent* NewStartPoint);
 
 protected:
-	virtual void PerformAttack(const FVector& StartLocation, const FVector& Direction);
+	virtual void PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
 };
