@@ -39,8 +39,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
 	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
 
-
-
 	UUserWidget* HUDWidget;
 	UUserWidget* PauseMenuWidget;
 };

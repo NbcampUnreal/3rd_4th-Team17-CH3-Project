@@ -71,3 +71,15 @@ void APEPlayerState::ReduceStamina(float Value)
 	SetStamina(Stamina - Value);
 }
 
+// Function For Test. TODO: Remove.
+void APEPlayerState::ReduceHealthPoint_FOR_TEST(float Value)
+{
+	ReduceHealthPoint(Value);
+}
+
+// Function For Test. TODO: Remove.
+void APEPlayerState::ReduceStamina_FOR_TEST(float Value)
+{
+	ReduceStamina(Value);
+}
+
