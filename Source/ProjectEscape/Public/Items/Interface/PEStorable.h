@@ -21,13 +21,12 @@ class PROJECTESCAPE_API IPEStorable
 	GENERATED_BODY()
 
 public:
-	virtual bool	CanBeStored() const = 0;
-	virtual bool	StoreItem(class AActor* Inventory) = 0;
-	virtual bool	RemoveFromStorage(class AActor* Inventory) = 0;
-	virtual int32	GetStackSize() const = 0;
-	virtual int32	GetMaxStackSize() const = 0;
-	virtual bool	AddToStack(int32 Amount) = 0;
-	virtual FString GetItemID() const = 0;
-	virtual bool	IsStackable() const = 0;
-	virtual bool	DropToWorld(const FVector& Location, const FRotator& Rotation) = 0;
+	virtual void OnPickedUp() = 0;
+	virtual void OnDropToWorld(const FVector& Location, const FRotator& Rotation) = 0;
+	virtual int32 GetItemCount() const = 0;
+	virtual int32 GetItemStackCount() const = 0;
+	virtual void AddItemCount(int32 Count) = 0;
+	virtual void OnDropToWorld(int32 Count, const FVector& Location, const FRotator& Rotation) = 0;
+	virtual void SplitAndDropItem(int32 Count, const FVector& Location, const FRotator& Rotation) = 0;
+	virtual void DestoryItem() = 0;
 };

@@ -16,15 +16,22 @@ class PROJECTESCAPE_API APEUITestPlayerController : public APlayerController
 
 public:
 	virtual void BeginPlay() override;
-
-
 	UFUNCTION(BlueprintCallable)
-	void StartGame();
+	void ShowMainMenu();
 	UFUNCTION(BlueprintCallable)
-	void PauseMenu();
+	void OnClickStartGame();
 	UFUNCTION(BlueprintCallable)
-	void ResumeGame();
-
+	void PauseGameAndShowPauseMenu();
+	UFUNCTION(BlueprintCallable)
+	void OnClickResume();
+	UFUNCTION(BlueprintCallable)
+	void OnClickCredit();
+	UFUNCTION(BlueprintCallable)
+	void OnClickHelper();
+	UFUNCTION(BlueprintCallable)
+	void OnClickBackMainMenu();
+	UFUNCTION(BlueprintCallable)
+	void ClearAllWidget();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -36,12 +43,22 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> CreditWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> HelperWidgetClass;
+
 	UPROPERTY()
 	UUserWidget* HUDWidget;
 	UPROPERTY()
 	UUserWidget* MainMenuWidget;
 	UPROPERTY()
 	UUserWidget* PauseMenuWidget;
+	UPROPERTY()
+	UUserWidget* CreditWidget;
+	UPROPERTY()
+	UUserWidget* HelperWidget;
 
 	bool bIsPause = false;
 };

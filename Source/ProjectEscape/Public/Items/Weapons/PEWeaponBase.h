@@ -9,6 +9,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "PEWeaponBase.generated.h"
 
+class UPEAttackBaseComponent;
 class UPEQuickSlotItemComponent;
 enum class EPEEquipmentType : uint8;
 class UPEUseableComponent;
@@ -43,7 +44,7 @@ protected:
 	EPEEquipmentType EquipmentType;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TObjectPtr<AActor> OwnerActor; // 아이템을 소유한 액터
+	TObjectPtr<AActor> WeaponOwnerActor; // 아이템을 소유한 액터
 	
 	bool bIsInHand;
 
@@ -69,5 +70,12 @@ public:
 	virtual void Use(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
 	virtual UPEUseableComponent* GetUseableComponent() const override; // 사용 가능한 컴포넌트를 반환합니다
+
+	/* Combat(Attack) 관련 섹션 */
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Hitscan")
+	TObjectPtr<UPEAttackBaseComponent> AttackComponent;
+
+	virtual UPEAttackBaseComponent* CreateAttackComponent();
 };
 

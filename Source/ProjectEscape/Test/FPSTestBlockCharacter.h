@@ -6,9 +6,13 @@
 #include "GameFramework/Character.h"
 #include "Characters/Hero/Interface/PEQuickSlotHandler.h"
 #include "Characters/Hero/Interface/PEInteractManagerHandler.h"
+#include "Combat/Interface/PEAttackable.h"
 #include "Logging/LogMacros.h"
 #include "FPSTestBlockCharacter.generated.h"
 
+class UPEReceiveAttackComponent;
+class UPEInventoryManagerComponent;
+class UPEUseableItemManagerComponent;
 class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
@@ -21,7 +25,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler
+class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler, public IPEAttackable
 {
 	GENERATED_BODY()
 
@@ -31,7 +35,7 @@ class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandl
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FirstPersonCameraComponent;
+	TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -57,13 +61,16 @@ class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandl
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* UseAction;
 	
-	/** Use Input Action */
+	/** Use Hand Item Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* HandPrimaryAction;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputAction* HandSecondaryAction;
-	
+
+	/** Use Inventory Action */
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
+	UInputAction* InventroyItemDropTestAction;
 	
 public:
 	AFPSTestBlockCharacter();
@@ -89,8 +96,8 @@ public:
 
 	/* Interact 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Interaction, meta = (AllowPrivateAccess = "true"))
-	UPEInteractManagerComponent* InteractManagerComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPEInteractManagerComponent> InteractManagerComponent;
 
 public:
 	UPEInteractManagerComponent* GetInteractManagerComponent() const;
@@ -98,19 +105,38 @@ public:
 
 	/* 장비 사용 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Item, meta = (AllowPrivateAccess = "true"))
-	class UPEUseableItemManagerComponent* UseableItemManagerComponent;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UseItem", meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPEUseableItemManagerComponent> UseableItemManagerComponent;
 	
 	virtual void Use();
 	
 	/* Quick Slot 관련 섹션 */
 protected:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickSlot, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEQuickSlotManagerComponent> QuickSlotManagerComponent;
 	
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 
 public:
+	// Quickslot Wrappers
 	virtual void HandPrimary();
 	virtual void HandSecondary();
+	virtual void HandMelee();
+	virtual void HandThrowable();
+	virtual void HandUseable();
+
+	/* Inventroy 관련 섹션 */
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickSlot, meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<UPEInventoryManagerComponent> InventoryManagerComponent;
+
+	void InventroyDropTest(); // 인벤토리 드랍 테스트용 함수
+
+	/* Combat 관련 섹션 */
+public:
+	virtual USceneComponent* GetAttackStartPoint() const override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
+	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
 };

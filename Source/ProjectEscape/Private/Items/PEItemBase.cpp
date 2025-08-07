@@ -3,16 +3,24 @@
 
 #include "Items/PEItemBase.h"
 #include "Items/Components/PEInteractableComponent.h"
+#include "Items/Components/PEStorableItemComponent.h"
 
 APEItemBase::APEItemBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	// InteractableComponent 생성 및 설정
 	InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->SetupAttachment(RootComponent);
 	InteractableComponent->SetHiddenInGame(false);
 
+	// Inventroy 관련 컴포넌트 생성 및 설정
+	StorableItemComponent = CreateDefaultSubobject<UPEStorableItemComponent>(TEXT("StorableItemComponent"));
+	
 	ItemOwnerActor = nullptr;
+	ItemCount = 3; // 기본 아이템 개수 설정
+	StackCount = 1;
+	MaxStackCount = 64;
 }
 
 void APEItemBase::BeginPlay()
@@ -25,7 +33,7 @@ void APEItemBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 	
-	InteractableComponent->SetComponentOwner(this);
+	InteractableComponent->SetComponentOwnerInterface(this);
 }
 
 void APEItemBase::Interact(AActor* Interactor)
@@ -43,47 +51,97 @@ bool APEItemBase::IsInteractable() const
 	return true;
 }
 
-bool APEItemBase::CanBeStored() const
+void APEItemBase::OnDuplicated()
 {
-	return true;
+	// TODO: 아이템 데이터 구조 확정 시 복제되는 값은 모두 이 함수에 넣어서 사용하도록 구현
 }
 
-bool APEItemBase::StoreItem(class AActor* Inventory)
+void APEItemBase::OnPickedUp()
 {
-	return true;
+	SetActorHiddenInGame(true);
+	SetActorEnableCollision(false);
+	UE_LOG(LogTemp, Warning, TEXT("APEItemBase::OnPickedUp called on %s"), *GetName());
 }
 
-bool APEItemBase::RemoveFromStorage(class AActor* Inventory)
+void APEItemBase::OnDropToWorld(const FVector& Location, const FRotator& Rotation)
 {
-	return true;
+	SetActorLocation(Location);
+	SetActorRotation(Rotation);
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	ItemOwnerActor = nullptr;
+	
+	UE_LOG(LogTemp, Warning, TEXT("APEItemBase::OnDropToWorld called on %s"), *GetName());
 }
 
-int32 APEItemBase::GetStackSize() const
+int32 APEItemBase::GetItemCount() const
 {
-	return 0;
+	return ItemCount;
 }
 
-int32 APEItemBase::GetMaxStackSize() const
+int32 APEItemBase::GetItemStackCount() const
 {
-	return 0;
+	return StackCount;
 }
 
-bool APEItemBase::AddToStack(int32 Amount)
+void APEItemBase::AddItemCount(int32 Count)
 {
-	return true;
+	ItemCount += Count;
+	StackCount = 1 + (ItemCount / MaxStackCount);
 }
 
-FString APEItemBase::GetItemID() const
+void APEItemBase::OnDropToWorld(int32 Count, const FVector& Location, const FRotator& Rotation)
 {
-	return FString(TEXT("DefaultItemID"));
+	if (Count >= ItemCount)
+	{
+		OnDropToWorld(Location, Rotation);
+	}
+	else
+	{
+		SplitAndDropItem(Count, Location, Rotation);
+	}
 }
 
-bool APEItemBase::IsStackable() const
+void APEItemBase::SplitAndDropItem(int32 Count, const FVector& Location, const FRotator& Rotation)
 {
-	return true;
+	// 아이템 개수를 감소시킴
+	ItemCount -= Count;
+	StackCount = 1 + ((ItemCount - 1) / MaxStackCount);
+		
+	// 복제된 아이템을 생성
+	if (GetWorld())
+	{
+		APEItemBase* DuplicatedItem = GetWorld()->SpawnActor<APEItemBase>(GetClass(), Location, Rotation);
+		if (DuplicatedItem)
+		{
+			// 복제된 아이템의 속성을 설정
+			// NOTE: 아이템 데이터 구조가 확정되지 않아 임시로 구현
+			DuplicatedItem->ItemCount = Count;
+			DuplicatedItem->StackCount = 1 + ((Count - 1) / MaxStackCount);
+			DuplicatedItem->MaxStackCount = MaxStackCount;
+			DuplicatedItem->ItemOwnerActor = nullptr;
+				
+			DuplicatedItem->OnDuplicated();
+			DuplicatedItem->OnDropToWorld(Location, Rotation);
+				
+			UE_LOG(LogTemp, Warning, TEXT("Item duplicated: Original count %d, Duplicated count %d"), ItemCount, Count);
+		}
+	}
 }
 
-bool APEItemBase::DropToWorld(const FVector& Location, const FRotator& Rotation)
+void APEItemBase::DestoryItem()
 {
-	return true;
+	/*
+	 *	NOTE: Timer나 델리게이트 처럼 다른 곳에서 이 아이템을 참조하고 있다면,
+	 *	DestoryItem() 호출 시점에 따라 문제가 발생할 수 있음
+	 */
+	if (GetWorld())
+	{
+		GetWorld()->DestroyActor(this);
+		UE_LOG(LogTemp, Warning, TEXT("APEItemBase::DestoryItem called on %s"), *GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("APEItemBase::DestoryItem failed: World is null"));
+	}
 }
