@@ -14,6 +14,11 @@ APEWeaponBase::APEWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Mesh 생성 및 설정
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	WeaponMesh->SetupAttachment(RootComponent);
+	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	// 상호작용 컴포넌트 생성 및 설정
 	InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->SetupAttachment(RootComponent);
@@ -64,6 +69,11 @@ void APEWeaponBase::PostInitializeComponents()
 	}
 }
 
+bool APEWeaponBase::Reload()
+{
+	return true;
+}
+
 void APEWeaponBase::Interact(AActor* Interactor)
 {
 	UE_LOG(LogPE, Warning, TEXT("Interact called on %s by %s"), *GetName(), *Interactor->GetName());
@@ -80,7 +90,7 @@ void APEWeaponBase::Interact(AActor* Interactor)
 	}
 }
 
-void APEWeaponBase::Use(AActor* Holder)
+void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Use called on %s by %s"), *GetName(), *Holder->GetName());
 	
@@ -107,6 +117,16 @@ void APEWeaponBase::Use(AActor* Holder)
 	AttackStats.CollisionChannel = ECC_Visibility;
 
 	AttackComponent->ExcuteAttack(AttackStats);
+}
+
+void APEWeaponBase::DoSecondaryAction(AActor* Holder)
+{
+	
+}
+
+void APEWeaponBase::DoTertiaryAction(AActor* Holder)
+{	
+	
 }
 
 void APEWeaponBase::OnHand(AActor* NewOwner)

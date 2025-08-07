@@ -42,7 +42,13 @@ public:
 	void Release();
 
 	UFUNCTION(BlueprintCallable, Category = "Useable")
-	void Use(AActor* User);
+	void DoPrimaryAction(AActor* User);
+	
+	UFUNCTION(BlueprintCallable, Category = "Useable")
+	void DoSecondaryAction(AActor* User);
+	
+	UFUNCTION(BlueprintCallable, Category = "Useable")
+	void DoTertiaryAction(AActor* User);
 	
 	FORCEINLINE void SetOwner(AActor* NewOwner) { CurrentHolder = NewOwner; }
 };

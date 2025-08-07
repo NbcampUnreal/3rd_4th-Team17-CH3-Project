@@ -29,16 +29,11 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
 
-	/* Interact 관련 섹션 */
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
-	TObjectPtr<UPEInteractableComponent> InteractableComponent;
-	
-	/* IPEInteractable 인터페이스 선언 */
+	/* Mesh 관련 섹션 */
 public:
-	virtual void Interact(AActor* Interactor) override;
-	virtual bool IsInteractable() const override;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
+	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
+	
 	/* Weapon Stat 관련 섹션 */
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
@@ -54,7 +49,19 @@ protected:
 	TObjectPtr<AActor> WeaponOwnerActor; // 아이템을 소유한 액터
 	
 	bool bIsInHand;
+	
+	bool Reload();
 
+	/* Interact 관련 섹션 */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	TObjectPtr<UPEInteractableComponent> InteractableComponent;
+	
+	/* IPEInteractable 인터페이스 선언 */
+public:
+	virtual void Interact(AActor* Interactor) override;
+	virtual bool IsInteractable() const override;
+	
 	/* 퀵슬롯 관련 섹션 */
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
@@ -74,7 +81,9 @@ protected:
 
 	/* IPEUseable 인터페이스 선언 */
 public:
-	virtual void Use(AActor* Holder) override;
+	virtual void DoPrimaryAction(AActor* Holder) override;
+	virtual void DoSecondaryAction(AActor* Holder) override;
+	virtual void DoTertiaryAction(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
 	virtual UPEUseableComponent* GetUseableComponent() const override; // 사용 가능한 컴포넌트를 반환합니다
 

@@ -63,6 +63,6 @@ void UPEUseableItemManagerComponent::UseCurrentItem(AActor* Holder)
 {
 	if (CurrentItemComponent)
 	{
-		CurrentItemComponent->Use(Holder);
+		CurrentItemComponent->DoPrimaryAction(Holder);
 	}
 }
