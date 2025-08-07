@@ -16,6 +16,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "Characters/Hero/Components/PEInteractManagerComponent.h"
 #include "Characters/Hero/Components/PEInventoryManagerComponent.h"
+#include "Combat/Components/PEReceiveAttackComponent.h"
 #include "Items/Components/PEStorableItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 
@@ -54,6 +55,11 @@ AFPSTestBlockCharacter::AFPSTestBlockCharacter()
 
 	// Create Inventory Manager Component
 	InventoryManagerComponent = CreateDefaultSubobject<UPEInventoryManagerComponent>(TEXT("InventoryManagerComponent"));
+
+	// Receive Attack Component
+	ReceiveAttackComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveAttackComponent"));
+	ReceiveAttackComponent->SetHiddenInGame(false);
+	ReceiveAttackComponent->SetupAttachment(RootComponent);
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -261,4 +267,9 @@ void AFPSTestBlockCharacter::InventroyDropTest()
 	{
 		InventoryManagerComponent->ItemDropTest();
 	}
+}
+
+USceneComponent* AFPSTestBlockCharacter::GetAttackStartPoint() const
+{
+	return FirstPersonCameraComponent;
 }

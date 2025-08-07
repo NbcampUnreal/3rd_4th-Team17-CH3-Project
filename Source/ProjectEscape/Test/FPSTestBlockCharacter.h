@@ -6,9 +6,11 @@
 #include "GameFramework/Character.h"
 #include "Characters/Hero/Interface/PEQuickSlotHandler.h"
 #include "Characters/Hero/Interface/PEInteractManagerHandler.h"
+#include "Combat/Interface/PEAttackable.h"
 #include "Logging/LogMacros.h"
 #include "FPSTestBlockCharacter.generated.h"
 
+class UPEReceiveAttackComponent;
 class UPEInventoryManagerComponent;
 class UPEUseableItemManagerComponent;
 class UInputComponent;
@@ -23,7 +25,7 @@ struct FInputActionValue;
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
 UCLASS(config=Game)
-class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler
+class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler, public IPEAttackable
 {
 	GENERATED_BODY()
 
@@ -33,7 +35,7 @@ class AFPSTestBlockCharacter : public ACharacter, public IPEInteractManagerHandl
 
 	/** First person camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FirstPersonCameraComponent;
+	TObjectPtr<UCameraComponent> FirstPersonCameraComponent;
 
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -129,4 +131,12 @@ protected:
 	TObjectPtr<UPEInventoryManagerComponent> InventoryManagerComponent;
 
 	void InventroyDropTest(); // 인벤토리 드랍 테스트용 함수
+
+	/* Combat 관련 섹션 */
+public:
+	virtual USceneComponent* GetAttackStartPoint() const override;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
+	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
 };

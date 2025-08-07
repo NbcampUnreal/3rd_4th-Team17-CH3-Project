@@ -135,13 +135,12 @@ void UPEInventoryManagerComponent::UpdateCurrentItemCount()
 
 void UPEInventoryManagerComponent::ItemDropTest()
 {
-	//Todo: 마지막 아이템이 버려질 때, 아이템이 주울 수 있는 상태로 바뀌어야 함
-	//		RemoveItemFromInventory과 병합 필요 (해당 함수가 미완성)
+	//NOTE: Test용 코드
 	if (InventoryItems.Num() == 0)
 	{
 		UE_LOG(LogPE, Warning, TEXT("No items in inventory to drop!"));
 		return;
 	}
 	FGameplayTag Tag = InventoryItems.begin()->Key;
-	DropItemFromInventoryByTag(60, Tag);
+	DropItemFromInventoryByTag(1, Tag);
 }
