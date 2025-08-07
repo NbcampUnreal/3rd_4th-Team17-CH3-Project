@@ -8,6 +8,11 @@ APEPlayerState::APEPlayerState()
 
 void APEPlayerState::SetHealthPoint(float NewValue)
 {
+	if (FMath::IsNearlyEqual(NewValue, HealthPoint))
+	{
+		return;
+	}
+
 	HealthPoint = FMath::Clamp(NewValue, 0, MaxHealthPoint);
 	OnChangeHealthPoint.Broadcast(HealthPoint, MaxHealthPoint);
 
@@ -21,6 +26,11 @@ void APEPlayerState::SetMaxHealthPoint(float NewValue)
 {
 	if (NewValue > 0)
 	{
+		if (FMath::IsNearlyEqual(NewValue, MaxHealthPoint))
+		{
+			return;
+		}
+
 		MaxHealthPoint = NewValue;
 		SetHealthPoint(HealthPoint);
 	}
@@ -38,6 +48,11 @@ void APEPlayerState::ReduceHealthPoint(float Value)
 
 void APEPlayerState::SetStamina(float NewValue)
 {
+	if (FMath::IsNearlyEqual(NewValue, Stamina))
+	{
+		return;
+	}
+
 	Stamina = FMath::Clamp(NewValue, 0, MaxStamina);
 	OnChangeStamina.Broadcast(Stamina, MaxStamina);
 }
@@ -46,6 +61,11 @@ void APEPlayerState::SetMaxStamina(float NewValue)
 {
 	if (NewValue > 0)
 	{
+		if (FMath::IsNearlyEqual(NewValue, MaxStamina))
+		{
+			return;
+		}
+
 		MaxStamina = NewValue;
 		SetStamina(Stamina);
 	}
