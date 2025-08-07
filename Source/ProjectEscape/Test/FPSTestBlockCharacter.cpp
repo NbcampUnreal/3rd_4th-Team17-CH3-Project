@@ -93,13 +93,6 @@ void AFPSTestBlockCharacter::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AFPSTestBlockCharacter::Look);
 
-		// Interacting - InteractManagerComponent가 자체적으로 바인딩을 처리하므로 여기서는 InteractAction만 설정
-		if (InteractManagerComponent && InteractAction)
-		{
-			// InteractManagerComponent에 InteractAction 설정
-			InteractManagerComponent->SetInteractAction(InteractAction);
-		}
-
 		//Use
 		EnhancedInputComponent->BindAction(UseAction, ETriggerEvent::Triggered, this, &AFPSTestBlockCharacter::Use);
 

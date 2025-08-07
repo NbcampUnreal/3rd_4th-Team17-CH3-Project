@@ -2,7 +2,11 @@
 #include "GameFramework/Character.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Characters/Hero/PEHero.h"
+#include "Characters/Hero/Components/PEInteractManagerComponent.h"
+#include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Items/Components/PEUseableComponent.h"
 
 UPEHeroInputComponent::UPEHeroInputComponent()
 {
@@ -68,6 +72,10 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 			{
 				EIC->BindAction(ReloadInputAction, ETriggerEvent::Started, this, &ThisClass::OnInputReload);
 			}
+			if (InteractInputAction)
+			{
+				EIC->BindAction(InteractInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputInteract);
+			}
 			if (PrimayActionInputAction)
 			{
 				EIC->BindAction(PrimayActionInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputPrimaryActionTriggered);
@@ -113,7 +121,7 @@ void UPEHeroInputComponent::OnInputLook(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputStartSprint(const FInputActionValue& Value)
 {
-	// TODO: ½ºÅÂ¹Ì³Ê °ü·Ã ±â´É ±¸Çö...
+	// TODO: ï¿½ï¿½ï¿½Â¹Ì³ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½...
 	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
 	{
 		MovementComponent->MaxWalkSpeed = SprintSpeed;
@@ -180,6 +188,20 @@ void UPEHeroInputComponent::OnInputReload(const FInputActionValue& Value)
 #endif
 }
 
+void UPEHeroInputComponent::OnInputInteract(const FInputActionValue& Value)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Interact Triggered!!")));
+	}
+#endif
+	if (APEHero* Hero = Cast<APEHero>(GetOwnerCharacter()))
+	{
+		Hero->GetInteractManagerComponent()->TryInteract();
+	}
+}
+
 void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValue& Value)
 {
 #ifdef WITH_EDITOR
@@ -188,6 +210,10 @@ void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValu
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Primary Action Triggered!!")));
 	}
 #endif
+	if (APEHero* Hero = Cast<APEHero>(GetOwnerCharacter()))
+	{
+		Hero->Use();
+	}
 }
 
 void UPEHeroInputComponent::OnInputPrimaryActionCompleted(const FInputActionValue& Value)

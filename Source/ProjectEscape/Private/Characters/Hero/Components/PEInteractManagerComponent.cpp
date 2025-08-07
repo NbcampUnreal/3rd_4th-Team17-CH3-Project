@@ -16,7 +16,6 @@ UPEInteractManagerComponent::UPEInteractManagerComponent()
 	InteractionRange = 300.0f;
 	CurrentInteractable = nullptr;
 	OwnerPawn = nullptr;
-	InteractAction = nullptr;
 }
 
 void UPEInteractManagerComponent::BeginPlay()
@@ -30,9 +29,6 @@ void UPEInteractManagerComponent::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("PEInteractManagerComponent: Owner is not a Pawn!"));
 		return;
 	}
-
-	// 입력 바인딩 설정
-	SetupInputBindings();
 }
 
 void UPEInteractManagerComponent::TickComponent(float DeltaTime, ELevelTick TickType,
@@ -88,6 +84,7 @@ void UPEInteractManagerComponent::CheckAndSetForInteractable()
 	FRotator CameraRotation;
 	
 	// Pawn의 Control Rotation 사용 (화면 중앙 방향)
+	// NOTE: 액터 카메라가 아닌 Pawn의 특정 부분이 사용되는 것 같음 수정 필요
 	OwnerPawn->GetActorEyesViewPoint(CameraLocation, CameraRotation);
 	
 	// Ray 시작점과 끝점 계산
@@ -145,45 +142,6 @@ void UPEInteractManagerComponent::CheckAndSetForInteractable()
 		}
 		
 		CurrentInteractable = NewInteractable;
-	}
-}
-
-//Todo: 해당 코드를 없애고, 캐릭터가 상호작용 함수 자체를 호출하도록 변경
-void UPEInteractManagerComponent::SetupInputBindings()
-{
-	if (!OwnerPawn)
-	{
-		return;
-	}
-
-	// Enhanced Input Component 가져오기
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(OwnerPawn->InputComponent))
-	{
-		if (InteractAction)
-		{
-			// 상호작용 액션 바인딩
-			EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &UPEInteractManagerComponent::OnInteractPressed);
-			UE_LOG(LogTemp, Log, TEXT("PEInteractManagerComponent: Input bindings set up successfully"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("PEInteractManagerComponent: InteractAction is not set!"));
-		}
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("PEInteractManagerComponent: Enhanced Input Component not found!"));
-	}
-}
-
-void UPEInteractManagerComponent::SetInteractAction(UInputAction* NewInteractAction)
-{
-	InteractAction = NewInteractAction;
-	
-	// InteractAction이 설정된 후 입력 바인딩 재설정
-	if (OwnerPawn)
-	{
-		SetupInputBindings();
 	}
 }
 
