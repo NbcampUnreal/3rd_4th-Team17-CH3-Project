@@ -19,8 +19,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnClickBackMainMenu();
 
-	void ClearAllWidget();
 	void ShowMainMenu();
+	void ClearAllWidget();
 
 protected:
 	virtual void BeginPlay() override;
