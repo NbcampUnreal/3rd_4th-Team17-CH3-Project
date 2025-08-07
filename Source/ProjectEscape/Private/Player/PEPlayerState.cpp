@@ -10,10 +10,11 @@ APEPlayerState::APEPlayerState()
 void APEPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
-	APEPlayerController* PEPlayerController = Cast<APEPlayerController>(GetPlayerController());
-	OnChangeHealthPoint.AddUObject(PEPlayerController, &APEPlayerController::OnChangeHealthPoint);
-	OnChangeStamina.AddUObject(PEPlayerController, &APEPlayerController::OnChangeStamina);
-
+	if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(GetPlayerController()))
+	{
+		OnChangeHealthPoint.AddUObject(PEPlayerController, &APEPlayerController::OnChangeHealthPoint);
+		OnChangeStamina.AddUObject(PEPlayerController, &APEPlayerController::OnChangeStamina);
+	}
 }
 
 void APEPlayerState::SetHealthPoint(float NewValue)

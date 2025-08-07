@@ -9,6 +9,12 @@ void APEPlayerController::BeginPlay()
 	Super::BeginPlay();
 	ShowHUD();
 
+	if (APEPlayerState* PS = GetPlayerState<APEPlayerState>())
+	{
+		ChangeHealthBar(PS->GetHealthPoint(), PS->GetMaxHealthPoint());
+		ChangeStaminaBar(PS->GetStamina(), PS->GetMaxStamina());
+	}
+
 }
 
 void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
@@ -38,6 +44,7 @@ void APEPlayerController::PlayDamageAnimOfHUDWidget()
 
 void APEPlayerController::ChangeHealthBar(float HealthPoint, float MaxHealthPoint)
 {
+	if (MaxHealthPoint <= 0) return;
 	if (HUDWidget)
 	{
 		UProgressBar* HealthBar = Cast<UProgressBar>(HUDWidget->GetWidgetFromName(TEXT("HealthBar")));
@@ -52,6 +59,7 @@ void APEPlayerController::ChangeHealthBar(float HealthPoint, float MaxHealthPoin
 
 void APEPlayerController::ChangeStaminaBar(float Stamina, float MaxStamina)
 {
+	if (MaxStamina <= 0) return;
 	if (HUDWidget)
 	{
 		UProgressBar* StaminaBar = Cast<UProgressBar>(HUDWidget->GetWidgetFromName(TEXT("StaminaBar")));
