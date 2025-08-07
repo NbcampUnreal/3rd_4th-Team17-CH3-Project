@@ -15,9 +15,23 @@ void UPEHeroInputComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 	if (bIsSprint)
 	{
-		if (!CheckCanSprintAndCommitCost(DeltaTime))
+		if (!CheckCanSprintAndCommitSprint(DeltaTime))
 		{
 			StopSprint();
+		}
+	}
+	else
+	{
+		RecoverCostWhileNotSprinting(DeltaTime);
+	}
+
+	/*DEBUG*/
+	if (APEPlayerState* PlayerState = GetOwnerPlayerState<APEPlayerState>())
+	{
+		if (GEngine)
+		{
+			float Stamina = PlayerState->GetStamina();
+			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Blue, FString::Printf(TEXT("Stamina: %.2f"), Stamina));
 		}
 	}
 }
@@ -277,7 +291,7 @@ bool UPEHeroInputComponent::CheckCanStartSprint()
 	return false;
 }
 
-bool UPEHeroInputComponent::CheckCanSprintAndCommitCost(float DeltaTime)
+bool UPEHeroInputComponent::CheckCanSprintAndCommitSprint(float DeltaTime)
 {
 	if (APEPlayerState* PlayerState = GetOwnerPlayerState<APEPlayerState>())
 	{
@@ -288,6 +302,14 @@ bool UPEHeroInputComponent::CheckCanSprintAndCommitCost(float DeltaTime)
 		}
 	}
 	return false;
+}
+
+void UPEHeroInputComponent::RecoverCostWhileNotSprinting(float DeltaTime)
+{
+	if (APEPlayerState* PlayerState = GetOwnerPlayerState<APEPlayerState>())
+	{
+		PlayerState->RecoverStamina(DeltaTime);
+	}
 }
 
 void UPEHeroInputComponent::StartSprint()

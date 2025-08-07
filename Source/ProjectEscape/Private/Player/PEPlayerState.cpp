@@ -80,3 +80,9 @@ void APEPlayerState::CommitSprint(float DeltaTime)
 	ReduceStamina(CostToSprint);
 }
 
+void APEPlayerState::RecoverStamina(float DeltaTime)
+{
+	float RecoveredSprint = SprintRestorePerSecond * DeltaTime;
+	IncreaseStamina(RecoveredSprint);
+}
+

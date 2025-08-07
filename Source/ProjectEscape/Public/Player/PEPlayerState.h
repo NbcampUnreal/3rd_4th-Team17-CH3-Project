@@ -38,6 +38,7 @@ public:
 	bool CanStartSprint() const;
 	bool CanSprint(float DeltaTime) const;
 	void CommitSprint(float DeltaTime);
+	void RecoverStamina(float DeltaTime);
 
 protected:
 	/* Status */

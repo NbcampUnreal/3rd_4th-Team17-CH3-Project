@@ -96,7 +96,8 @@ protected:
 	UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputLocalPlayerSubsystem();
 
 	bool CheckCanStartSprint();
-	bool CheckCanSprintAndCommitCost(float DeltaTime);
+	bool CheckCanSprintAndCommitSprint(float DeltaTime);
+	void RecoverCostWhileNotSprinting(float DeltaTime);
 	void StartSprint();
 	void StopSprint();
 };
