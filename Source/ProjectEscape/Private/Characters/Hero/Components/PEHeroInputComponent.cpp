@@ -1,6 +1,10 @@
 #include "Characters/Hero/Components/PEHeroInputComponent.h"
 #include "Player/PEPlayerState.h"
 #include "EnhancedInputSubsystems.h"
+#include "Characters/Hero/PEHero.h"
+#include "Characters/Hero/Components/PEInteractManagerComponent.h"
+#include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
+#include "Items/Components/PEUseableComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
 
@@ -88,6 +92,10 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 			if (ReloadInputAction)
 			{
 				EIC->BindAction(ReloadInputAction, ETriggerEvent::Started, this, &ThisClass::OnInputReload);
+			}
+			if (InteractInputAction)
+			{
+				EIC->BindAction(InteractInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputInteract);
 			}
 			if (PrimayActionInputAction)
 			{
@@ -206,6 +214,20 @@ void UPEHeroInputComponent::OnInputReload(const FInputActionValue& Value)
 #endif
 }
 
+void UPEHeroInputComponent::OnInputInteract(const FInputActionValue& Value)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Interact Triggered!!")));
+	}
+#endif
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		Hero->GetInteractManagerComponent()->TryInteract();
+	}
+}
+
 void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValue& Value)
 {
 #ifdef WITH_EDITOR
@@ -214,6 +236,10 @@ void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValu
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Primary Action Triggered!!")));
 	}
 #endif
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		Hero->Use();
+	}
 }
 
 void UPEHeroInputComponent::OnInputPrimaryActionCompleted(const FInputActionValue& Value)

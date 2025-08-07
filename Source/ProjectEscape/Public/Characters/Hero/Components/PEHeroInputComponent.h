@@ -34,6 +34,7 @@ public:
 	void OnInputToggleCrouch(const FInputActionValue& Value);
 	void OnInputQuickSlotNumber(const FInputActionValue& Value, int32 SlotNumber);
 	void OnInputReload(const FInputActionValue& Value);
+	void OnInputInteract(const FInputActionValue& Value);
 	void OnInputPrimaryActionTriggered(const FInputActionValue& Value);
 	void OnInputPrimaryActionCompleted(const FInputActionValue& Value);
 	void OnInputSecondaryActionTriggered(const FInputActionValue& Value);
@@ -59,6 +60,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> ReloadInputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> InteractInputAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> PrimayActionInputAction;
