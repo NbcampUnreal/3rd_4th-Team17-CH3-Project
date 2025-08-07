@@ -8,7 +8,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "ProjectEscape/Public/PEEquipmentType.h"
+#include "Items/PEEquipmentType.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
 #include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
