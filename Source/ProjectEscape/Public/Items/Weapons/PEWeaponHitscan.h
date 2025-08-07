@@ -22,6 +22,5 @@ protected:
 
 	/* Hitscan 관련 섹션 */	
 public:
-	virtual void Use(AActor* Holder) override;
 	virtual UPEAttackBaseComponent* CreateAttackComponent() override;
 };
