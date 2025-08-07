@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameFramework/Character.h"
 #include "PEHeroInputComponent.generated.h"
 
 class UInputAction;
@@ -19,6 +20,7 @@ class PROJECTESCAPE_API UPEHeroInputComponent : public UActorComponent
 
 public:
 	UPEHeroInputComponent();
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void InputConfiguration();
 	void SetupEnhancedInput(UInputComponent* PlayerInputComponent);
@@ -76,8 +78,62 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Configuration")
 	bool bCanCrouch = true;
 
+	/* movement state control */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Input|MovementState")
+	bool bIsSprint = false;
+
 protected:
-	ACharacter* GetOwnerCharacter();
+	template<class T>
+	T* GetOwnerCharacter();
+
+	template<class T>
+	T* GetOwnerPlayerController();
+
+	template<class T>
+	T* GetOwnerPlayerState();
+
 	UCharacterMovementComponent* GetOwnerMovementComponent();
 	UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputLocalPlayerSubsystem();
+
+	bool CheckCanStartSprint();
+	bool CheckCanSprintAndCommitCost(float DeltaTime);
+	void StartSprint();
+	void StopSprint();
 };
+
+template<class T>
+T* UPEHeroInputComponent::GetOwnerCharacter()
+{
+	if (T* Hero = Cast<T>(GetOwner()))
+	{
+		return Hero;
+	}
+	return nullptr;
+}
+
+template<class T>
+T* UPEHeroInputComponent::GetOwnerPlayerController()
+{
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
+	{
+		if (T* PC = Cast<T>(Hero->GetController()))
+		{
+			return PC;
+		}
+	}
+	return nullptr;
+}
+
+template<class T>
+T* UPEHeroInputComponent::GetOwnerPlayerState()
+{
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
+	{
+		if (T* PS = Cast<T>(Hero->GetPlayerState()))
+		{
+			return PS;
+		}
+	}
+	return nullptr;
+}
+

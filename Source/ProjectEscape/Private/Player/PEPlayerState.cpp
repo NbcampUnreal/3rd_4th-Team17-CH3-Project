@@ -61,3 +61,22 @@ void APEPlayerState::ReduceStamina(float Value)
 	SetStamina(Stamina - Value);
 }
 
+bool APEPlayerState::CanStartSprint() const
+{
+	// Requires stamina to run for at least 0.1 seconds.
+	float MinimumCostToSprint = SprintCostPerSecond * 0.1f;
+	return (Stamina >= MinimumCostToSprint);
+}
+
+bool APEPlayerState::CanSprint(float DeltaTime) const
+{
+	float CostToSprint = SprintCostPerSecond * DeltaTime;
+	return (Stamina >= CostToSprint);
+}
+
+void APEPlayerState::CommitSprint(float DeltaTime)
+{
+	float CostToSprint = SprintCostPerSecond * DeltaTime;
+	ReduceStamina(CostToSprint);
+}
+
