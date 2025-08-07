@@ -1,9 +1,20 @@
-#include "Player/PEPlayerState.h"
+﻿#include "Player/PEPlayerState.h"
+#include "Player/PEPlayerController.h"
 
 APEPlayerState::APEPlayerState()
 {
 	HealthPoint = MaxHealthPoint;
 	Stamina = MaxStamina;
+}
+
+void APEPlayerState::BeginPlay()
+{
+	Super::BeginPlay();
+	if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(GetPlayerController()))
+	{
+		OnChangeHealthPoint.AddUObject(PEPlayerController, &APEPlayerController::OnChangeHealthPoint);
+		OnChangeStamina.AddUObject(PEPlayerController, &APEPlayerController::OnChangeStamina);
+	}
 }
 
 void APEPlayerState::SetHealthPoint(float NewValue)
@@ -106,3 +117,14 @@ void APEPlayerState::RecoverStamina(float DeltaTime)
 	IncreaseStamina(RecoveredSprint);
 }
 
+// Function For Test. TODO: Remove.
+void APEPlayerState::ReduceHealthPoint_FOR_TEST(float Value)
+{
+	ReduceHealthPoint(Value);
+}
+
+// Function For Test. TODO: Remove.
+void APEPlayerState::ReduceStamina_FOR_TEST(float Value)
+{
+	ReduceStamina(Value);
+}

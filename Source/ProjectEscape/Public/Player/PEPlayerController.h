@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
@@ -18,6 +18,17 @@ public:
 
 	void ShowHUD();
 	void ClearAllWidget();
+
+	UFUNCTION()
+	void OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint);
+
+	UFUNCTION()
+	void OnChangeStamina(float HealthPoint, float MaxHealthPoint);
+
+	void PlayDamageAnimOfHUDWidget();
+	void ChangeHealthBar(float HealthPoint, float MaxHealthPoint);
+	void ChangeStaminaBar(float Stamina, float MaxStamina);
+
 
 protected:
 	virtual void BeginPlay() override;

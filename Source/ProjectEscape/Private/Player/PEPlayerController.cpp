@@ -1,4 +1,6 @@
-#include "Player/PEPlayerController.h"
+﻿#include "Player/PEPlayerController.h"
+#include "Player\PEPlayerState.h"
+#include "Components\ProgressBar.h"
 #include "Blueprint/UserWidget.h"
 
 
@@ -6,6 +8,73 @@ void APEPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	ShowHUD();
+
+	if (APEPlayerState* PS = GetPlayerState<APEPlayerState>())
+	{
+		ChangeHealthBar(PS->GetHealthPoint(), PS->GetMaxHealthPoint());
+		ChangeStaminaBar(PS->GetStamina(), PS->GetMaxStamina());
+	}
+
+}
+
+void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
+{
+	PlayDamageAnimOfHUDWidget();
+	ChangeHealthBar(HealthPoint, MaxHealthPoint);
+}
+
+void APEPlayerController::OnChangeStamina(float Stamina, float MaxStamina)
+{
+	ChangeStaminaBar(Stamina,MaxStamina);
+
+}
+
+void APEPlayerController::PlayDamageAnimOfHUDWidget()
+{
+
+	if (HUDWidget)
+	{
+		UFunction* DamageFunc = HUDWidget->FindFunction(FName("PlayDamageAnim"));
+		if (DamageFunc)
+		{
+			HUDWidget->ProcessEvent(DamageFunc, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::ChangeHealthBar(float HealthPoint, float MaxHealthPoint)
+{
+	if (MaxHealthPoint <= 0)
+	{
+		return;
+	}
+	if (HUDWidget)
+	{
+		UProgressBar* HealthBar = Cast<UProgressBar>(HUDWidget->GetWidgetFromName(TEXT("HealthBar")));
+
+		if (HealthBar)
+		{
+			HealthBar->SetPercent(HealthPoint / MaxHealthPoint);
+			UE_LOG(LogTemp, Warning, TEXT("hp : %.f , %.f"), HealthPoint, MaxHealthPoint);
+		}
+	}
+}
+
+void APEPlayerController::ChangeStaminaBar(float Stamina, float MaxStamina)
+{
+	if (MaxStamina <= 0)
+	{
+		return;
+	}
+	if (HUDWidget)
+	{
+		UProgressBar* StaminaBar = Cast<UProgressBar>(HUDWidget->GetWidgetFromName(TEXT("StaminaBar")));
+
+		if (StaminaBar)
+		{
+			StaminaBar->SetPercent(Stamina / MaxStamina);
+		}
+	}
 }
 
 void APEPlayerController::ShowHUD()
