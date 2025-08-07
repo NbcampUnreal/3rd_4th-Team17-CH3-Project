@@ -12,6 +12,7 @@ void APEPlayerState::BeginPlay()
 	Super::BeginPlay();
 	APEPlayerController* PEPlayerController = Cast<APEPlayerController>(GetPlayerController());
 	OnChangeHealthPoint.AddUObject(PEPlayerController, &APEPlayerController::OnChangeHealthPoint);
+	OnChangeStamina.AddUObject(PEPlayerController, &APEPlayerController::OnChangeStamina);
 
 }
 

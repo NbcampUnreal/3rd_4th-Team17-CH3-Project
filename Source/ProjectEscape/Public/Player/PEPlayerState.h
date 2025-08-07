@@ -26,16 +26,17 @@ public:
 	float GetStamina() const { return Stamina; }
 	float GetMaxStamina() const { return MaxStamina; }
 
-	UFUNCTION(BlueprintCallable)
-	void SetHealthPoint(float NewValue);
 
+	void SetHealthPoint(float NewValue);
 	void SetMaxHealthPoint(float NewValue);
 	void IncreaseHealthPoint(float Value);
+	UFUNCTION(BlueprintCallable)
 	void ReduceHealthPoint(float Value);
 
 	void SetStamina(float NewValue);
 	void SetMaxStamina(float NewValue);
 	void IncreaseStamina(float Value);
+	UFUNCTION(BlueprintCallable)
 	void ReduceStamina(float Value);
 
 protected:

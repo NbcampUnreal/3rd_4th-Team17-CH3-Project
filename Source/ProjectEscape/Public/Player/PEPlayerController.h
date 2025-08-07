@@ -25,6 +25,11 @@ public:
 	UFUNCTION()
 	void OnChangeStamina(float HealthPoint, float MaxHealthPoint);
 
+	void PlayDamageAnimOfHUDWidget();
+	void ChangeHealthBar(float HealthPoint, float MaxHealthPoint);
+	void ChangeStaminaBar(float Stamina, float MaxStamina);
+
+
 protected:
 	virtual void BeginPlay() override;
 
