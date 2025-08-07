@@ -13,19 +13,25 @@ UPEHeroInputComponent::UPEHeroInputComponent()
 
 void UPEHeroInputComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
-	if (bIsSprint)
+	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
 	{
-		if (!CheckCanSprintAndCommitSprint(DeltaTime))
+		bool isMoving = !FMath::IsNearlyZero(MovementComponent->Velocity.Length());
+		if (bIsSprint && isMoving)
 		{
-			StopSprint();
+			if (!CheckCanSprintAndCommitSprint(DeltaTime))
+			{
+				StopSprint();
+			}
+		}
+		else
+		{
+			RecoverCostWhileNotSprinting(DeltaTime);
 		}
 	}
-	else
-	{
-		RecoverCostWhileNotSprinting(DeltaTime);
-	}
 
+#ifdef WITH_EDITOR
 	/*DEBUG*/
+	// TODO: This code should be removed after the integration with the UI Stamina Bar is completed
 	if (APEPlayerState* PlayerState = GetOwnerPlayerState<APEPlayerState>())
 	{
 		if (GEngine)
@@ -34,6 +40,7 @@ void UPEHeroInputComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Blue, FString::Printf(TEXT("Stamina: %.2f"), Stamina));
 		}
 	}
+#endif
 }
 
 void UPEHeroInputComponent::InputConfiguration()
