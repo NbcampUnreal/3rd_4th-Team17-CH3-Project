@@ -3,7 +3,7 @@
 
 #include "Items/Weapons/PEWeaponBase.h"
 
-#include "PEEquipmentType.h"
+#include "Items/PEEquipmentType.h"
 #include "Combat/Components/PEAttackBaseComponent.h"
 #include "Core/PELogChannels.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
