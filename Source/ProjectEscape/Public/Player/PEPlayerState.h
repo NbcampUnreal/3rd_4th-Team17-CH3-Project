@@ -35,6 +35,12 @@ public:
 	void SetMaxStamina(float NewValue);
 	void IncreaseStamina(float Value);
 	void ReduceStamina(float Value);
+	
+	/* Secandary Operations */
+	bool CanStartSprint() const;
+	bool CanSprint(float DeltaTime) const;
+	void CommitSprint(float DeltaTime);
+	void RecoverStamina(float DeltaTime);
 
 	// Function For Test. TODO: Remove.
 	UFUNCTION(BlueprintCallable)
@@ -46,15 +52,22 @@ public:
 
 protected:
 	/* Status */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Status")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status")
 	float MaxHealthPoint = 100;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Status")
+	UPROPERTY(BlueprintReadOnly, Category = "Status")
 	float HealthPoint;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Status")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status")
 	float MaxStamina = 100;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Status")
+	UPROPERTY(BlueprintReadOnly, Category = "Status")
 	float Stamina;
+
+	/* Configuration */
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status|Cost")
+	float SprintCostPerSecond = 20;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Status|Cost")
+	float SprintRestorePerSecond = 20;
 };

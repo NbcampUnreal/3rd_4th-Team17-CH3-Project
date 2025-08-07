@@ -3,7 +3,7 @@
 
 #include "Items/Components/PEQuickSlotItemComponent.h"
 
-#include "PEEquipmentType.h"
+#include "Items/PEEquipmentType.h"
 #include "Core/PELogChannels.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 
