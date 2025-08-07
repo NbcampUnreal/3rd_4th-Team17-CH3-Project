@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
@@ -19,6 +19,12 @@ public:
 	void ShowHUD();
 	void ClearAllWidget();
 
+	UFUNCTION()
+	void OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint);
+
+	UFUNCTION()
+	void OnChangeStamina(float HealthPoint, float MaxHealthPoint);
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -27,6 +33,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
 	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
+
+
 
 	UUserWidget* HUDWidget;
 	UUserWidget* PauseMenuWidget;

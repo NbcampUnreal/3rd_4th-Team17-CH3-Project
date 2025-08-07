@@ -1,4 +1,5 @@
-#include "Player/PEPlayerController.h"
+﻿#include "Player/PEPlayerController.h"
+#include "Player\PEPlayerState.h"
 #include "Blueprint/UserWidget.h"
 
 
@@ -6,6 +7,22 @@ void APEPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	ShowHUD();
+
+	if (APEPlayerState* PEPlayerState = GetPlayerState<APEPlayerState>())
+	{
+
+	}
+
+}
+
+void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
+{
+
+}
+
+void APEPlayerController::OnChangeStamina(float HealthPoint, float MaxHealthPoint)
+{
+
 }
 
 void APEPlayerController::ShowHUD()

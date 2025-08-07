@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerState.h"
@@ -14,6 +14,8 @@ class PROJECTESCAPE_API APEPlayerState : public APlayerState
 public:
 	APEPlayerState();
 
+	virtual void BeginPlay() override;
+
 	/* Status Delegates, Getters, Setters */
 	FOnFloatStatusChanged OnChangeHealthPoint;
 	FOnFloatStatusChanged OnChangeStamina;
@@ -24,7 +26,9 @@ public:
 	float GetStamina() const { return Stamina; }
 	float GetMaxStamina() const { return MaxStamina; }
 
+	UFUNCTION(BlueprintCallable)
 	void SetHealthPoint(float NewValue);
+
 	void SetMaxHealthPoint(float NewValue);
 	void IncreaseHealthPoint(float Value);
 	void ReduceHealthPoint(float Value);
