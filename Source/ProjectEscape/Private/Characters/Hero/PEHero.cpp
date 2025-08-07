@@ -34,4 +34,3 @@ void APEHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		HeroInputComponent->SetupEnhancedInput(PlayerInputComponent);
 	}
 }
-

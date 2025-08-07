@@ -8,5 +8,26 @@ UCLASS()
 class PROJECTESCAPE_API APEPlayerController : public APlayerController
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void PauseGameAndShowPauseMenu();
+
+	UFUNCTION(BlueprintCallable)
+	void OnClickResume();
+
+	void ShowHUD();
+	void ClearAllWidget();
+
+protected:
+	virtual void BeginPlay() override;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
+	TSubclassOf<UUserWidget> HUDWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
+	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
+
+	UUserWidget* HUDWidget;
+	UUserWidget* PauseMenuWidget;
 };
