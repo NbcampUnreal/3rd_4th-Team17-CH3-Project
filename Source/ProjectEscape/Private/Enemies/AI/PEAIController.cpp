@@ -2,8 +2,8 @@
 
 
 #include "Enemies/AI/PEAIController.h"
-#include "NavigationSystem.h"
 #include "Enemies/AI/PEAICharacter.h"
+#include "NavigationSystem.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
 #include "Kismet/GameplayStatics.h"
@@ -42,6 +42,8 @@ void APEAIController::BeginPlay()
 	{
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), false); // 블랙보드 값 초기화
 		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), false);
+
+		StartBehaviorTree();
 	}
 	else
 	{
@@ -54,16 +56,24 @@ void APEAIController::BeginPlay()
 		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &APEAIController::OnPerceptionUpdated);
 	}
 	
-	GetWorld()->GetTimerManager().SetTimer(RandomMoveTimer, this, &APEAIController::MoveToRandomLocation, PatrolCycle, true);
+	//GetWorld()->GetTimerManager().SetTimer(RandomMoveTimer, this, &APEAIController::MoveToRandomLocation, PatrolCycle, true);
 }
 
 void APEAIController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	if (GetWorld())
+}
+
+void APEAIController::StartBehaviorTree()
+{
+	if (BehaviorTreeAsset)
 	{
-		GetWorld()->GetTimerManager().ClearTimer(RandomMoveTimer);
+		RunBehaviorTree(BehaviorTreeAsset);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Behavior Tree Component is not set."));
 	}
 }
 
@@ -81,39 +91,6 @@ void APEAIController::OnPossess(APawn* InPawn)
 	}
 }
 
-void APEAIController::MoveToRandomLocation()
-{
-	APawn* MyPawn = GetPawn();
-
-	if (!MyPawn)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("AIController has no pawn to move."));
-		return;
-	}
-
-	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
-	if (!NavSystem)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Navigation system not found."));
-		return;
-	}
-
-	FNavLocation RandomLocation; // Variable to hold the random navigable location
-
-	bool bFoundLocation = NavSystem->GetRandomPointInNavigableRadius(MyPawn->GetActorLocation(), MoveRadius, RandomLocation);
-
-	if (bFoundLocation)
-	{
-		// Move the AI pawn to the random location
-		MoveToLocation(RandomLocation.Location);
-		UE_LOG(LogTemp, Warning, TEXT("AIController moving to random location: %s"), *RandomLocation.Location.ToString());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Failed to find a random navigable location within radius: %f"), MoveRadius);
-	}
-}
-
 void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
 	APawn* PlayerPawn = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
@@ -124,7 +101,16 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 
 	APawn* MyPawn = GetPawn();
 	if (!MyPawn) return;
+
 	FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
+
+	FVector LastKnownLocation = Actor->GetActorLocation();
+
+	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+	FNavLocation ProjectedLocation;
+	if (NavSys && NavSys->ProjectPointToNavigation(LastKnownLocation, ProjectedLocation)) {
+		LastKnownLocation = ProjectedLocation.Location;
+	}
 
 	if (Stimulus.WasSuccessfullySensed())
 	{
@@ -138,9 +124,10 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor); // 블랙보드에 타겟 액터 설정
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), true);
-		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnowLocation"), Actor->GetActorLocation());
+		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), LastKnownLocation);
+		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), false);
+		GetWorld()->GetTimerManager().ClearTimer(InvestigateTimerHandle);
 
-		StartChasing(Actor);
 	}
 	else
 	{
@@ -153,58 +140,23 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 			true);
 	
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), false);
-		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), false);
+		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), true);
+		BlackboardComp->SetValueAsVector(TEXT("TargetLastKnownLocation"), LastKnownLocation);
 
-		StopChasing();
+		GetWorld()->GetTimerManager().SetTimer(
+			InvestigateTimerHandle,
+			this,
+			&APEAIController::EndInvestigating,
+			InvestigateDuration,  // 예: 3.0f
+			false);
+			
+
 	}
 }
 
-void APEAIController::StartChasing(AActor* Target)
+void APEAIController::EndInvestigating()
 {
-	if (bIsChasing && CurrentTarget == Target)
-	{
-		return;
-	}
-	bIsChasing = true;
-	CurrentTarget = Target;
-
-	GetWorldTimerManager().ClearTimer(RandomMoveTimer); // 기존 순회(패트롤) 타이머 정리
-	
-	if(APEAICharacter* AICharacter = Cast<APEAICharacter>(GetPawn()))
-	{
-		AICharacter->SetMovementSpeed(AICharacter->RunSpeed); // 추적 중이면 RunSpeed로 이동 속도 설정
-	}
-
-	UpdateChase();
-
-	GetWorldTimerManager().SetTimer(ChaseTimer, this, &APEAIController::UpdateChase, 0.25f, true); // 주기적으로 플레이어 추적 경로 갱신
-
-}
-
-void APEAIController::UpdateChase()
-{
-	if (!bIsChasing || !CurrentTarget)
-	{
-		return;
-	}
-	// 현재 타겟 위치로 이동
-	MoveToActor(CurrentTarget, ChaseDistance);
-}
-
-void APEAIController::StopChasing()
-{
-	if (!bIsChasing)
-	{
-		return; // 추적 중이 아닌 경우
-	}
-	bIsChasing = false;
-	CurrentTarget = nullptr;
-	GetWorldTimerManager().ClearTimer(ChaseTimer); // 추적 타이머 정리
-	StopMovement(); // AI의 이동 중지
-
-	if (APEAICharacter* AICharacter = Cast<APEAICharacter>(GetPawn()))
-	{
-		AICharacter->SetMovementSpeed(AICharacter->WalkSpeed); // 순회(패트롤) 속도로 되돌리기
-	}
-	GetWorldTimerManager().SetTimer(RandomMoveTimer, this, &APEAIController::MoveToRandomLocation, PatrolCycle, true, PatrolRepeatTime); // 순회(패트롤) 타이머 재설정
+	BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), false);
+	BlackboardComp->ClearValue(TEXT("TargetActor"));
+	BlackboardComp->ClearValue(TEXT("TargetLastKnownLocation"));
 }

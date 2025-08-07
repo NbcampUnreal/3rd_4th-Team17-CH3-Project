@@ -23,6 +23,9 @@ public:
 		return BlackboardComp;
 	}
 
+	void StartBehaviorTree();
+	void EndInvestigating();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
 	float SightRadius = 1500.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
@@ -32,15 +35,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
 	float SightDuration = 5.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
-	float PatrolCycle = 3.0f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Patrol")
-	float PatrolRepeatTime = 2.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	float InvestigateDuration = 5.0f; // 플레이어를 놓쳤을 때 조사하는 시간
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Chase")
-	float ChaseDistance = 100.0f; // 추적 완료처리되는 플레이어와의 거리
+	FTimerHandle InvestigateTimerHandle; // 조사 타이머 핸들
 
 protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	class UBehaviorTree* BehaviorTreeAsset;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
 	UAIPerceptionComponent* AIPerception;
 
@@ -58,20 +61,8 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
-	void MoveToRandomLocation();
-
-	FTimerHandle RandomMoveTimer;
-
-	UPROPERTY(EditAnywhere, Category = "AI")
-	float MoveRadius = 1000.0f;
 
 	UPROPERTY()
 	AActor* CurrentTarget = nullptr;
 
-	bool bIsChasing = false;
-	FTimerHandle ChaseTimer;
-
-	void StartChasing(AActor* Target);
-	void StopChasing();
-	void UpdateChase();
 };

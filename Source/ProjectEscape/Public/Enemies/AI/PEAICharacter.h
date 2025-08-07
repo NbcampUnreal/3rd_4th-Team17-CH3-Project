@@ -2,7 +2,10 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Enemies/AI/PEAIController.h"
 #include "PEAICharacter.generated.h"
+
+class APEAIController;
 
 UCLASS()
 class PROJECTESCAPE_API APEAICharacter : public ACharacter
@@ -11,6 +14,10 @@ class PROJECTESCAPE_API APEAICharacter : public ACharacter
 
 public:
 	APEAICharacter();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
+	TSubclassOf<APEAIController> AIControllerClassBP = nullptr;
+
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float WalkSpeed = 300.0f;
