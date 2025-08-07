@@ -30,12 +30,16 @@ public:
 	void SetHealthPoint(float NewValue);
 	void SetMaxHealthPoint(float NewValue);
 	void IncreaseHealthPoint(float Value);
+
+	//테스트용
 	UFUNCTION(BlueprintCallable)
 	void ReduceHealthPoint(float Value);
 
 	void SetStamina(float NewValue);
 	void SetMaxStamina(float NewValue);
 	void IncreaseStamina(float Value);
+
+	//테스트용
 	UFUNCTION(BlueprintCallable)
 	void ReduceStamina(float Value);
 
