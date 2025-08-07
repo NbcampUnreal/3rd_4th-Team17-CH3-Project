@@ -7,7 +7,6 @@
 #include "PEUITestPlayerController.generated.h"
 
 class UUserWidget;
-class UProgressBar;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnDamageTaken, float, DCCurrentHealth, float, DCMaxHealth);
 
@@ -46,8 +45,6 @@ protected:
 	float MaxHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Health")
 	float Health;
-	UPROPERTY()
-	UProgressBar* HealthBar;
 
 	UPROPERTY(BlueprintAssignable, Category = "Event")
 	FOnDamageTaken OnDamage;

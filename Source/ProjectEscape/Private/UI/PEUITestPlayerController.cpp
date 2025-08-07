@@ -184,7 +184,7 @@ float APEUITestPlayerController::TakeDamage(float DamageAmount, FDamageEvent con
 	return DamageAmount;
 }
 // 테스트용 이게 실제로 잘 적용될지는 모르겠음. 
-void APEUITestPlayerController::HandleHealthChanged(float DCCurrentHealth, float DCMaxHealth)
+void APEUITestPlayerController::HandleHealthChanged(float NewCurrentHealth, float NewMaxHealth)
 {
 	if (HUDWidget)
 	{
@@ -196,13 +196,11 @@ void APEUITestPlayerController::HandleHealthChanged(float DCCurrentHealth, float
 	}
 	if (HUDWidget)
 	{
-		if (!HealthBar)
-		{
-			HealthBar = Cast<UProgressBar>(HUDWidget->GetWidgetFromName(TEXT("HealthBar")));
-		}
+		UProgressBar* HealthBar = Cast<UProgressBar>(HUDWidget->GetWidgetFromName(TEXT("HealthBar")));
+
 		if (HealthBar)
 		{
-			HealthBar->SetPercent(DCCurrentHealth / DCMaxHealth);
+			HealthBar->SetPercent(NewCurrentHealth / NewMaxHealth);
 		}
 	}
 }
