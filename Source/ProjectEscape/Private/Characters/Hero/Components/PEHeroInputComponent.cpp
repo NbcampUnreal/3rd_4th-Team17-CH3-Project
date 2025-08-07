@@ -28,19 +28,6 @@ void UPEHeroInputComponent::TickComponent(float DeltaTime, ELevelTick TickType, 
 			RecoverCostWhileNotSprinting(DeltaTime);
 		}
 	}
-
-#ifdef WITH_EDITOR
-	/*DEBUG*/
-	// TODO: This code should be removed after the integration with the UI Stamina Bar is completed
-	if (APEPlayerState* PlayerState = GetOwnerPlayerState<APEPlayerState>())
-	{
-		if (GEngine)
-		{
-			float Stamina = PlayerState->GetStamina();
-			GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Blue, FString::Printf(TEXT("Stamina: %.2f"), Stamina));
-		}
-	}
-#endif
 }
 
 void UPEHeroInputComponent::InputConfiguration()
