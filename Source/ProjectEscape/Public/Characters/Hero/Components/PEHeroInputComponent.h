@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
@@ -39,6 +39,7 @@ public:
 	void OnInputPrimaryActionCompleted(const FInputActionValue& Value);
 	void OnInputSecondaryActionTriggered(const FInputActionValue& Value);
 	void OnInputSecondaryActionCompleted(const FInputActionValue& Value);
+	void OnInputOpenPauseMenu(const FInputActionValue& Value);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> MoveInputAction;
@@ -69,6 +70,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> SecondaryActionInputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> OpenPauseMenuAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Mapping")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;

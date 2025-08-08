@@ -1,9 +1,10 @@
-#include "Characters/Hero/Components/PEHeroInputComponent.h"
+﻿#include "Characters/Hero/Components/PEHeroInputComponent.h"
 #include "Player/PEPlayerState.h"
 #include "EnhancedInputSubsystems.h"
 #include "Characters/Hero/PEHero.h"
 #include "Characters/Hero/Components/PEInteractManagerComponent.h"
 #include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
+#include "Player/PEPlayerController.h"
 #include "Items/Components/PEUseableComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
@@ -106,6 +107,10 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 			{
 				EIC->BindAction(SecondaryActionInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputSecondaryActionTriggered);
 				EIC->BindAction(SecondaryActionInputAction, ETriggerEvent::Completed, this, &ThisClass::OnInputSecondaryActionCompleted);
+			}
+			if (OpenPauseMenuAction)
+			{
+				EIC->BindAction(OpenPauseMenuAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputOpenPauseMenu);
 			}
 		}
 		
@@ -270,6 +275,17 @@ void UPEHeroInputComponent::OnInputSecondaryActionCompleted(const FInputActionVa
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Black, FString::Printf(TEXT("On Input Secondary Action Complete...")));
 	}
 #endif
+}
+
+void UPEHeroInputComponent::OnInputOpenPauseMenu(const FInputActionValue& Value)
+{
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
+	{
+		if (APEPlayerController* PC = GetOwnerPlayerController<APEPlayerController>())
+		{
+			PC->PauseGameAndShowPauseMenu();
+		}
+	}
 }
 
 UCharacterMovementComponent* UPEHeroInputComponent::GetOwnerMovementComponent()
