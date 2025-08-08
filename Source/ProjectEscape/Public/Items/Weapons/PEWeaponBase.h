@@ -49,6 +49,7 @@ protected:
 	TObjectPtr<AActor> WeaponOwnerActor; // 아이템을 소유한 액터
 	
 	bool bIsInHand;
+	int32 CurrentAmmoCount;
 	
 	bool Reload();
 

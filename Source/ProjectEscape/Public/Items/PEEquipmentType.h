@@ -18,9 +18,11 @@ class PROJECTESCAPE_API UPEEquipmentType : public UObject
 UENUM(BlueprintType)
 enum class EPEEquipmentType : uint8
 {
-	None			UMETA(DisplayName = "None"),
-	Primary			UMETA(DisplayName = "Primary Weapon"),
-	Secondary		UMETA(DisplayName = "Secondary Weapon"),
-	Melee			UMETA(DisplayName = "Melee Weapon"),
-	Throwable		UMETA(DisplayName = "Throwable Weapon")
+	None		= 0	UMETA(DisplayName = "None"),
+	Primary		= 1	UMETA(DisplayName = "Primary Weapon"),
+	Secondary	= 2	UMETA(DisplayName = "Secondary Weapon"),
+	Melee		= 3	UMETA(DisplayName = "Melee Weapon"),
+	Throwable	= 4	UMETA(DisplayName = "Throwable Weapon"),
+
+	MAX				UMETA(Hidden)
 };

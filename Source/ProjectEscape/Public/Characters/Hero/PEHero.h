@@ -50,15 +50,17 @@ protected:
 	TObjectPtr<UPEUseableItemManagerComponent> UseableItemManagerComponent;
 
 public:
-	virtual void Use();
+	virtual void DoPrimaryAction();
+	virtual void DoSecondaryAction();
+	virtual void DoTertiaryAction();
 	
 	/* Quick Slot 관련 섹션 */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEQuickSlotManagerComponent> QuickSlotManagerComponent;
-	
-	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 
+public:
+	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 	
 	/* Inventroy 관련 섹션 */
 protected:

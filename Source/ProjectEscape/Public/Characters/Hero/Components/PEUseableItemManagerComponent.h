@@ -43,5 +43,7 @@ public:
 	void SetHandItem(UPEUseableComponent* NewItemComponent);
 	UPEUseableComponent* GetCurrentItem() const;
 	void ReleaseHandItem();
-	void UseCurrentItem(AActor* Holder);
+	void DoPrimaryActionCurrentItem(AActor* Holder);
+	void DoSecondaryActionCurrentItem(AActor* Holder);
+	void DoTertiaryActionCurrentItem(AActor* Holder);
 };

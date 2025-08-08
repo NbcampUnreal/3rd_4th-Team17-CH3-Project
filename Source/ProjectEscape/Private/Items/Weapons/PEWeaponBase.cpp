@@ -32,6 +32,7 @@ APEWeaponBase::APEWeaponBase()
 
 	bIsInHand = false;
 	LastAttackTime = 0.0f;
+	CurrentAmmoCount = 1000; // 테스트용으로 1000발 초기화
 }
 
 void APEWeaponBase::BeginPlay()
@@ -93,12 +94,16 @@ void APEWeaponBase::Interact(AActor* Interactor)
 void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Use called on %s by %s"), *GetName(), *Holder->GetName());
+	if (CurrentAmmoCount <= 0)
+	{
+		return; // 탄약이 없으면 발사 불가
+	}
 	
 	// FireRate 체크 (RPM을 초당 발사 횟수로 변환)
 	if (WeaponStats.FireRate > 0.0f)
 	{
 		float CurrentTime = GetWorld()->GetTimeSeconds();
-		float TimeBetweenShots = 60.0f / WeaponStats.FireRate; // RPM을 초 단위 간격으로 변환
+		float TimeBetweenShots = 60.0f / WeaponStats.FireRate;
 		
 		if (CurrentTime - LastAttackTime < TimeBetweenShots)
 		{
@@ -110,13 +115,20 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 		
 		LastAttackTime = CurrentTime;
 	}
-	
+
 	FPEAttackStats AttackStats;
 	AttackStats.AttackRange = WeaponStats.Range;
 	AttackStats.DamageAmount = WeaponStats.Damage;
+	AttackStats.AttackRadius = WeaponStats.Spread;
 	AttackStats.CollisionChannel = ECC_Visibility;
 
-	AttackComponent->ExcuteAttack(AttackStats);
+	// 1회 발사 시 몇 개의 탄환을 발사할지 설정 (e.g. 산탄총은 12개의 펠릿이 발사됌)
+	for (size_t i = 0; i < WeaponStats.BulletsPerShot; ++i)
+	{
+		AttackComponent->ExcuteAttack(AttackStats);
+	}
+
+	CurrentAmmoCount--;
 }
 
 void APEWeaponBase::DoSecondaryAction(AActor* Holder)

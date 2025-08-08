@@ -111,13 +111,38 @@ UPEInteractManagerComponent* APEHero::GetInteractManagerComponent() const
 	return InteractManagerComponent; 
 }
 
-void APEHero::Use()
+void APEHero::DoPrimaryAction()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Use called"));
 	if (UseableItemManagerComponent)
 	{
-		UseableItemManagerComponent->UseCurrentItem(this);
-		UE_LOG(LogTemp, Warning, TEXT("Use called with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
+		UseableItemManagerComponent->DoPrimaryActionCurrentItem(this);
+		UE_LOG(LogTemp, Warning, TEXT("Primary Action with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UseableComponent is not initialized!"));
+	}
+}
+
+void APEHero::DoSecondaryAction()
+{
+	if (UseableItemManagerComponent)
+	{
+		UseableItemManagerComponent->DoSecondaryActionCurrentItem(this);
+		UE_LOG(LogTemp, Warning, TEXT("Secondary Action called with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UseableComponent is not initialized!"));
+	}
+}
+
+void APEHero::DoTertiaryAction()
+{
+	if (UseableItemManagerComponent)
+	{
+		UseableItemManagerComponent->DoTertiaryActionCurrentItem(this);
+		UE_LOG(LogTemp, Warning, TEXT("Tertiary Action called with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
 	{
@@ -160,7 +185,6 @@ void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 		UE_LOG(LogTemp, Warning, TEXT("No equipment found for type: %d"), static_cast<int32>(EquipmentType));
 	}
 }
-
 
 void APEHero::InventroyDropTest()
 {

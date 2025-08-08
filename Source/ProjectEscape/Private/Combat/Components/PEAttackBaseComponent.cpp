@@ -26,7 +26,9 @@ bool UPEAttackBaseComponent::ExcuteAttack(const FPEAttackStats& AttackStats)
 
 	const FVector& StartLocation = AttackStartPoint->GetComponentLocation();
 	const FRotator& StartRotation = AttackStartPoint->GetComponentRotation();
-	const FVector& Direction = StartRotation.Vector();
+	FVector Direction = StartRotation.Vector();
+
+	Direction = ApplyAccuracyDeviation(Direction, AttackStats.AttackRadius);
 
 	PerformAttack(AttackStats, StartLocation, Direction);
 	return true;
@@ -34,7 +36,9 @@ bool UPEAttackBaseComponent::ExcuteAttack(const FPEAttackStats& AttackStats)
 
 bool UPEAttackBaseComponent::ExcuteAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
-	PerformAttack(AttackStats, StartLocation, Direction);
+	FVector FinalDirection = ApplyAccuracyDeviation(Direction, AttackStats.AttackRadius);
+
+	PerformAttack(AttackStats, StartLocation, FinalDirection);
 	return true;
 }
 
@@ -56,4 +60,19 @@ void UPEAttackBaseComponent::PerformAttack(const FPEAttackStats& AttackStats, co
 	UE_LOG(LogPE, Warning, TEXT("PEAttackComponentBase::PerformAttack: This function should be overridden in derived classes."));
 }
 
+FVector UPEAttackBaseComponent::ApplyAccuracyDeviation(const FVector& OriginalDirection, float AccuracyRadius) const
+{
+	if (AccuracyRadius <= 0.0f)
+	{
+		return OriginalDirection;
+	}
 
+	const float RandomPitch = FMath::RandRange(-AccuracyRadius, AccuracyRadius);
+	const float RandomYaw = FMath::RandRange(-AccuracyRadius, AccuracyRadius);
+	
+	const FRotator DirectionRotator = OriginalDirection.Rotation();
+	const FRotator RandomOffset(RandomPitch, RandomYaw, 0.0f);
+	const FRotator FinalRotation = DirectionRotator + RandomOffset;
+	
+	return FinalRotation.Vector();
+}
