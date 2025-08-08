@@ -44,15 +44,6 @@ void APEAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (AIControllerClassBP == nullptr)
-	{
-		AIControllerClass = APEAIController::StaticClass();
-	}
-	else
-	{
-		AIControllerClass = AIControllerClassBP;
-	}
-
 	UE_LOG(LogTemp, Warning, TEXT("AICharacter has been spawned"));
 }
 

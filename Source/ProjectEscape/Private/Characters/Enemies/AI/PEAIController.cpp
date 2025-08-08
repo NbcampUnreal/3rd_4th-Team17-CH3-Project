@@ -117,7 +117,7 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 	#ifdef WITH_EDITOR
 		FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
 		DrawDebugString(GetWorld(),
-			DisplayLocation + FVector(0, 0, 100), // 100 만큼 더하고 다시 더하는 이유가 뭘까요
+			DisplayLocation,
 			FString::Printf(TEXT("발견: %s"), *Actor->GetName()),
 			nullptr,
 			FColor::Green,
@@ -137,7 +137,7 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 	#ifdef WITH_EDITOR
 		FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
 		DrawDebugString(GetWorld(),
-			DisplayLocation + FVector(0, 0, 100), // 100 만큼 더하고 다시 더하는 이유가 뭘까요
+			DisplayLocation + FVector(0, 0, 100),
 			FString::Printf(TEXT("놓침: %s"), *Actor->GetName()),
 			nullptr,
 			FColor::Red,
