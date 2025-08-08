@@ -14,7 +14,7 @@ struct PROJECTESCAPE_API FPEAttackStats
 
 	float DamageAmount = 10.0f; 
 	float AttackRange = 1000.0f;
-	float AttackRadius = 0.0f;
+	float SpreadAngle = 0.0f;
 	ECollisionChannel CollisionChannel = ECC_Pawn;
 };
 
@@ -47,7 +47,7 @@ public:
 	void SetAttackStartPoint(USceneComponent* NewStartPoint);
 
 protected:
-	FVector ApplyAccuracyDeviation(const FVector& OriginalDirection, const float& AccuracyRadius) const;
+	FVector ApplyAccuracyDeviation(const FVector& OriginalDirection, const float& SpreadAngle) const;
 	
 	virtual void PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
 };

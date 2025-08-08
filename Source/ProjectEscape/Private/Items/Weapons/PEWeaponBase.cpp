@@ -31,6 +31,7 @@ APEWeaponBase::APEWeaponBase()
 
 	bIsInHand = false;
 	bIsFiring = false;
+	bIsReloading = false;
 	LastAttackTime = 0.0f;
 	CurrentAmmoCount = 1000; // 테스트용으로 1000발 초기화
 }
@@ -131,11 +132,11 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	FPEAttackStats AttackStats;
 	AttackStats.AttackRange = WeaponStats.Range;
 	AttackStats.DamageAmount = WeaponStats.Damage;
-	AttackStats.AttackRadius = WeaponStats.Spread;
+	AttackStats.SpreadAngle = WeaponStats.Spread;
 	AttackStats.CollisionChannel = ECC_Visibility;
 
 	// 1회 발사 시 몇 개의 탄환을 발사할지 설정 (e.g. 산탄총은 12개의 펠릿이 발사됌)
-	for (size_t i = 0; i < WeaponStats.BulletsPerShot; ++i)
+	for (int32 i = 0; i < WeaponStats.BulletsPerShot; ++i)
 	{
 		AttackComponent->ExcuteAttack(AttackStats);
 	}

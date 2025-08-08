@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Combat/Interface/PEAttackable.h"
 #include "GameFramework/Character.h"
 #include "Interface/PEInteractManagerHandler.h"
@@ -73,6 +74,7 @@ protected:
 	/* Combat 관련 섹션 */
 public:
 	virtual USceneComponent* GetAttackStartPoint() const override;
+	virtual UPEStorableItemComponent* GetStorableItemComponent(FGameplayTag Tag) const override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
