@@ -180,12 +180,6 @@ void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 			// 아이템을 손에 들고 있는 상태로 설정
 			UseableItemManagerComponent->SetHandItem(UseableComponent);
 			
-			// 인터페이스가 구현되어 있다면 OnHand 호출
-			if (IPEUseable* UseableInterface = Cast<IPEUseable>(HandItem))
-			{
-				UseableInterface->OnHand(this);
-			}
-			
 			UE_LOG(LogTemp, Warning, TEXT("HandEquipment: %s is now in hand"), *HandItem->GetName());
 		}
 		else
