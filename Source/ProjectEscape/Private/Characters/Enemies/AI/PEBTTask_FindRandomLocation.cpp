@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Enemies/AI/PEBTTask_FindRandomLocation.h"
-#include "Enemies/AI/PEAIController.h"
+#include "Characters/Enemies/AI/PEBTTask_FindRandomLocation.h"
+#include "Characters/Enemies/AI/PEAIController.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
 

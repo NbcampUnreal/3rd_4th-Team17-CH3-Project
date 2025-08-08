@@ -2,7 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "Enemies/AI/PEAIController.h"
+#include "Characters/Enemies/AI/PEAIController.h"
 #include "PEAICharacter.generated.h"
 
 class APEAIController;
@@ -14,6 +14,7 @@ class PROJECTESCAPE_API APEAICharacter : public ACharacter
 
 public:
 	APEAICharacter();
+	virtual void PreInitializeComponents() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	TSubclassOf<APEAIController> AIControllerClassBP = nullptr;

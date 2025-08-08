@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Enemies/AI/PEAIController.h"
-#include "Enemies/AI/PEAICharacter.h"
+#include "Characters/Enemies/AI/PEAIController.h"
+#include "Characters/Enemies/AI/PEAICharacter.h"
 #include "NavigationSystem.h"
 #include "Perception/AIPerceptionComponent.h"
 #include "Perception/AISenseConfig_Sight.h"
@@ -56,7 +56,6 @@ void APEAIController::BeginPlay()
 		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &APEAIController::OnPerceptionUpdated);
 	}
 	
-	//GetWorld()->GetTimerManager().SetTimer(RandomMoveTimer, this, &APEAIController::MoveToRandomLocation, PatrolCycle, true);
 }
 
 void APEAIController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -100,9 +99,10 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 	}
 
 	APawn* MyPawn = GetPawn();
-	if (!MyPawn) return;
-
-	FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
+	if (!MyPawn)
+	{
+		return;
+	}
 
 	FVector LastKnownLocation = Actor->GetActorLocation();
 
@@ -114,13 +114,16 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 
 	if (Stimulus.WasSuccessfullySensed())
 	{
+	#ifdef WITH_EDITOR
+		FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
 		DrawDebugString(GetWorld(),
-			DisplayLocation + FVector(0, 0, 100),
+			DisplayLocation + FVector(0, 0, 100), // 100 만큼 더하고 다시 더하는 이유가 뭘까요
 			FString::Printf(TEXT("발견: %s"), *Actor->GetName()),
 			nullptr,
 			FColor::Green,
 			2.0f,
 			true);
+	#endif
 
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor); // 블랙보드에 타겟 액터 설정
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), true);
@@ -131,13 +134,16 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 	}
 	else
 	{
+	#ifdef WITH_EDITOR
+		FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
 		DrawDebugString(GetWorld(),
-			DisplayLocation + FVector(0, 0, 100),
+			DisplayLocation + FVector(0, 0, 100), // 100 만큼 더하고 다시 더하는 이유가 뭘까요
 			FString::Printf(TEXT("놓침: %s"), *Actor->GetName()),
 			nullptr,
 			FColor::Red,
 			2.0f,
 			true);
+	#endif
 	
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), false);
 		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), true);
@@ -147,7 +153,7 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 			InvestigateTimerHandle,
 			this,
 			&APEAIController::EndInvestigating,
-			InvestigateDuration,  // 예: 3.0f
+			InvestigateDuration,
 			false);
 			
 

@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Enemies/AI/PEAICharacter.h"
-#include "Enemies/AI/PEAIController.h"
+#include "Characters/Enemies/AI/PEAICharacter.h"
+#include "Characters/Enemies/AI/PEAIController.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -13,10 +13,30 @@ APEAICharacter::APEAICharacter()
 
 	// variable initialization
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
-	Movement->MaxWalkSpeed = WalkSpeed; 
-	Movement->bOrientRotationToMovement = true; 
-	Movement->RotationRate = RotateSpeed; 
-	Movement->AirControl = AirControl; 
+	if (Movement)
+	{
+		Movement->MaxWalkSpeed = WalkSpeed;
+		Movement->bOrientRotationToMovement = true;
+		Movement->RotationRate = RotateSpeed;
+		Movement->AirControl = AirControl;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AICharacterMovementComponent is nullptr!"));
+	}
+}
+
+void APEAICharacter::PreInitializeComponents()
+{
+	Super::PreInitializeComponents();
+	if (AIControllerClassBP == nullptr)
+	{
+		AIControllerClass = APEAIController::StaticClass();
+	}
+	else
+	{
+		AIControllerClass = AIControllerClassBP;
+	}
 }
 
 // Called when the game starts or when spawned
