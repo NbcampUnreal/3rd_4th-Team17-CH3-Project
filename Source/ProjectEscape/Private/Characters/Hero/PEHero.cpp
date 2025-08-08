@@ -27,7 +27,7 @@ APEHero::APEHero()
 	
 	// Create Interact Manager Component
 	InteractManagerComponent = CreateDefaultSubobject<UPEInteractManagerComponent>(TEXT("InteractManagerComponent"));
-
+	
 	// Create Useable Item Component
 	UseableItemManagerComponent = CreateDefaultSubobject<UPEUseableItemManagerComponent>(TEXT("UseableItemManagerComponent"));
 
@@ -117,6 +117,19 @@ void APEHero::DoPrimaryAction()
 	{
 		UseableItemManagerComponent->DoPrimaryActionCurrentItem(this);
 		UE_LOG(LogTemp, Warning, TEXT("Primary Action with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UseableComponent is not initialized!"));
+	}
+}
+
+void APEHero::CompletePrimaryAction()
+{
+	if (UseableItemManagerComponent)
+	{
+		UseableItemManagerComponent->CompletePrimaryActionCurrentItem(this);
+		UE_LOG(LogTemp, Warning, TEXT("Primary Action Complete with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
 	{

@@ -16,12 +16,11 @@ APEWeaponBase::APEWeaponBase()
 
 	// Mesh 생성 및 설정
 	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	WeaponMesh->SetupAttachment(RootComponent);
-	WeaponMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	RootComponent = WeaponMesh;
 
 	// 상호작용 컴포넌트 생성 및 설정
 	InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
-	InteractableComponent->SetupAttachment(RootComponent);
+	InteractableComponent->SetupAttachment(WeaponMesh);
 	InteractableComponent->SetHiddenInGame(false);
 
 	// 장착 컴포넌트 생성 및 설정
@@ -31,6 +30,7 @@ APEWeaponBase::APEWeaponBase()
 	QuickSlotItemComponent = CreateDefaultSubobject<UPEQuickSlotItemComponent>(TEXT("QuickSlotItemComponent"));
 
 	bIsInHand = false;
+	bIsFiring = false;
 	LastAttackTime = 0.0f;
 	CurrentAmmoCount = 1000; // 테스트용으로 1000발 초기화
 }
@@ -96,7 +96,13 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	UE_LOG(LogTemp, Warning, TEXT("Use called on %s by %s"), *GetName(), *Holder->GetName());
 	if (CurrentAmmoCount <= 0)
 	{
-		return; // 탄약이 없으면 발사 불가
+		return; 
+	}
+
+	if (!WeaponStats.IsAutomatic && bIsFiring)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Weapon is not automatic and already firing. Ignoring primary action."));
+		return;
 	}
 	
 	// FireRate 체크 (RPM을 초당 발사 횟수로 변환)
@@ -129,6 +135,12 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	}
 
 	CurrentAmmoCount--;
+	bIsFiring = true;
+}
+
+void APEWeaponBase::CompletePrimaryAction(AActor* Holder)
+{
+	bIsFiring = false;
 }
 
 void APEWeaponBase::DoSecondaryAction(AActor* Holder)

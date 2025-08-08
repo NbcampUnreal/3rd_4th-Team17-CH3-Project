@@ -45,6 +45,9 @@ public:
 	void DoPrimaryAction(AActor* User);
 	
 	UFUNCTION(BlueprintCallable, Category = "Useable")
+	void CompletePrimaryAction(AActor* User);
+	
+	UFUNCTION(BlueprintCallable, Category = "Useable")
 	void DoSecondaryAction(AActor* User);
 	
 	UFUNCTION(BlueprintCallable, Category = "Useable")

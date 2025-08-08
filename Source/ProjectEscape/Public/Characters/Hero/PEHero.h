@@ -51,6 +51,7 @@ protected:
 
 public:
 	virtual void DoPrimaryAction();
+	virtual void CompletePrimaryAction();
 	virtual void DoSecondaryAction();
 	virtual void DoTertiaryAction();
 	

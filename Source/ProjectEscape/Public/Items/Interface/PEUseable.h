@@ -23,6 +23,7 @@ class PROJECTESCAPE_API IPEUseable
 
 public:
 	virtual void DoPrimaryAction(AActor* Holder) = 0;
+	virtual void CompletePrimaryAction(AActor* Holder) = 0;
 	virtual void DoSecondaryAction(AActor* Holder) = 0;
 	virtual void DoTertiaryAction(AActor* Holder) = 0;
 	virtual void OnHand(AActor* NewOwner) = 0;

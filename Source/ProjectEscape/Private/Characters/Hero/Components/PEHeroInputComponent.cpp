@@ -278,6 +278,10 @@ void UPEHeroInputComponent::OnInputPrimaryActionCompleted(const FInputActionValu
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Black, FString::Printf(TEXT("On Input Primary Action Complete...")));
 	}
 #endif
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		Hero->CompletePrimaryAction();
+	}
 }
 
 void UPEHeroInputComponent::OnInputSecondaryActionTriggered(const FInputActionValue& Value)

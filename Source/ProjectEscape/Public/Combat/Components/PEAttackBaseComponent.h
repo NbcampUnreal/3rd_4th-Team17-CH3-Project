@@ -47,7 +47,7 @@ public:
 	void SetAttackStartPoint(USceneComponent* NewStartPoint);
 
 protected:
-	FVector ApplyAccuracyDeviation(const FVector& OriginalDirection, float AccuracyRadius) const;
+	FVector ApplyAccuracyDeviation(const FVector& OriginalDirection, const float& AccuracyRadius) const;
 	
 	virtual void PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
 };

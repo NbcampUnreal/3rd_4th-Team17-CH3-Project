@@ -60,7 +60,7 @@ void UPEAttackBaseComponent::PerformAttack(const FPEAttackStats& AttackStats, co
 	UE_LOG(LogPE, Warning, TEXT("PEAttackComponentBase::PerformAttack: This function should be overridden in derived classes."));
 }
 
-FVector UPEAttackBaseComponent::ApplyAccuracyDeviation(const FVector& OriginalDirection, float AccuracyRadius) const
+FVector UPEAttackBaseComponent::ApplyAccuracyDeviation(const FVector& OriginalDirection, const float& AccuracyRadius) const
 {
 	if (AccuracyRadius <= 0.0f)
 	{

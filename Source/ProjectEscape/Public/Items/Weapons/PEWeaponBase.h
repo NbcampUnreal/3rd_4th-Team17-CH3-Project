@@ -49,6 +49,7 @@ protected:
 	TObjectPtr<AActor> WeaponOwnerActor; // 아이템을 소유한 액터
 	
 	bool bIsInHand;
+	bool bIsFiring;
 	int32 CurrentAmmoCount;
 	
 	bool Reload();
@@ -83,10 +84,11 @@ protected:
 	/* IPEUseable 인터페이스 선언 */
 public:
 	virtual void DoPrimaryAction(AActor* Holder) override;
+	virtual void CompletePrimaryAction(AActor* Holder) override;
 	virtual void DoSecondaryAction(AActor* Holder) override;
 	virtual void DoTertiaryAction(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
-	virtual UPEUseableComponent* GetUseableComponent() const override; // 사용 가능한 컴포넌트를 반환합니다
+	virtual UPEUseableComponent* GetUseableComponent() const override;
 
 	/* Combat(Attack) 관련 섹션 */
 protected:

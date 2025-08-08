@@ -67,6 +67,14 @@ void UPEUseableItemManagerComponent::DoPrimaryActionCurrentItem(AActor* Holder)
 	}
 }
 
+void UPEUseableItemManagerComponent::CompletePrimaryActionCurrentItem(AActor* Holder)
+{
+	if (CurrentItemComponent)
+	{
+		CurrentItemComponent->CompletePrimaryAction(Holder);
+	}
+}
+
 void UPEUseableItemManagerComponent::DoSecondaryActionCurrentItem(AActor* Holder)
 {
 	if (CurrentItemComponent)

@@ -48,6 +48,22 @@ void UPEUseableComponent::DoPrimaryAction(AActor* User)
 	}
 }
 
+void UPEUseableComponent::CompletePrimaryAction(AActor* User)
+{
+	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::CompletePrimaryAction"));
+	if (bIsHold)
+	{
+		if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+		{
+			UseableInterface->CompletePrimaryAction(User);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+		}
+	}
+}
+
 void UPEUseableComponent::DoSecondaryAction(AActor* User)
 {
 	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::DoSecondaryAction"));

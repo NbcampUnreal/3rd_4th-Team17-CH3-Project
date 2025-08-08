@@ -44,6 +44,7 @@ public:
 	UPEUseableComponent* GetCurrentItem() const;
 	void ReleaseHandItem();
 	void DoPrimaryActionCurrentItem(AActor* Holder);
+	void CompletePrimaryActionCurrentItem(AActor* Holder);
 	void DoSecondaryActionCurrentItem(AActor* Holder);
 	void DoTertiaryActionCurrentItem(AActor* Holder);
 };
