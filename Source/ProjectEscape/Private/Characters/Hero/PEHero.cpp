@@ -212,3 +212,8 @@ USceneComponent* APEHero::GetAttackStartPoint() const
 	return FirstPersonCameraComponent;
 }
 
+UPEStorableItemComponent* APEHero::GetStorableItemComponent(FGameplayTag Tag) const
+{
+	return InventoryManagerComponent->GetItemByTag(Tag);
+}
+

@@ -22,7 +22,8 @@ enum class EPEEquipmentType : uint8
 	Primary		= 1	UMETA(DisplayName = "Primary Weapon"),
 	Secondary	= 2	UMETA(DisplayName = "Secondary Weapon"),
 	Melee		= 3	UMETA(DisplayName = "Melee Weapon"),
-	Throwable	= 4	UMETA(DisplayName = "Throwable Weapon"),
+	Healing		= 4	UMETA(DisplayName = "Healing Item"),
+	Throwable	= 5	UMETA(DisplayName = "Throwable Weapon"),
 
 	MAX				UMETA(Hidden)
 };
