@@ -18,7 +18,7 @@ APEItemBase::APEItemBase()
 	StorableItemComponent = CreateDefaultSubobject<UPEStorableItemComponent>(TEXT("StorableItemComponent"));
 	
 	ItemOwnerActor = nullptr;
-	ItemCount = 3; // 기본 아이템 개수 설정
+	ItemCount = 5; // 기본 아이템 개수 설정
 	StackCount = 1;
 	MaxStackCount = 64;
 }
@@ -88,6 +88,18 @@ void APEItemBase::AddItemCount(int32 Count)
 {
 	ItemCount += Count;
 	StackCount = 1 + (ItemCount / MaxStackCount);
+}
+
+void APEItemBase::ReduceItemCount(int32 Count)
+{
+	ItemCount = FMath::Max(0, ItemCount - Count);
+
+	if (ItemCount <= 0)
+	{
+		DestoryItem();
+		return;
+	}
+	StackCount = 1 + (ItemCount/ MaxStackCount);
 }
 
 void APEItemBase::OnDropToWorld(int32 Count, const FVector& Location, const FRotator& Rotation)

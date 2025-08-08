@@ -24,6 +24,7 @@ void UPEUseableComponent::BeginPlay()
 
 void UPEUseableComponent::Hold()
 {
+	
 	bIsHold = true;
 }
 
@@ -94,4 +95,14 @@ void UPEUseableComponent::DoTertiaryAction(AActor* User)
 			UE_LOG(LogTemp, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
 		}
 	}
+}
+
+bool UPEUseableComponent::IsHolding() const
+{
+	return bIsHold;
+}
+
+void UPEUseableComponent::SetCurrentHolder(AActor* NewOwner)
+{
+	CurrentHolder = NewOwner;
 }

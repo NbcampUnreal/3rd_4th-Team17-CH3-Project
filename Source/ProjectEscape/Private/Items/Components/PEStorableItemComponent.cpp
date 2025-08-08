@@ -60,6 +60,14 @@ void UPEStorableItemComponent::OnItemDropped(int32 Count, const FVector& Locatio
 	}
 }
 
+void UPEStorableItemComponent::ReduceItemCount(int32 Count)
+{
+	if (ComponentOwnerInterface)
+	{
+		ComponentOwnerInterface->ReduceItemCount(Count);
+	}
+}
+
 void UPEStorableItemComponent::DestroyItem() const
 {
 	if (ComponentOwnerInterface)
