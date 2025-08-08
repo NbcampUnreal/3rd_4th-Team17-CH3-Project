@@ -91,10 +91,19 @@ void APEItemBase::SetInventroyManagerComponent(UPEInventoryManagerComponent* New
 	OwningInventoryManagerComponent = NewComponentOwnerInterface;
 }
 
+int32 APEItemBase::CalculateStackCount(int32 Count) const
+{
+	if (Count <= 0)
+	{
+		return 0;
+	}
+	return (Count - 1) / MaxStackCount + 1;
+}
+
 void APEItemBase::AddItemCount(int32 Count)
 {
 	ItemCount += Count;
-	StackCount = 1 + (ItemCount / MaxStackCount);
+	StackCount = CalculateStackCount(ItemCount);
 }
 
 void APEItemBase::ReduceItemCount(int32 Count)
@@ -107,7 +116,7 @@ void APEItemBase::ReduceItemCount(int32 Count)
 		DestoryItem();
 		return;
 	}
-	StackCount = 1 + (ItemCount/ MaxStackCount);
+	StackCount = CalculateStackCount(ItemCount);
 }
 
 void APEItemBase::OnDropToWorld(int32 Count, const FVector& Location, const FRotator& Rotation)
@@ -126,7 +135,7 @@ void APEItemBase::SplitAndDropItem(int32 Count, const FVector& Location, const F
 {
 	// 아이템 개수를 감소시킴
 	ItemCount -= Count;
-	StackCount = 1 + ((ItemCount - 1) / MaxStackCount);
+	StackCount = CalculateStackCount(ItemCount);
 		
 	// 복제된 아이템을 생성
 	if (GetWorld())
@@ -137,7 +146,7 @@ void APEItemBase::SplitAndDropItem(int32 Count, const FVector& Location, const F
 			// 복제된 아이템의 속성을 설정
 			// NOTE: 아이템 데이터 구조가 확정되지 않아 임시로 구현
 			DuplicatedItem->ItemCount = Count;
-			DuplicatedItem->StackCount = 1 + ((Count - 1) / MaxStackCount);
+			DuplicatedItem->StackCount = CalculateStackCount(Count);
 			DuplicatedItem->MaxStackCount = MaxStackCount;
 			DuplicatedItem->ItemOwnerActor = nullptr;
 				

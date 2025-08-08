@@ -29,9 +29,6 @@ protected:
 	/* 장착 관련 섹션 */
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Useable")
-	TObjectPtr<AActor> CurrentHolder;
-
-	UPROPERTY(VisibleAnywhere, Category = "Useable")
 	bool bIsHold;
 	
 public:
@@ -54,5 +51,4 @@ public:
 	void DoTertiaryAction(AActor* User);
 
 	bool IsHolding() const;
-	void SetCurrentHolder(AActor* NewOwner);
 };

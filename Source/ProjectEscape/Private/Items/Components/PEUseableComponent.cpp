@@ -12,7 +12,6 @@ UPEUseableComponent::UPEUseableComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	CurrentHolder = nullptr;
 	bIsHold = false;
 }
 
@@ -100,9 +99,4 @@ void UPEUseableComponent::DoTertiaryAction(AActor* User)
 bool UPEUseableComponent::IsHolding() const
 {
 	return bIsHold;
-}
-
-void UPEUseableComponent::SetCurrentHolder(AActor* NewOwner)
-{
-	CurrentHolder = NewOwner;
 }

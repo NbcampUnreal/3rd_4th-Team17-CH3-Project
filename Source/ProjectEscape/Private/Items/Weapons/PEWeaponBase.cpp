@@ -71,6 +71,13 @@ void APEWeaponBase::PostInitializeComponents()
 	}
 }
 
+void APEWeaponBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	GetWorldTimerManager().ClearTimer(ReloadTimerHandle);
+}
+
 bool APEWeaponBase::TryReload()
 {
 	if (bIsReloading)

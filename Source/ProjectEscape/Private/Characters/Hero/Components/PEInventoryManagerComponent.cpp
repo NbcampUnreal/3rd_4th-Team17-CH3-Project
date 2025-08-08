@@ -99,7 +99,10 @@ void UPEInventoryManagerComponent::DropItemFromInventoryByTag(const int32& Count
 
 void UPEInventoryManagerComponent::RemoveItemFromInventoryByTag(const FGameplayTag& Tag)
 {
-	InventoryItems[Tag] = nullptr; // 아이템 제거
+	if (InventoryItems.Contains(Tag))
+	{
+		InventoryItems[Tag] = nullptr; // 아이템 제거
+	}
 }
 
 void UPEInventoryManagerComponent::ClearInventory()

@@ -50,6 +50,8 @@ protected:
 	int32 ItemCount;
 	
 	int32 StackCount; // 아이템의 스택 개수(e.g. 최대 64개까지 스택 가능한 아이템이 90개 있을 경우 StackCount는 2가 됌)
+	
+	int32 CalculateStackCount(int32 Count) const;
 
 	virtual void OnDuplicated();
 public:
