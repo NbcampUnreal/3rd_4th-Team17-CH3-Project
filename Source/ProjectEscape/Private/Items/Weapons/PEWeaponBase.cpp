@@ -97,7 +97,13 @@ bool APEWeaponBase::TryReload()
 		return false;
 	}
 
-	if (AmmoComponent.IsValid() && AmmoComponent->GetItemCount() > 0)
+	if (!AmmoComponent.IsValid())
+	{
+		UE_LOG(LogPE, Warning, TEXT("AmmoComponent is not valid for %s"), *GetName());
+		return false;
+	}
+	
+	if (AmmoComponent->GetItemCount() > 0)
 	{
 		bIsReloading = true;
 	
@@ -108,6 +114,11 @@ bool APEWeaponBase::TryReload()
 			WeaponStats.ReloadTime,
 			false);
 		UE_LOG(LogPE, Log, TEXT("Reloading..."));
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("No ammo available for reloading."));
+		return false;
 	}
 
 	return true;
@@ -120,7 +131,7 @@ void APEWeaponBase::PerformReload()
 		bIsReloading = false;
 		return;
 	}
-
+	
 	if (AmmoComponent.IsValid() && AmmoComponent->GetItemCount() > 0)
 	{
 		int AmmoToReload = FMath::Min(WeaponStats.MaxAmmo - CurrentAmmoCount, AmmoComponent->GetItemCount());

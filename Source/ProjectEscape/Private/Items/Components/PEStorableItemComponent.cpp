@@ -76,6 +76,14 @@ void UPEStorableItemComponent::DestroyItem() const
 	}
 }
 
+void UPEStorableItemComponent::SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface)
+{
+	if (ComponentOwnerInterface)
+	{
+		return ComponentOwnerInterface->SetInventroyManagerComponent(NewComponentOwnerInterface);
+	}
+}
+
 int32 UPEStorableItemComponent::GetItemCount() const
 {
 	if (ComponentOwnerInterface)

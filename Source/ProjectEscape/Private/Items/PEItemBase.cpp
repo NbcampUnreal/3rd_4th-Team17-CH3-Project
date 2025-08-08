@@ -2,6 +2,8 @@
 
 
 #include "Items/PEItemBase.h"
+
+#include "Characters/Hero/Components/PEInventoryManagerComponent.h"
 #include "Items/Components/PEInteractableComponent.h"
 #include "Items/Components/PEStorableItemComponent.h"
 
@@ -84,6 +86,11 @@ int32 APEItemBase::GetItemStackCount() const
 	return StackCount;
 }
 
+void APEItemBase::SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface)
+{
+	OwningInventoryManagerComponent = NewComponentOwnerInterface;
+}
+
 void APEItemBase::AddItemCount(int32 Count)
 {
 	ItemCount += Count;
@@ -96,6 +103,7 @@ void APEItemBase::ReduceItemCount(int32 Count)
 
 	if (ItemCount <= 0)
 	{
+		OwningInventoryManagerComponent->RemoveItemFromInventoryByTag(StorableItemComponent->GetItemTag());
 		DestoryItem();
 		return;
 	}

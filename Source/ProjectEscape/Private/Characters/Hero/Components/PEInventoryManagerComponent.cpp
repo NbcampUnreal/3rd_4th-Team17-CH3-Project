@@ -59,12 +59,13 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 	{
 		InventoryItems.Add(ItemTag, Item);
 		Item->OnItemPickedUp();
+		Item->SetInventroyManagerComponent(this);
 		UpdateCurrentItemCount();
 		UE_LOG(LogPE, Log, TEXT("New item added to Inventory"));
 	}
 
 	// 인벤토리에 있는 모든 아이템을 로그에 출력 (테스트용 코드, UI 연결 시 삭제)
-	UE_LOG(LogPE, Log, TEXT("Current Inventory Items (%d/%d):"), InventoryItems.Num(), MaxInventorySize);
+	UE_LOG(LogPE, Log, TEXT("Current Inventory Items (%d/%d):"), CurrentItemInInventroyCount, MaxInventorySize);
 	for (const auto &ItemPair : InventoryItems)
 	{
 		if (ItemPair.Value)
@@ -94,6 +95,11 @@ void UPEInventoryManagerComponent::DropItemFromInventoryByTag(const int32& Count
 	{
 		UE_LOG(LogPE, Log, TEXT("Item not found"));
 	}
+}
+
+void UPEInventoryManagerComponent::RemoveItemFromInventoryByTag(const FGameplayTag& Tag)
+{
+	InventoryItems[Tag] = nullptr; // 아이템 제거
 }
 
 void UPEInventoryManagerComponent::ClearInventory()

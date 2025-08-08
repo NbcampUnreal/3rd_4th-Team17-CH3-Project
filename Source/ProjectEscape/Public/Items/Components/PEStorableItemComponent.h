@@ -16,6 +16,7 @@
  *	
  */
 
+class UPEInventoryManagerComponent;
 class IPEStorable;
 class UPEStorable;
 
@@ -49,6 +50,7 @@ public:
 	void OnItemDropped(int32 Count, const FVector& Location, const FRotator& Rotation) const;
 	void ReduceItemCount(int32 Count);
 	void DestroyItem() const;
+	void SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface);
 	int32 GetItemCount() const;
 	int32 GetStackCount() const;
 };
