@@ -24,7 +24,7 @@ public:
 	EPEEquipmentType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FGameplayTag BulletType;
+	FGameplayTag AmmoType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsAutomatic;

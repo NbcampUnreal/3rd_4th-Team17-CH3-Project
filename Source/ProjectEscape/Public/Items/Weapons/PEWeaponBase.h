@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "FPEWeaponData.h"
 #include "GameFramework/Actor.h"
+#include "Items/Components/PEStorableItemComponent.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Interface/PEInteractable.h"
 #include "Items/Interface/PEUseable.h"
@@ -46,15 +47,25 @@ protected:
 	FPEWeaponData WeaponStats;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
-	TObjectPtr<AActor> WeaponOwnerActor; // 아이템을 소유한 액터
+	TObjectPtr<AActor> WeaponOwnerActor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
+	TWeakObjectPtr<UPEStorableItemComponent> AmmoComponent; // 소모되는 탄약으로 선택된 액터의 컴포넌트
+	
+	UPROPERTY()
+	FTimerHandle ReloadTimerHandle;
 	
 	bool bIsInHand;
 	bool bIsFiring;
 	bool bIsReloading;
-	
 	int32 CurrentAmmoCount;
 	
-	bool Reload();
+public:
+	bool TryReload();
+	void CancleReload();
+
+protected:
+	void PerformReload();
 
 	/* Interact 관련 섹션 */
 protected:

@@ -34,6 +34,7 @@ APEWeaponBase::APEWeaponBase()
 	bIsReloading = false;
 	LastAttackTime = 0.0f;
 	CurrentAmmoCount = 1000; // 테스트용으로 1000발 초기화
+
 }
 
 void APEWeaponBase::BeginPlay()
@@ -71,9 +72,52 @@ void APEWeaponBase::PostInitializeComponents()
 	}
 }
 
-bool APEWeaponBase::Reload()
+bool APEWeaponBase::TryReload()
 {
+	if (bIsReloading)
+	{
+		return false;
+	}
+
+	
+	if (IPEAttackable* IPEAttackableInterface = Cast<IPEAttackable>(WeaponOwnerActor))
+	{
+		AmmoComponent = IPEAttackableInterface->GetStorableItemComponent(WeaponStats.AmmoType);
+	}
+
+	if (AmmoComponent.IsValid() && AmmoComponent->GetItemCount() > 0)
+	{
+		bIsReloading = true;
+	
+		GetWorldTimerManager().SetTimer(
+			ReloadTimerHandle,
+			this,
+			&APEWeaponBase::PerformReload,
+			WeaponStats.ReloadTime,
+			false);
+	}
+
 	return true;
+}
+
+void APEWeaponBase::PerformReload()
+{
+	if (!bIsInHand)
+	{
+		return;
+	}
+
+	if (AmmoComponent.IsValid() && AmmoComponent->GetItemCount() > 0)
+	{
+		int 
+	}
+	
+	bIsReloading = false;
+}
+
+void APEWeaponBase::CancleReload()
+{
+	GetWorldTimerManager().ClearTimer(ReloadTimerHandle);
 }
 
 void APEWeaponBase::Interact(AActor* Interactor)
@@ -152,12 +196,12 @@ void APEWeaponBase::CompletePrimaryAction(AActor* Holder)
 
 void APEWeaponBase::DoSecondaryAction(AActor* Holder)
 {
-	
+	// NOTE: 보조 액션이 필요한 무기에만 구현됩니다.
 }
 
 void APEWeaponBase::DoTertiaryAction(AActor* Holder)
 {	
-	
+	TryReload();
 }
 
 void APEWeaponBase::OnHand(AActor* NewOwner)
