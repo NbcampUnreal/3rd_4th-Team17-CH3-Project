@@ -44,15 +44,12 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
 	float InteractionRange = 300.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Input")
-	TObjectPtr<UInputAction> InteractAction;
-
+	
 	UPROPERTY()
 	TObjectPtr<UPEInteractableComponent> CurrentInteractable;
 
 	UPROPERTY()
-	TObjectPtr<class APawn> OwnerPawn;
+	TObjectPtr<APawn> OwnerPawn;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
@@ -63,15 +60,6 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Interaction")
 	bool HasInteractable() const { return CurrentInteractable != nullptr; }
-
-	UFUNCTION(BlueprintCallable, Category = "Interaction")
-	void SetInteractionRange(float NewRange) { InteractionRange = NewRange; }
-
-	UFUNCTION(BlueprintCallable, Category = "Input")
-	void SetInteractAction(UInputAction* NewInteractAction);
-
-	UFUNCTION(BlueprintCallable, Category = "Input")
-	void SetupInputBindings();
 
 protected:
 	// 상호작용 입력 처리 함수

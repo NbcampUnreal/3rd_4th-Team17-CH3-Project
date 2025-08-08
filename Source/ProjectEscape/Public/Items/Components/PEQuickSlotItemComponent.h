@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "PEQuickSlotItemComponent.generated.h"
 
+class IPEQuickSlotItem;
 enum class EPEEquipmentType : uint8;
 /*
  * 퀵슬롯에 등록될 수 있는 아이템을 위한 컴포넌트 클래스입니다.
@@ -32,6 +33,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quick Slot")
 	TObjectPtr<AActor> ComponentOwnerActor; // 컴포넌트 소유 액터
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quick Slot")
+	TScriptInterface<IPEQuickSlotItem> ComponentOwnerActorInterface; // 컴포넌트 소유 액터 인터페이스
+	
+	
 public:
 	// 아이템이 주워졌을 때 호출
 	UFUNCTION()
@@ -41,5 +46,7 @@ public:
 	void OnItemDropped();
 
 	UFUNCTION()
-	EPEEquipmentType GetEquipmentType();
+	EPEEquipmentType GetEquipmentType() const;
+
+	void SetComponentInterface(UObject* NewOwner);
 };

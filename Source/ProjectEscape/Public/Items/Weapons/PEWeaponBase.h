@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FPEWeaponData.h"
 #include "GameFramework/Actor.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Interface/PEInteractable.h"
 #include "Items/Interface/PEUseable.h"
 #include "PEWeaponBase.generated.h"
 
+struct FPEWeaponData;
+class UPEAttackBaseComponent;
 class UPEQuickSlotItemComponent;
 enum class EPEEquipmentType : uint8;
 class UPEUseableComponent;
@@ -37,13 +40,18 @@ public:
 	virtual bool IsInteractable() const override;
 
 	/* Weapon Stat 관련 섹션 */
-	//Todo: 무기 타입을 Tag로 관리하도록 변경
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
-	EPEEquipmentType EquipmentType;
+	TObjectPtr<UDataTable> WeaponDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+	FName WeaponRowName;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TObjectPtr<AActor> OwnerActor; // 아이템을 소유한 액터
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
+	FPEWeaponData WeaponStats;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
+	TObjectPtr<AActor> WeaponOwnerActor; // 아이템을 소유한 액터
 	
 	bool bIsInHand;
 
@@ -69,5 +77,14 @@ public:
 	virtual void Use(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
 	virtual UPEUseableComponent* GetUseableComponent() const override; // 사용 가능한 컴포넌트를 반환합니다
-};
 
+	/* Combat(Attack) 관련 섹션 */
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Hitscan")
+	TObjectPtr<UPEAttackBaseComponent> AttackComponent;
+
+	UPROPERTY()
+	float LastAttackTime;
+
+	virtual UPEAttackBaseComponent* CreateAttackComponent();
+};

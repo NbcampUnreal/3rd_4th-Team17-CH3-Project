@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PEEquipmentType.h"
+#include "Items/PEEquipmentType.h"
 #include "UObject/Interface.h"
 #include "PEQuickSlotItem.generated.h"
 

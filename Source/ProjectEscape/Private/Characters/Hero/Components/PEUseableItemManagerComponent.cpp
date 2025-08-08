@@ -14,38 +14,11 @@ UPEUseableItemManagerComponent::UPEUseableItemManagerComponent()
 void UPEUseableItemManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	OwnerActor = GetOwner();
+	ComponentOwnerActor = GetOwner();
 }
-
-/*
-void UPEUseableItemManagerComponent::SetHandItem(IPEUseable* NewItem)
-{
-	// IPEUseable 인터페이스를 UPEUseableComponent로 캐스팅하여 설정
-	if (NewItem)
-	{
-		CurrentItemComponent = Cast<UPEUseableComponent>(NewItem);
-		if (CurrentItemComponent)
-		{
-			UE_LOG(LogTemp, Log, TEXT("UPEUseableItemManagerComponent: Set current item to %s"),
-				*CurrentItemComponent->GetOwner()->GetName());
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("UPEUseableItemManagerComponent: Failed to cast IPEUseable to UPEUseableComponent"));
-		}
-	}
-	else
-	{
-		CurrentItemComponent = nullptr;
-		UE_LOG(LogTemp, Log, TEXT("UPEUseableItemManagerComponent: Cleared current item"));
-	}
-}
-}
-*/
 
 void UPEUseableItemManagerComponent::SetHandItem(UPEUseableComponent* NewItemComponent)
 {
-	// Todo: 아이템 해제를 분리하고, 분리된 함수를 SetHandItem에서 호출하도록 변경
 	// 현재 손에 아이템이 있다면 먼저 해제
 	if (CurrentItemComponent)
 	{
@@ -69,6 +42,7 @@ void UPEUseableItemManagerComponent::SetHandItem(UPEUseableComponent* NewItemCom
 	{
 		UE_LOG(LogTemp, Log, TEXT("UPEUseableItemManagerComponent: Cleared current item component"));
 	}
+	
 	// Todo: 아이템 변경 애니메이션 실행
 }
 
