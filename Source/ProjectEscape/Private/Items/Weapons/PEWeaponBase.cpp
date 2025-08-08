@@ -14,9 +14,13 @@ APEWeaponBase::APEWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Mesh 생성 및 설정
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	RootComponent = WeaponMesh;
+
 	// 상호작용 컴포넌트 생성 및 설정
 	InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
-	InteractableComponent->SetupAttachment(RootComponent);
+	InteractableComponent->SetupAttachment(WeaponMesh);
 	InteractableComponent->SetHiddenInGame(false);
 
 	// 장착 컴포넌트 생성 및 설정
@@ -26,7 +30,10 @@ APEWeaponBase::APEWeaponBase()
 	QuickSlotItemComponent = CreateDefaultSubobject<UPEQuickSlotItemComponent>(TEXT("QuickSlotItemComponent"));
 
 	bIsInHand = false;
+	bIsFiring = false;
+	bIsReloading = false;
 	LastAttackTime = 0.0f;
+	CurrentAmmoCount = 1000; // 테스트용으로 1000발 초기화
 }
 
 void APEWeaponBase::BeginPlay()
@@ -64,6 +71,11 @@ void APEWeaponBase::PostInitializeComponents()
 	}
 }
 
+bool APEWeaponBase::Reload()
+{
+	return true;
+}
+
 void APEWeaponBase::Interact(AActor* Interactor)
 {
 	UE_LOG(LogPE, Warning, TEXT("Interact called on %s by %s"), *GetName(), *Interactor->GetName());
@@ -80,15 +92,31 @@ void APEWeaponBase::Interact(AActor* Interactor)
 	}
 }
 
-void APEWeaponBase::Use(AActor* Holder)
+void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Use called on %s by %s"), *GetName(), *Holder->GetName());
+	if (CurrentAmmoCount <= 0)
+	{
+		return; 
+	}
+
+	// NOTE: 무기 발사 불가능 상태가 많아지면 Tag로 전환하는 것을 고려해야 함
+	if (bIsReloading)
+	{
+		return;
+	}
+
+	if (!WeaponStats.IsAutomatic && bIsFiring)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Weapon is not automatic and already firing. Ignoring primary action."));
+		return;
+	}
 	
 	// FireRate 체크 (RPM을 초당 발사 횟수로 변환)
 	if (WeaponStats.FireRate > 0.0f)
 	{
 		float CurrentTime = GetWorld()->GetTimeSeconds();
-		float TimeBetweenShots = 60.0f / WeaponStats.FireRate; // RPM을 초 단위 간격으로 변환
+		float TimeBetweenShots = 60.0f / WeaponStats.FireRate;
 		
 		if (CurrentTime - LastAttackTime < TimeBetweenShots)
 		{
@@ -100,13 +128,36 @@ void APEWeaponBase::Use(AActor* Holder)
 		
 		LastAttackTime = CurrentTime;
 	}
-	
+
 	FPEAttackStats AttackStats;
 	AttackStats.AttackRange = WeaponStats.Range;
 	AttackStats.DamageAmount = WeaponStats.Damage;
+	AttackStats.SpreadAngle = WeaponStats.Spread;
 	AttackStats.CollisionChannel = ECC_Visibility;
 
-	AttackComponent->ExcuteAttack(AttackStats);
+	// 1회 발사 시 몇 개의 탄환을 발사할지 설정 (e.g. 산탄총은 12개의 펠릿이 발사됌)
+	for (int32 i = 0; i < WeaponStats.BulletsPerShot; ++i)
+	{
+		AttackComponent->ExcuteAttack(AttackStats);
+	}
+
+	CurrentAmmoCount--;
+	bIsFiring = true;
+}
+
+void APEWeaponBase::CompletePrimaryAction(AActor* Holder)
+{
+	bIsFiring = false;
+}
+
+void APEWeaponBase::DoSecondaryAction(AActor* Holder)
+{
+	
+}
+
+void APEWeaponBase::DoTertiaryAction(AActor* Holder)
+{	
+	
 }
 
 void APEWeaponBase::OnHand(AActor* NewOwner)
