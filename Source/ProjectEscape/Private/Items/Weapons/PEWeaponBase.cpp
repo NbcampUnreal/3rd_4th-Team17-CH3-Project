@@ -99,6 +99,12 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 		return; 
 	}
 
+	// NOTE: 무기 발사 불가능 상태가 많아지면 Tag로 전환하는 것을 고려해야 함
+	if (bIsReloading)
+	{
+		return;
+	}
+
 	if (!WeaponStats.IsAutomatic && bIsFiring)
 	{
 		UE_LOG(LogTemp, Log, TEXT("Weapon is not automatic and already firing. Ignoring primary action."));

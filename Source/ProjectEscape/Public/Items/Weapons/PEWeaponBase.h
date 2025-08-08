@@ -50,6 +50,8 @@ protected:
 	
 	bool bIsInHand;
 	bool bIsFiring;
+	bool bIsReloading;
+	
 	int32 CurrentAmmoCount;
 	
 	bool Reload();
