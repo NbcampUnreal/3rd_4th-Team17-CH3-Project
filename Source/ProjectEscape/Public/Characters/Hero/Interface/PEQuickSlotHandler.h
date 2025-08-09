@@ -24,5 +24,5 @@ class PROJECTESCAPE_API IPEQuickSlotHandler
 
 public:
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) = 0;
-	virtual void DropHandEquipmentToWorld(const FGameplayTag& EquipmentTag) = 0;
+	virtual void DropHandEquipmentToWorld() = 0;
 };

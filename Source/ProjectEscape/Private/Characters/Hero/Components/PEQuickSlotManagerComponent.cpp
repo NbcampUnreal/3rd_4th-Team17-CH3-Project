@@ -4,6 +4,7 @@
 #include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Characters/Hero/Interface/PEQuickSlotHandler.h"
+#include "Core/PELogChannels.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 
 /*
@@ -91,6 +92,27 @@ bool UPEQuickSlotManagerComponent::ContainWeaponType(EPEEquipmentType EquipmentT
 		return true;
 	}
 	return false;
+}
+
+void UPEQuickSlotManagerComponent::DropHandEquipmentToWorld(EPEEquipmentType EquipmentType, const FVector& Location, const FRotator& Rotation)
+{
+	if (QuickSlotItems.Contains(EquipmentType))
+	{
+		if (IPEQuickSlotItem* QuickSlotItem = Cast<IPEQuickSlotItem>(QuickSlotItems[EquipmentType]))
+		{
+			QuickSlotItem->OnDropped(Location, Rotation);
+			UE_LOG(LogPE, Log, TEXT("DropHandEquipmentToWorld: Dropped %s at Location: %s, Rotation: %s"),
+				*QuickSlotItems[EquipmentType]->GetName(), *Location.ToString(), *Rotation.ToString());
+		}
+		else
+		{
+			UE_LOG(LogPE, Warning, TEXT("DropHandEquipmentToWorld: QuickSlotItemComponent not found for EquipmentType %d!"), static_cast<int32>(EquipmentType));
+		}
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("DropHandEquipmentToWorld: EquipmentType %d not found in QuickSlotItems!"), static_cast<int32>(EquipmentType));
+	}
 }
 
 AActor* UPEQuickSlotManagerComponent::GetActorFromQuickSlot(EPEEquipmentType EquipmentType) const

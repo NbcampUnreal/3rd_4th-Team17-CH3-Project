@@ -4,6 +4,7 @@
 #include "Items/Components/PEUseableComponent.h"
 
 #include "Core/PELogChannels.h"
+#include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Interface/PEUseable.h"
 
 
@@ -99,4 +100,14 @@ void UPEUseableComponent::DoTertiaryAction(AActor* User)
 bool UPEUseableComponent::IsHolding() const
 {
 	return bIsHold;
+}
+
+EPEEquipmentType UPEUseableComponent::GetEquipmentType() const
+{
+	if (IPEQuickSlotItem* QuickSlotItemInterface = Cast<IPEQuickSlotItem>(GetOwner()))
+	{
+		return QuickSlotItemInterface->GetEquipmentType();
+	}
+	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::GetEquipmentType: Owner %s does not implement IPEQuickSlotItem interface!"), *GetOwner()->GetName());
+	return EPEEquipmentType::None; // 기본값 반환
 }

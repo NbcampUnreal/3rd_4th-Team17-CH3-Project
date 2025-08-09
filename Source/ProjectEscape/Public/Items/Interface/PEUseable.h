@@ -28,5 +28,5 @@ public:
 	virtual void DoTertiaryAction(AActor* Holder) = 0;
 	virtual void OnHand(AActor* NewOwner) = 0;
 	virtual void OnRelease(AActor* NewOwner) = 0;
-	virtual UPEUseableComponent* GetUseableComponent() const = 0; // 사용 가능한 컴포넌트를 반환합니다
+	virtual UPEUseableComponent* GetUseableComponent() const = 0; 
 };

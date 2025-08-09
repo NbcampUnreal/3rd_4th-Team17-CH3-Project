@@ -163,6 +163,11 @@ void APEHero::DoTertiaryAction()
 	}
 }
 
+UPEUseableItemManagerComponent* APEHero::GetUseableItemManagerComponent() const
+{
+	return UseableItemManagerComponent;
+}
+
 void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 {
 	// Todo: 퀵슬롯으로 부터 아이템을 받은 다음 손에 장착
@@ -193,9 +198,17 @@ void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 	}
 }
 
-void APEHero::DropHandEquipmentToWorld(const FGameplayTag& EquipmentTag)
+void APEHero::DropHandEquipmentToWorld()
 {
-	
+	if (UseableItemManagerComponent)
+	{
+		UseableItemManagerComponent->DropHandEquipmentToWorld();
+	}
+}
+
+UPEQuickSlotManagerComponent* APEHero::GetQuickSlotManagerComponent() const
+{
+	return QuickSlotManagerComponent;
 }
 
 void APEHero::InventroyDropTest()

@@ -55,6 +55,7 @@ public:
 	virtual void CompletePrimaryAction();
 	virtual void DoSecondaryAction();
 	virtual void DoTertiaryAction();
+	virtual UPEUseableItemManagerComponent* GetUseableItemManagerComponent() const;
 	
 	/* Quick Slot 관련 섹션 */
 protected:
@@ -63,7 +64,8 @@ protected:
 
 public:
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
-	virtual void DropHandEquipmentToWorld(const FGameplayTag& EquipmentTag) override;
+	virtual void DropHandEquipmentToWorld() override;
+	UPEQuickSlotManagerComponent* GetQuickSlotManagerComponent() const;
 	
 	/* Inventroy 관련 섹션 */
 protected:
