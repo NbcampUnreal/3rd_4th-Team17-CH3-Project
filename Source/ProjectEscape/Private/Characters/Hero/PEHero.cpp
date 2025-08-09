@@ -91,7 +91,7 @@ void APEHero::TryInteract(AActor* TargetActor)
 	}
 	else if (UPEQuickSlotItemComponent* QuickSlotItemComponent = TargetActor->FindComponentByClass<UPEQuickSlotItemComponent>())
 	{
-		QuickSlotItemComponent->OnItemPickedUp();
+		//QuickSlotItemComponent->OnItemPickedUp();
 		QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), TargetActor);
 		UE_LOG(LogTemp, Warning, TEXT("QuickSlotItemComponent found and set for %s"), *GetNameSafe(TargetActor));
 

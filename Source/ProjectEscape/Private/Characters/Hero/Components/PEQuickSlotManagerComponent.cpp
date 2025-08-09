@@ -33,7 +33,7 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 		UE_LOG(LogTemp, Warning, TEXT("SetQuickSlotItem: ItemActor is null!"));
 		return;
 	}
-
+	
 	// 아이템을 이미 퀵슬롯에 등록한 경우, 기존 아이템을 해제
 	if (QuickSlotItems.Contains(EquipmentType))
 	{
@@ -57,6 +57,14 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 	{
 		QuickSlotItems.Add(EquipmentType, ItemActor);
 		UE_LOG(LogTemp, Log, TEXT("Added quick slot item: %s for type: %d"), *ItemActor->GetName(), static_cast<int32>(EquipmentType));
+	}
+
+	if (IPEQuickSlotItem* QuickSlotItemInterface = Cast<IPEQuickSlotItem>(ItemActor))
+	{
+		if (UPEQuickSlotItemComponent* QuickSlotItemComponent = QuickSlotItemInterface->GetQuickSlotItemComponent())
+		{
+			QuickSlotItemComponent->OnItemPickedUp();
+		}
 	}
 }
 
