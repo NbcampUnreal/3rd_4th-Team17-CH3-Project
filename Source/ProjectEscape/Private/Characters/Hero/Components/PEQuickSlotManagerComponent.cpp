@@ -42,7 +42,10 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 			{
 				if (UPEQuickSlotItemComponent* QuickSlotItemComponent = QuickSlotItemInterface->GetQuickSlotItemComponent())
 				{
-					QuickSlotItemComponent->OnItemDropped();
+					const FVector& Location = EquipOwner->GetActorLocation();
+					const FRotator& Rotation = EquipOwner->GetActorRotation();
+					
+					QuickSlotItemComponent->OnItemDropped(Location, Rotation);
 				}
 			}
 		}

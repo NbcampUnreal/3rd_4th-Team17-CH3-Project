@@ -63,6 +63,7 @@ protected:
 
 public:
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
+	virtual void DropHandEquipmentToWorld(const FGameplayTag& EquipmentTag) override;
 	
 	/* Inventroy 관련 섹션 */
 protected:

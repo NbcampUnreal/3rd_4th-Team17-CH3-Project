@@ -59,6 +59,11 @@ void UPEUseableItemManagerComponent::ReleaseHandItem()
 	}
 }
 
+void UPEUseableItemManagerComponent::DropHandEquipmentToWorld()
+{
+	
+}
+
 void UPEUseableItemManagerComponent::DoPrimaryActionCurrentItem(AActor* Holder)
 {
 	if (CurrentItemComponent)

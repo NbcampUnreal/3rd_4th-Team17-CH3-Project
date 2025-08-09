@@ -269,9 +269,16 @@ AActor* APEWeaponBase::GetItemOwner() const
 	return WeaponOwnerActor;
 }
 
-void APEWeaponBase::OnDropped()
+void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 {
 	WeaponOwnerActor = nullptr;
+	
+	SetActorLocation(Location);
+	SetActorRotation(Rotation);
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	
+	UE_LOG(LogTemp, Warning, TEXT("APEWeaponBase::OnDropped called on %s"), *GetName());
 }
 
 UPEQuickSlotItemComponent* APEWeaponBase::GetQuickSlotItemComponent() const

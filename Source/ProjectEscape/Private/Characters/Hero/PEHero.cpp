@@ -193,6 +193,11 @@ void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 	}
 }
 
+void APEHero::DropHandEquipmentToWorld(const FGameplayTag& EquipmentTag)
+{
+	
+}
+
 void APEHero::InventroyDropTest()
 {
 	if (InventoryManagerComponent)

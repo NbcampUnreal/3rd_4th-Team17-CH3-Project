@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "UObject/Interface.h"
 #include "PEQuickSlotHandler.generated.h"
 
@@ -23,4 +24,5 @@ class PROJECTESCAPE_API IPEQuickSlotHandler
 
 public:
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) = 0;
+	virtual void DropHandEquipmentToWorld(const FGameplayTag& EquipmentTag) = 0;
 };
