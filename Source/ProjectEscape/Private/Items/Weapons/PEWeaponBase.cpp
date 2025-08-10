@@ -149,7 +149,6 @@ void APEWeaponBase::PerformReload()
 	bIsReloading = false;
 	UE_LOG(LogPE, Log, TEXT("Reload complete. Current ammo: %d"), CurrentAmmoCount);
 	
-	// 4. 무기 재장전이 완료되었을 때 델리게이트 브로드캐스트
 	BroadcastWeaponStateChanged();
 }
 
@@ -227,7 +226,6 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	CurrentAmmoCount--;
 	bIsFiring = true;
 	
-	// 1. 무기가 발사될 때 델리게이트 브로드캐스트
 	BroadcastWeaponStateChanged();
 }
 
@@ -256,14 +254,8 @@ void APEWeaponBase::OnHand(AActor* NewOwner)
 
 void APEWeaponBase::OnRelease(AActor* NewOwner)
 {
-	//bIsInHand = false;
-	
-	// 3. 무기를 놓았을 때 델리게이트 브로드캐스트 (무기 정보 초기화 후)
-	// 무기 정보 초기화
-	CurrentAmmoCount = 0;
 	bIsFiring = false;
 	bIsReloading = false;
-	WeaponOwnerActor = nullptr;
 	
 	// 빈 구조체 생성하여 브로드캐스트
 	FPEEquipmentInfo EmptyEquipmentInfo;
