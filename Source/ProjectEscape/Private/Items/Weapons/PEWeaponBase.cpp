@@ -257,7 +257,7 @@ void APEWeaponBase::OnRelease(AActor* NewOwner)
 	bIsFiring = false;
 	bIsReloading = false;
 	
-	// 빈 구조체 생성하여 브로드캐스트
+	// 무기를 놓으면 맨손 상태가 되므로 빈 FPEEquipmentInfo를 브로드캐스트
 	FPEEquipmentInfo EmptyEquipmentInfo;
 	EmptyEquipmentInfo.EquipmentName = FName();
 	EmptyEquipmentInfo.EquipmentCount = TEXT("");
