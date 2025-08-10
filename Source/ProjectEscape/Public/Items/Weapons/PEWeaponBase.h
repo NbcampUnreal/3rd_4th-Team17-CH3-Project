@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "FPEWeaponData.h"
+#include "FPEEquipmentInfo.h"
 #include "GameFramework/Actor.h"
 #include "Items/Components/PEStorableItemComponent.h"
 #include "Items/Interface/PEQuickSlotItem.h"
@@ -18,6 +19,9 @@ enum class EPEEquipmentType : uint8;
 class UPEUseableComponent;
 class UPEInteractableComponent;
 
+// 무기 상태 변화 델리게이트 선언
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponStateChanged, const FPEEquipmentInfo&, EquipmentInfo);
+
 UCLASS()
 class PROJECTESCAPE_API APEWeaponBase : public AActor, public IPEInteractable, public IPEUseable, public IPEQuickSlotItem
 {
@@ -25,6 +29,10 @@ class PROJECTESCAPE_API APEWeaponBase : public AActor, public IPEInteractable, p
 	
 public:	
 	APEWeaponBase();
+
+	// 무기 상태 변화 델리게이트
+	UPROPERTY(BlueprintAssignable, Category = "Weapon Events")
+	FOnWeaponStateChanged OnWeaponStateChanged;
 
 protected:
 	virtual void BeginPlay() override;
@@ -113,4 +121,11 @@ protected:
 	float LastAttackTime;
 
 	virtual UPEAttackBaseComponent* CreateAttackComponent();
+
+protected:
+	// 현재 무기 상태 정보를 생성하는 헬퍼 함수
+	FPEEquipmentInfo CreateCurrentEquipmentInfo() const;
+	
+	// 델리게이트 브로드캐스트 헬퍼 함수
+	void BroadcastWeaponStateChanged();
 };

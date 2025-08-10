@@ -148,6 +148,9 @@ void APEWeaponBase::PerformReload()
 	
 	bIsReloading = false;
 	UE_LOG(LogPE, Log, TEXT("Reload complete. Current ammo: %d"), CurrentAmmoCount);
+	
+	// 4. 무기 재장전이 완료되었을 때 델리게이트 브로드캐스트
+	BroadcastWeaponStateChanged();
 }
 
 void APEWeaponBase::CancleReload()
@@ -223,6 +226,9 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 
 	CurrentAmmoCount--;
 	bIsFiring = true;
+	
+	// 1. 무기가 발사될 때 델리게이트 브로드캐스트
+	BroadcastWeaponStateChanged();
 }
 
 void APEWeaponBase::CompletePrimaryAction(AActor* Holder)
@@ -243,11 +249,23 @@ void APEWeaponBase::DoTertiaryAction(AActor* Holder)
 void APEWeaponBase::OnHand(AActor* NewOwner)
 {
 	//bIsInHand = true;
+	
+	// 2. 무기를 들었을 때 델리게이트 브로드캐스트
+	BroadcastWeaponStateChanged();
 }
 
 void APEWeaponBase::OnRelease(AActor* NewOwner)
 {
 	//bIsInHand = false;
+	
+	// 3. 무기를 놓았을 때 델리게이트 브로드캐스트 (무기 정보 초기화 후)
+	// 무기 정보 초기화
+	CurrentAmmoCount = 0;
+	bIsFiring = false;
+	bIsReloading = false;
+	WeaponOwnerActor = nullptr;
+	
+	BroadcastWeaponStateChanged();
 }
 
 bool APEWeaponBase::IsInteractable() const
@@ -295,4 +313,29 @@ UPEAttackBaseComponent* APEWeaponBase::CreateAttackComponent()
 {
 	UE_LOG(LogPE, Warning, TEXT("APEWeaponBase::CreateAttackComponent() called"));
     return NewObject<UPEAttackBaseComponent>(this);
+}
+
+FPEEquipmentInfo APEWeaponBase::CreateCurrentEquipmentInfo() const
+{
+	FPEEquipmentInfo EquipmentInfo;
+	EquipmentInfo.EquipmentName = WeaponRowName;
+	EquipmentInfo.EquipmentCount = FString::Printf(TEXT("%d/%d"), CurrentAmmoCount, WeaponStats.MaxAmmo);
+	EquipmentInfo.EquipmentDescription = FString::Printf(TEXT("Damage: %d, Range: %.1f"), 
+		WeaponStats.Damage, WeaponStats.Range);
+	// 무기 아이콘은 WeaponStats에서 가져오거나 기본값 사용
+	// EquipmentInfo.EquipmentIcon = WeaponStats.WeaponIcon; // 필요시 추가
+	return EquipmentInfo;
+}
+
+void APEWeaponBase::BroadcastWeaponStateChanged()
+{
+	FPEEquipmentInfo EquipmentInfo = CreateCurrentEquipmentInfo();
+	
+	// 델리게이트 브로드캐스트 정보 로그 출력
+	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
+		*EquipmentInfo.EquipmentName.ToString(),
+		*EquipmentInfo.EquipmentCount,
+		*EquipmentInfo.EquipmentDescription);
+	
+	OnWeaponStateChanged.Broadcast(EquipmentInfo);
 }

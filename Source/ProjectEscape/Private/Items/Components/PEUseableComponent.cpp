@@ -24,13 +24,31 @@ void UPEUseableComponent::BeginPlay()
 
 void UPEUseableComponent::Hold()
 {
-	
-	bIsHold = true;
+	if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+	{
+		UseableInterface->OnHand(GetOwner());
+		bIsHold = true;
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+	}
+	UE_LOG(LogPE, Log, TEXT("UPEUseableComponent::Hold called on %s"), *GetOwner()->GetName());
 }
 
 void UPEUseableComponent::Release()
 {
-	bIsHold = false;
+	if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+	{
+		UseableInterface->OnRelease(GetOwner());
+		bIsHold = false;
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+	}
+	UE_LOG(LogPE, Log, TEXT("UPEUseableComponent::Hold called on %s"), *GetOwner()->GetName());
+
 }
 
 void UPEUseableComponent::DoPrimaryAction(AActor* User)
