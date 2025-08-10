@@ -8,6 +8,20 @@
 #include "Interface/PEQuickSlotHandler.h"
 #include "PEHero.generated.h"
 
+// 인벤토리 리스트 구조체
+USTRUCT(BlueprintType)
+struct PROJECTESCAPE_API FInventoryList
+{
+	GENERATED_BODY()
+
+public:
+	// 내부 선언은 비워둠 (추후 확장 가능)
+};
+
+// 델리게이트 선언
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemDrop, FGameplayTag, ItemTag, int32, DropCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryList, InventoryList);
+
 class UCameraComponent;
 class UPEInteractManagerComponent;
 class UPEReceiveAttackComponent;
@@ -73,6 +87,18 @@ protected:
 	TObjectPtr<UPEInventoryManagerComponent> InventoryManagerComponent;
 
 	void InventroyDropTest(); // 인벤토리 드랍 테스트용 함수
+	
+	// 델리게이트 처리 함수
+	UFUNCTION()
+	void HandleInventoryItemDrop(FGameplayTag ItemTag, int32 DropCount);
+
+public:
+	// 인벤토리 이벤트 델리게이트
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnInventoryItemDrop OnInventoryItemDrop;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnInventoryChanged OnInventoryChanged;
 
 	/* Combat 관련 섹션 */
 public:
