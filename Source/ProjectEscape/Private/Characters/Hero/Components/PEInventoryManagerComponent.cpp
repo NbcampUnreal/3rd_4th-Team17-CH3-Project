@@ -36,20 +36,37 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 	 *	4. 이미 인벤토리에 있는 아이템이며, 기존 아이템에 스택은 가능하지만, 스택을 더 늘릴 수 없는 경우
 	 *		(e.g. 이미 인벤토리에 10칸 차지,
 	 *		아이템 최대 스택이 10인 아이템 A를 9개 갖고 있고, 재차 습득한 아이템 A의 개수가 2개 이상인 경우)
-	 *	5. 
+	 *	5.
 	 */
-	if (CurrentItemInInventroyCount > MaxInventorySize) 
+	if (CurrentItemInInventroyCount > MaxInventorySize)
 	{
 		UE_LOG(LogPE, Warning, TEXT("Inventory is full!"));
 		return;
 	}
 
 	FGameplayTag ItemTag = Item->GetItemTag();
+
+	if (CurrentItemInInventroyCount == MaxInventorySize)
+	{
+		if (UPEStorableItemComponent* ContainItem = GetItemByTag(ItemTag))
+		{
+			int32 CurrentNeedItemCount = (ContainItem->GetStackCount() * ContainItem->GetStackCapacity()) - ContainItem->GetItemCount();
+
+			if (CurrentNeedItemCount > 0)
+			{
+				int32 NeedItemCount = FMath::Min(Item->GetItemCount(), CurrentNeedItemCount);
+
+				ContainItem->AddItemCount(NeedItemCount);
+				Item->ReduceItemCount(NeedItemCount);
+			}
+		}
+		return;
+	}
 	
 	// 동일한 아이템이 있는 경우 스택 추가
 	if (UPEStorableItemComponent* ContainItem = GetItemByTag(ItemTag))
 	{
-		Item-> OnItemPickedUp(); 
+		Item-> OnItemPickedUp();
 		Item->DestroyItem(); //아이템이 주워졌을 때 이미 있는 아이템이면 제거
 		ContainItem->AddItemCount(Item->GetItemCount());
 		UpdateCurrentItemCount();

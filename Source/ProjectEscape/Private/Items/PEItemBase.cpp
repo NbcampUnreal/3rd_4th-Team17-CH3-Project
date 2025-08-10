@@ -22,7 +22,7 @@ APEItemBase::APEItemBase()
 	ItemOwnerActor = nullptr;
 	ItemCount = 5; // 기본 아이템 개수 설정
 	StackCount = 1;
-	MaxStackCount = 64;
+	StackCapacity = 64;
 }
 
 void APEItemBase::BeginPlay()
@@ -86,6 +86,11 @@ int32 APEItemBase::GetItemStackCount() const
 	return StackCount;
 }
 
+int32 APEItemBase::GetStackCapacity() const
+{
+	return StackCapacity;
+}
+
 void APEItemBase::SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface)
 {
 	OwningInventoryManagerComponent = NewComponentOwnerInterface;
@@ -97,7 +102,7 @@ int32 APEItemBase::CalculateStackCount(int32 Count) const
 	{
 		return 0;
 	}
-	return (Count - 1) / MaxStackCount + 1;
+	return (Count - 1) / StackCapacity + 1;
 }
 
 void APEItemBase::AddItemCount(int32 Count)
@@ -147,7 +152,7 @@ void APEItemBase::SplitAndDropItem(int32 Count, const FVector& Location, const F
 			// NOTE: 아이템 데이터 구조가 확정되지 않아 임시로 구현
 			DuplicatedItem->ItemCount = Count;
 			DuplicatedItem->StackCount = CalculateStackCount(Count);
-			DuplicatedItem->MaxStackCount = MaxStackCount;
+			DuplicatedItem->StackCapacity = StackCapacity;
 			DuplicatedItem->ItemOwnerActor = nullptr;
 				
 			DuplicatedItem->OnDuplicated();

@@ -44,7 +44,7 @@ protected:
 	TWeakObjectPtr<UPEInventoryManagerComponent> OwningInventoryManagerComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
-	int32 MaxStackCount;
+	int32 StackCapacity;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Storage")
 	int32 ItemCount;
@@ -61,6 +61,7 @@ public:
 	virtual void SplitAndDropItem(int32 Count, const FVector& Location, const FRotator& Rotation) override;
 	virtual int32 GetItemCount() const override;
 	virtual int32 GetItemStackCount() const override;
+	virtual int32 GetStackCapacity() const override;
 	virtual void SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface) override;
 	virtual void AddItemCount(int32 Count) override;
 	virtual void ReduceItemCount(int32 Count) override;

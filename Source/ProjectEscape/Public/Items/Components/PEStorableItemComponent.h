@@ -53,4 +53,5 @@ public:
 	void SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface);
 	int32 GetItemCount() const;
 	int32 GetStackCount() const;
+	int32 GetStackCapacity() const;
 };
