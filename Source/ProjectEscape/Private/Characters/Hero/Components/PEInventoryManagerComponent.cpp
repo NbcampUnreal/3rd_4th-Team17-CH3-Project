@@ -5,6 +5,7 @@
 #include "NativeGameplayTags.h"
 #include "Core/PELogChannels.h"
 #include "Items/Components/PEStorableItemComponent.h"
+#include "Characters/Hero/PEHero.h"
 
 UPEInventoryManagerComponent::UPEInventoryManagerComponent()
 {
@@ -58,6 +59,7 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 
 				ContainItem->AddItemCount(NeedItemCount);
 				Item->ReduceItemCount(NeedItemCount);
+				BroadcastInventoryChanged();
 			}
 		}
 		return;
@@ -70,6 +72,7 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 		Item->DestroyItem(); //아이템이 주워졌을 때 이미 있는 아이템이면 제거
 		ContainItem->AddItemCount(Item->GetItemCount());
 		UpdateCurrentItemCount();
+		BroadcastInventoryChanged(); 
 		UE_LOG(LogPE, Log, TEXT("Contained Item! Item count increased: %d"), ContainItem->GetItemCount());
 	}
 	else
@@ -78,6 +81,7 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 		Item->OnItemPickedUp();
 		Item->SetInventroyManagerComponent(this);
 		UpdateCurrentItemCount();
+		BroadcastInventoryChanged(); 
 		UE_LOG(LogPE, Log, TEXT("New item added to Inventory"));
 	}
 
@@ -107,6 +111,7 @@ void UPEInventoryManagerComponent::DropItemFromInventoryByTag(const int32& Count
 		}
 		int32 DropCount = FMath::Clamp(Count, 0, DropItem->GetItemCount());
 		DropItem->OnItemDropped(DropCount, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
+		BroadcastInventoryChanged(); 
 	}
 	else
 	{
@@ -119,12 +124,14 @@ void UPEInventoryManagerComponent::RemoveItemFromInventoryByTag(const FGameplayT
 	if (InventoryItems.Contains(Tag))
 	{
 		InventoryItems[Tag] = nullptr; // 아이템 제거
+		BroadcastInventoryChanged(); 
 	}
 }
 
 void UPEInventoryManagerComponent::ClearInventory()
 {
 	InventoryItems.Empty();
+	BroadcastInventoryChanged(); 
 	UE_LOG(LogPE, Log, TEXT("Inventory cleared"));
 }
 
@@ -169,4 +176,26 @@ void UPEInventoryManagerComponent::ItemDropTest()
 	}
 	FGameplayTag Tag = InventoryItems.begin()->Key;
 	DropItemFromInventoryByTag(1, Tag);
+}
+
+FInventoryList UPEInventoryManagerComponent::ConvertToInventoryList() const
+{
+	FInventoryList InventoryList;
+	// TODO: 내부 구현에 대한 협의 필요
+	// 예시: InventoryItems Map을 FInventoryList 구조체로 변환
+	return InventoryList;
+}
+
+void UPEInventoryManagerComponent::BroadcastInventoryChanged()
+{
+	if (APEHero* Hero = Cast<APEHero>(GetOwner()))
+	{
+		FInventoryList CurrentInventoryList = ConvertToInventoryList();
+		Hero->OnInventoryChanged.Broadcast(CurrentInventoryList);
+		UE_LOG(LogPE, Log, TEXT("BroadcastInventoryChanged: Inventory change broadcasted to UI"));
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("BroadcastInventoryChanged: Owner is not APEHero"));
+	}
 }
