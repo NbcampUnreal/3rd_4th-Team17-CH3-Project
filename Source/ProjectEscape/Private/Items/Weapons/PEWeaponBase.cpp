@@ -265,7 +265,13 @@ void APEWeaponBase::OnRelease(AActor* NewOwner)
 	bIsReloading = false;
 	WeaponOwnerActor = nullptr;
 	
-	BroadcastWeaponStateChanged();
+	// 빈 구조체 생성하여 브로드캐스트
+	FPEEquipmentInfo EmptyEquipmentInfo;
+	EmptyEquipmentInfo.EquipmentName = FName();
+	EmptyEquipmentInfo.EquipmentCount = TEXT("");
+	EmptyEquipmentInfo.EquipmentDescription = TEXT("");
+	
+	OnWeaponStateChanged.Broadcast(EmptyEquipmentInfo);
 }
 
 bool APEWeaponBase::IsInteractable() const
@@ -322,7 +328,6 @@ FPEEquipmentInfo APEWeaponBase::CreateCurrentEquipmentInfo() const
 	EquipmentInfo.EquipmentCount = FString::Printf(TEXT("%d/%d"), CurrentAmmoCount, WeaponStats.MaxAmmo);
 	EquipmentInfo.EquipmentDescription = FString::Printf(TEXT("Damage: %d, Range: %.1f"), 
 		WeaponStats.Damage, WeaponStats.Range);
-	// 무기 아이콘은 WeaponStats에서 가져오거나 기본값 사용
 	// EquipmentInfo.EquipmentIcon = WeaponStats.WeaponIcon; // 필요시 추가
 	return EquipmentInfo;
 }
@@ -331,11 +336,12 @@ void APEWeaponBase::BroadcastWeaponStateChanged()
 {
 	FPEEquipmentInfo EquipmentInfo = CreateCurrentEquipmentInfo();
 	
-	// 델리게이트 브로드캐스트 정보 로그 출력
+	OnWeaponStateChanged.Broadcast(EquipmentInfo);
+	
+	// 델리게이트 브로드캐스트 정보 로그 출력 (테스트 용 코드)
 	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
 		*EquipmentInfo.EquipmentName.ToString(),
 		*EquipmentInfo.EquipmentCount,
 		*EquipmentInfo.EquipmentDescription);
 	
-	OnWeaponStateChanged.Broadcast(EquipmentInfo);
 }
