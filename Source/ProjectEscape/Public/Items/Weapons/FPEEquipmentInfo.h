@@ -18,7 +18,7 @@ struct PROJECTESCAPE_API FPEEquipmentInfo
 	FName EquipmentName;
 
 	UPROPERTY()
-	FString EquipmentCount;
+	FString AmmoCount;
 
 	UPROPERTY()
 	FString EquipmentDescription;

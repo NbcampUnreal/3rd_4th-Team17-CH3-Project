@@ -122,10 +122,10 @@ protected:
 
 	virtual UPEAttackBaseComponent* CreateAttackComponent();
 
+	/* UI 반영 델리게이트 헬퍼 함수 관련 섹션*/
 protected:
-	// 현재 무기 상태 정보를 생성하는 헬퍼 함수
 	FPEEquipmentInfo CreateCurrentEquipmentInfo() const;
 	
-	// 델리게이트 브로드캐스트 헬퍼 함수
 	void BroadcastWeaponStateChanged();
+	void BroadcastEmptyWeaponState();
 };
