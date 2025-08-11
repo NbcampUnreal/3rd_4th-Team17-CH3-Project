@@ -6,15 +6,22 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
+#include "Engine/World.h"
 
 UPEBTTask_AttackPlayer::UPEBTTask_AttackPlayer()
 {
     NodeName = TEXT("Attack Player");
-    bNotifyTick = true; // Tick 이벤트 사용 (공격 지속 시간 관리)
+    // bNotifyTick = true; // Tick 이벤트 사용 (공격 지속 시간 관리)
 }
+
 
 EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
+    if (AttackTimerHandle.IsValid())
+    {
+        GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
+    }
+
     AAIController* AIController = OwnerComp.GetAIOwner();
     if (!AIController)
     {
@@ -41,11 +48,40 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
         return EBTNodeResult::Failed;
     }
 
+    float CurrentTime = GetWorld()->GetTimeSeconds();
+    float LastAttackTime = BlackboardComp->GetValueAsFloat(TEXT("LastAttackTime"));
+
+    // 쿨다운 체크
+    if (CurrentTime - LastAttackTime < AttackCoolTime)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("AI Attack CoolTime: %.1f초"),
+            AttackCoolTime - (CurrentTime - LastAttackTime));
+
+        float RemainingTime = AttackCoolTime - (CurrentTime - LastAttackTime);
+
+        TWeakObjectPtr<UPEBTTask_AttackPlayer> WeakThis(this);
+        GetWorld()->GetTimerManager().SetTimer(
+            AttackTimerHandle,
+            [WeakThis, &OwnerComp]()
+            {
+                if (WeakThis.IsValid())
+                {
+                    WeakThis->FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+                }
+            },
+            RemainingTime,
+            false
+        );
+
+        return EBTNodeResult::InProgress;
+    }
+
+
     // 플레이어와의 거리 체크
     float DistanceToPlayer = FVector::Dist(MyPawn->GetActorLocation(), TargetActor->GetActorLocation());
     if (DistanceToPlayer > AttackRange)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Attack Failed: Player too far (%.1f > %.1f)"), DistanceToPlayer, AttackRange);
+        UE_LOG(LogTemp, Warning, TEXT("Attack Fail: Player too far (%.1f > %.1f)"), DistanceToPlayer, AttackRange);
         return EBTNodeResult::Failed;
     }
 
@@ -64,7 +100,10 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
             FString::Printf(TEXT("AI ATTACKING PLAYER! Distance: %.1f"), DistanceToPlayer));
     }
 
+    BlackboardComp->SetValueAsFloat(TEXT("LastAttackTime"), CurrentTime); //마지막 공격 시간 업데이트
+
     // 공격 완료까지 대기 (AttackDuration 시간 후 Success 반환) <- 애니메이션 재생 시간에 따라 조정
     // 간단한 구현을 위해 바로 성공 반환
+
     return EBTNodeResult::Succeeded;
 }

@@ -9,8 +9,8 @@
 UCLASS()
 class PROJECTESCAPE_API UPEBTTask_AttackPlayer : public UBTTaskNode
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+
 public:
     UPEBTTask_AttackPlayer();
 
@@ -20,9 +20,13 @@ protected:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Attack")
     float AttackRange = 150.0f; // 공격 가능한 최대 거리
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Attack")
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Attack")
     float AttackCoolTime = 2.0f; // 공격 쿨타임
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Attack")
     float AttackDuration = 0.0f; // 공격 애니메이션/딜레이 시간(추후 애니메이션 추가 시 활용할 예정)
+
+private:
+	FTimerHandle AttackTimerHandle;
+
 };
