@@ -22,6 +22,8 @@ struct FPEGameplayTags
 	FGameplayTag Item_Weapon_RangeWeapon_SubWeapon;
 	FGameplayTag Item_Things;
 	FGameplayTag Item_Things_Ammo;
+	FGameplayTag Item_Things_Ammo_Rifle;
+	FGameplayTag Item_Things_Ammo_Shotgun;
 	FGameplayTag Item_Things_Heal;
 	FGameplayTag Item_Things_Grenade;
 	FGameplayTag Item_Things_Key;
