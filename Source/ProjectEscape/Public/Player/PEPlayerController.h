@@ -4,6 +4,8 @@
 #include "GameFramework/PlayerController.h"
 #include "PEPlayerController.generated.h"
 
+struct FInventoryInfo;
+
 UCLASS()
 class PROJECTESCAPE_API APEPlayerController : public APlayerController
 {
@@ -24,6 +26,9 @@ public:
 
 	UFUNCTION()
 	void OnChangeStamina(float HealthPoint, float MaxHealthPoint);
+
+	UFUNCTION()
+	void OnInventoryAndQuickSlotUpdate(FInventoryInfo& InInventoryInfo);
 
 	void PlayDamageAnimOfHUDWidget();
 	void ChangeHealthBar(float HealthPoint, float MaxHealthPoint);

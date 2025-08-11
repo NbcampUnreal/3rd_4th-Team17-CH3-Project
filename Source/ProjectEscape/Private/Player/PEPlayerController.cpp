@@ -2,6 +2,7 @@
 #include "Player\PEPlayerState.h"
 #include "Components\ProgressBar.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/Inventory/PEInventoryHUD.h"
 
 
 void APEPlayerController::BeginPlay()
@@ -27,6 +28,17 @@ void APEPlayerController::OnChangeStamina(float Stamina, float MaxStamina)
 {
 	ChangeStaminaBar(Stamina,MaxStamina);
 
+}
+
+void APEPlayerController::OnInventoryAndQuickSlotUpdate(FInventoryInfo& InInventoryInfo)
+{
+	if (InventoryWidget)
+	{
+		if (UPEInventoryHUD* InventoryHUD = Cast<UPEInventoryHUD>(InventoryWidget))
+		{
+			InventoryHUD->UpdateInventoryUI(InInventoryInfo);
+		}
+	}
 }
 
 void APEPlayerController::PlayDamageAnimOfHUDWidget()
@@ -99,7 +111,6 @@ void APEPlayerController::OpenInventoryWidget()
 	if (InventoryWidget && !InventoryWidget->IsInViewport())
 	{
 		InventoryWidget->AddToViewport();
-		SetInputMode(FInputModeGameAndUI());
 		bShowMouseCursor = true;
 	}
 }
@@ -110,9 +121,8 @@ void APEPlayerController::CloseInventoryWidget()
 	{
 		InventoryWidget->RemoveFromParent();
 		InventoryWidget = nullptr;
-
-		SetInputMode(FInputModeGameOnly());
 		bShowMouseCursor = false;
+		SetInputMode(FInputModeGameOnly());
 	}
 }
 
