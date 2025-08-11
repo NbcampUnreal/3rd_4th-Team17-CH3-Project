@@ -29,6 +29,9 @@ public:
 	void ChangeHealthBar(float HealthPoint, float MaxHealthPoint);
 	void ChangeStaminaBar(float Stamina, float MaxStamina);
 
+	void ToggleInventoryWidget();
+	void OpenInventoryWidget();
+	void CloseInventoryWidget();
 
 protected:
 	virtual void BeginPlay() override;
@@ -39,6 +42,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
 	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
+	TSubclassOf<UUserWidget> InventoryWidgetClass;
+
 	UUserWidget* HUDWidget;
 	UUserWidget* PauseMenuWidget;
+	UUserWidget* InventoryWidget;
 };

@@ -77,6 +77,18 @@ void APEPlayerController::ChangeStaminaBar(float Stamina, float MaxStamina)
 	}
 }
 
+void APEPlayerController::ToggleInventoryWidget()
+{
+}
+
+void APEPlayerController::OpenInventoryWidget()
+{
+}
+
+void APEPlayerController::CloseInventoryWidget()
+{
+}
+
 void APEPlayerController::ShowHUD()
 {
 	if (!HUDWidget && HUDWidgetClass)
@@ -135,6 +147,12 @@ void APEPlayerController::ClearAllWidget()
 	{
 		PauseMenuWidget->RemoveFromParent();
 		PauseMenuWidget = nullptr;
+	}
+
+	if (InventoryWidget)
+	{
+		InventoryWidget->RemoveFromParent();
+		InventoryWidget = nullptr;
 	}
 }
 

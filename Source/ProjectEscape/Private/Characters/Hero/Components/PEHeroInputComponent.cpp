@@ -319,7 +319,7 @@ void UPEHeroInputComponent::OnToggleInventoryUI(const FInputActionValue& Value)
 {
 	if (APEPlayerController* PC = GetOwnerPlayerController<APEPlayerController>())
 	{
-		//
+		PC->ToggleInventoryWidget();
 	}
 }
 
