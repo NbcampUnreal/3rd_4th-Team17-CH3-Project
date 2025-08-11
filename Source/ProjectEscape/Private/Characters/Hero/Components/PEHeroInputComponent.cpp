@@ -114,6 +114,10 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 			{
 				EIC->BindAction(OpenPauseMenuAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputOpenPauseMenu);
 			}
+			if (ToggleInventoryUIAction)
+			{
+				EIC->BindAction(ToggleInventoryUIAction, ETriggerEvent::Triggered, this, &ThisClass::OnToggleInventoryUI);
+			}
 		}
 		
 	}
@@ -308,6 +312,14 @@ void UPEHeroInputComponent::OnInputOpenPauseMenu(const FInputActionValue& Value)
 		{
 			PC->PauseGameAndShowPauseMenu();
 		}
+	}
+}
+
+void UPEHeroInputComponent::OnToggleInventoryUI(const FInputActionValue& Value)
+{
+	if (APEPlayerController* PC = GetOwnerPlayerController<APEPlayerController>())
+	{
+		//
 	}
 }
 
