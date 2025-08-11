@@ -38,7 +38,7 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 	 *		아이템 최대 스택이 10인 아이템 A를 9개 갖고 있고, 재차 습득한 아이템 A의 개수가 2개 이상인 경우)
 	 *	5. 
 	 */
-	if (InventoryItems.Num() > MaxInventorySize) 
+	if (CurrentItemInInventroyCount > MaxInventorySize) 
 	{
 		UE_LOG(LogPE, Warning, TEXT("Inventory is full!"));
 		return;

@@ -35,6 +35,7 @@ public:
 	void OnInputQuickSlotNumber(const FInputActionValue& Value, int32 SlotNumber);
 	void OnInputReload(const FInputActionValue& Value);
 	void OnInputInteract(const FInputActionValue& Value);
+	void OnDropHandEquipmentToWorld(const FInputActionValue& Value);
 	void OnInputPrimaryActionTriggered(const FInputActionValue& Value);
 	void OnInputPrimaryActionCompleted(const FInputActionValue& Value);
 	void OnInputSecondaryActionTriggered(const FInputActionValue& Value);
@@ -64,6 +65,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> InteractInputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> DropEquipmentInputAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> PrimayActionInputAction;

@@ -91,7 +91,6 @@ void APEHero::TryInteract(AActor* TargetActor)
 	}
 	else if (UPEQuickSlotItemComponent* QuickSlotItemComponent = TargetActor->FindComponentByClass<UPEQuickSlotItemComponent>())
 	{
-		QuickSlotItemComponent->OnItemPickedUp();
 		QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), TargetActor);
 		UE_LOG(LogTemp, Warning, TEXT("QuickSlotItemComponent found and set for %s"), *GetNameSafe(TargetActor));
 
@@ -163,6 +162,11 @@ void APEHero::DoTertiaryAction()
 	}
 }
 
+UPEUseableItemManagerComponent* APEHero::GetUseableItemManagerComponent() const
+{
+	return UseableItemManagerComponent;
+}
+
 void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 {
 	// Todo: 퀵슬롯으로 부터 아이템을 받은 다음 손에 장착
@@ -191,6 +195,19 @@ void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No equipment found for type: %d"), static_cast<int32>(EquipmentType));
 	}
+}
+
+void APEHero::DropHandEquipmentToWorld()
+{
+	if (UseableItemManagerComponent)
+	{
+		UseableItemManagerComponent->DropHandEquipmentToWorld();
+	}
+}
+
+UPEQuickSlotManagerComponent* APEHero::GetQuickSlotManagerComponent() const
+{
+	return QuickSlotManagerComponent;
 }
 
 void APEHero::InventroyDropTest()
