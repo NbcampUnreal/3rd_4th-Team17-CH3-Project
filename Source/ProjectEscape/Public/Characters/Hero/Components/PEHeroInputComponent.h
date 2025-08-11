@@ -112,6 +112,8 @@ protected:
 	void RecoverCostWhileNotSprinting(float DeltaTime);
 	void StartSprint();
 	void StopSprint();
+
+	bool CanControlCharacter();
 };
 
 template<class T>

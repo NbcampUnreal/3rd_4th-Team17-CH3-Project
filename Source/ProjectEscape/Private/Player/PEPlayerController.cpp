@@ -79,14 +79,53 @@ void APEPlayerController::ChangeStaminaBar(float Stamina, float MaxStamina)
 
 void APEPlayerController::ToggleInventoryWidget()
 {
+	if (InventoryWidget && InventoryWidget->IsInViewport())
+	{
+		CloseInventoryWidget();
+	}
+	else
+	{
+		OpenInventoryWidget();
+	}
 }
 
 void APEPlayerController::OpenInventoryWidget()
 {
+	if (!InventoryWidget && InventoryWidgetClass)
+	{
+		InventoryWidget = CreateWidget<UUserWidget>(this, InventoryWidgetClass);
+	}
+
+	if (InventoryWidget && !InventoryWidget->IsInViewport())
+	{
+		InventoryWidget->AddToViewport();
+		SetInputMode(FInputModeGameAndUI());
+		bShowMouseCursor = true;
+	}
 }
 
 void APEPlayerController::CloseInventoryWidget()
 {
+	if (InventoryWidget && InventoryWidget->IsInViewport())
+	{
+		InventoryWidget->RemoveFromParent();
+		InventoryWidget = nullptr;
+
+		SetInputMode(FInputModeGameOnly());
+		bShowMouseCursor = false;
+	}
+}
+
+bool APEPlayerController::IsOpenInventory() const
+{
+	if (InventoryWidget && InventoryWidget->IsInViewport())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 void APEPlayerController::ShowHUD()

@@ -125,6 +125,11 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 
 void UPEHeroInputComponent::OnInputMove(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
+
 	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		FVector2D MoveVector = Value.Get<FVector2D>();
@@ -140,6 +145,11 @@ void UPEHeroInputComponent::OnInputMove(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputLook(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
+
 	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		FVector2D LookVector = Value.Get<FVector2D>();
@@ -153,6 +163,11 @@ void UPEHeroInputComponent::OnInputLook(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputStartSprint(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
+
 	if (!bIsSprint)
 	{
 		if (CheckCanStartSprint())
@@ -166,6 +181,11 @@ void UPEHeroInputComponent::OnInputStartSprint(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputStopSprint(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
+
 	if (bIsSprint)
 	{
 		StopSprint();
@@ -175,6 +195,11 @@ void UPEHeroInputComponent::OnInputStopSprint(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputStartJump(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
+
 	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		Hero->Jump();
@@ -183,6 +208,11 @@ void UPEHeroInputComponent::OnInputStartJump(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputStopJump(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
+
 	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		Hero->StopJumping();
@@ -192,6 +222,11 @@ void UPEHeroInputComponent::OnInputStopJump(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputToggleCrouch(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
+
 	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		if (Hero->CanCrouch())
@@ -207,13 +242,17 @@ void UPEHeroInputComponent::OnInputToggleCrouch(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputQuickSlotNumber(const FInputActionValue& Value, int32 SlotNumber)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
 #ifdef WITH_EDITOR
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("SlotNumber: %d"), SlotNumber));
 	}
 #endif
-	
+
 	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
 	{
 		if (SlotNumber >= 0 && SlotNumber < static_cast<int32>(EPEEquipmentType::MAX))
@@ -226,6 +265,10 @@ void UPEHeroInputComponent::OnInputQuickSlotNumber(const FInputActionValue& Valu
 
 void UPEHeroInputComponent::OnInputReload(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
 #ifdef WITH_EDITOR
 	if (GEngine)
 	{
@@ -240,6 +283,10 @@ void UPEHeroInputComponent::OnInputReload(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputInteract(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
 #ifdef WITH_EDITOR
 	if (GEngine)
 	{
@@ -254,6 +301,10 @@ void UPEHeroInputComponent::OnInputInteract(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
 #ifdef WITH_EDITOR
 	if (GEngine)
 	{
@@ -268,6 +319,10 @@ void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValu
 
 void UPEHeroInputComponent::OnInputPrimaryActionCompleted(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
 #ifdef WITH_EDITOR
 	if (GEngine)
 	{
@@ -282,6 +337,10 @@ void UPEHeroInputComponent::OnInputPrimaryActionCompleted(const FInputActionValu
 
 void UPEHeroInputComponent::OnInputSecondaryActionTriggered(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
 #ifdef WITH_EDITOR
 	if (GEngine)
 	{
@@ -296,6 +355,10 @@ void UPEHeroInputComponent::OnInputSecondaryActionTriggered(const FInputActionVa
 
 void UPEHeroInputComponent::OnInputSecondaryActionCompleted(const FInputActionValue& Value)
 {
+	if (!CanControlCharacter())
+	{
+		return;
+	}
 #ifdef WITH_EDITOR
 	if (GEngine)
 	{
@@ -306,9 +369,13 @@ void UPEHeroInputComponent::OnInputSecondaryActionCompleted(const FInputActionVa
 
 void UPEHeroInputComponent::OnInputOpenPauseMenu(const FInputActionValue& Value)
 {
-	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
+	if (APEPlayerController* PC = GetOwnerPlayerController<APEPlayerController>())
 	{
-		if (APEPlayerController* PC = GetOwnerPlayerController<APEPlayerController>())
+		if (PC->IsOpenInventory())
+		{
+			PC->CloseInventoryWidget();
+		}
+		else
 		{
 			PC->PauseGameAndShowPauseMenu();
 		}
@@ -397,4 +464,13 @@ void UPEHeroInputComponent::StopSprint()
 	{
 		MovementComponent->MaxWalkSpeed = NormalSpeed;
 	}
+}
+
+bool UPEHeroInputComponent::CanControlCharacter()
+{
+	if (APEPlayerController* PC = GetOwnerPlayerController<APEPlayerController>())
+	{
+		return !PC->IsOpenInventory();
+	}
+	return false;
 }

@@ -32,6 +32,7 @@ public:
 	void ToggleInventoryWidget();
 	void OpenInventoryWidget();
 	void CloseInventoryWidget();
+	bool IsOpenInventory() const;
 
 protected:
 	virtual void BeginPlay() override;
