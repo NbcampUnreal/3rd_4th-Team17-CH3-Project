@@ -250,7 +250,7 @@ void APEWeaponBase::OnHand(AActor* NewOwner)
 	BroadcastWeaponStateChanged();
 }
 
-void APEWeaponBase::OnRelease(AActor* NewOwner)
+void APEWeaponBase::OnRelease()
 {
 	bIsFiring = false;
 	bIsReloading = false;
@@ -281,6 +281,7 @@ AActor* APEWeaponBase::GetItemOwner() const
 void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 {
 	WeaponOwnerActor = nullptr;
+	OnRelease();
 	
 	SetActorLocation(Location);
 	SetActorRotation(Rotation);

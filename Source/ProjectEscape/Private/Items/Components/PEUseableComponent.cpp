@@ -40,7 +40,7 @@ void UPEUseableComponent::Release()
 {
 	if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
 	{
-		UseableInterface->OnRelease(GetOwner());
+		UseableInterface->OnRelease();
 		bIsHold = false;
 	}
 	else

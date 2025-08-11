@@ -109,7 +109,7 @@ public:
 	virtual void DoSecondaryAction(AActor* Holder) override;
 	virtual void DoTertiaryAction(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
-	virtual void OnRelease(AActor* NewOwner) override;
+	virtual void OnRelease() override;
 	virtual UPEUseableComponent* GetUseableComponent() const override;
 
 	/* Combat(Attack) 관련 섹션 */
