@@ -21,6 +21,9 @@ void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealth
 {
 	PlayDamageAnimOfHUDWidget();
 	ChangeHealthBar(HealthPoint, MaxHealthPoint);
+
+	// 테스트 코드 사용후 제거
+	TestPlayHUDAnim();
 }
 
 void APEPlayerController::OnChangeStamina(float Stamina, float MaxStamina)
@@ -40,6 +43,48 @@ void APEPlayerController::PlayDamageAnimOfHUDWidget()
 			HUDWidget->ProcessEvent(DamageFunc, nullptr);
 		}
 	}
+}
+
+void APEPlayerController::PlayHitMarkerAnimOfHUDWIdget()
+{
+	if (HUDWidget)
+	{
+		UFunction* HitMarkerFunc = HUDWidget->FindFunction(FName("PlayHitMarkerAnim"));
+		if (HitMarkerFunc)
+		{
+			HUDWidget->ProcessEvent(HitMarkerFunc, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::PlayKillMarkerAnimOfHUDWidget()
+{
+	if (HUDWidget)
+	{
+		UFunction* KillMarkerFunc = HUDWidget->FindFunction(FName("PlayKillMarkerAnim"));
+		if (KillMarkerFunc)
+		{
+			HUDWidget->ProcessEvent(KillMarkerFunc, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::PlayAimAnimOfHUDWidget()
+{
+	if (HUDWidget)
+	{
+		UFunction* AimFunc = HUDWidget->FindFunction(FName("PlayAimAnim"));
+		if (AimFunc)
+		{
+			HUDWidget->ProcessEvent(AimFunc, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::TestPlayHUDAnim()
+{
+	PlayHitMarkerAnimOfHUDWIdget();
+	PlayAimAnimOfHUDWidget();
 }
 
 void APEPlayerController::ChangeHealthBar(float HealthPoint, float MaxHealthPoint)
