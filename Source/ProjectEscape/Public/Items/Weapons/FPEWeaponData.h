@@ -24,7 +24,7 @@ public:
 	EPEEquipmentType Type;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FGameplayTag BulletType;
+	FGameplayTag AmmoType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsAutomatic;
@@ -44,7 +44,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float FireRate;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float ReloadTime;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

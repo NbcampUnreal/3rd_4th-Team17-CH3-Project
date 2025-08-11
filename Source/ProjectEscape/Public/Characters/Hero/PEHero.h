@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Combat/Interface/PEAttackable.h"
 #include "GameFramework/Character.h"
 #include "Interface/PEInteractManagerHandler.h"
@@ -50,15 +51,18 @@ protected:
 	TObjectPtr<UPEUseableItemManagerComponent> UseableItemManagerComponent;
 
 public:
-	virtual void Use();
+	virtual void DoPrimaryAction();
+	virtual void CompletePrimaryAction();
+	virtual void DoSecondaryAction();
+	virtual void DoTertiaryAction();
 	
 	/* Quick Slot 관련 섹션 */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEQuickSlotManagerComponent> QuickSlotManagerComponent;
-	
-	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 
+public:
+	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 	
 	/* Inventroy 관련 섹션 */
 protected:
@@ -70,6 +74,7 @@ protected:
 	/* Combat 관련 섹션 */
 public:
 	virtual USceneComponent* GetAttackStartPoint() const override;
+	virtual UPEStorableItemComponent* GetStorableItemComponent(FGameplayTag Tag) const override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
