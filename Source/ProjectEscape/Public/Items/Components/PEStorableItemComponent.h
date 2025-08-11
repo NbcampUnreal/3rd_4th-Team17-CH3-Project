@@ -37,7 +37,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TScriptInterface<IPEStorable> ComponentOwnerInterface;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (Categories = "Item"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	FGameplayTag ItemTag;
 
 public:

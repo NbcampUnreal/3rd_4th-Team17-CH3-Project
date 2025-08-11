@@ -22,13 +22,14 @@ APEItemBase::APEItemBase()
 	ItemOwnerActor = nullptr;
 	ItemCount = 5; // 기본 아이템 개수 설정
 	StackCount = 1;
-	StackCapacity = 64;
 }
 
 void APEItemBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	InitializeFromDataTable();
+	StorableItemComponent->SetItemTag(ItemStats.ItemTag);
 }
 
 void APEItemBase::PostInitializeComponents()
@@ -53,9 +54,15 @@ bool APEItemBase::IsInteractable() const
 	return true;
 }
 
-void APEItemBase::OnDuplicated()
+void APEItemBase::InitializeFromDataTable()
 {
-	// TODO: 아이템 데이터 구조 확정 시 복제되는 값은 모두 이 함수에 넣어서 사용하도록 구현
+	if (ItemDataTable && !ItemRowName.IsNone())
+	{
+		if (FPEItemData* ItemData = ItemDataTable->FindRow<FPEItemData>(ItemRowName, TEXT("")))
+		{
+			ItemStats = *ItemData;
+		}
+	}
 }
 
 void APEItemBase::OnPickedUp()
@@ -88,7 +95,7 @@ int32 APEItemBase::GetItemStackCount() const
 
 int32 APEItemBase::GetStackCapacity() const
 {
-	return StackCapacity;
+	return ItemStats.StackCapacity;
 }
 
 void APEItemBase::SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface)
@@ -102,7 +109,7 @@ int32 APEItemBase::CalculateStackCount(int32 Count) const
 	{
 		return 0;
 	}
-	return (Count - 1) / StackCapacity + 1;
+	return (Count - 1) / ItemStats.StackCapacity + 1;
 }
 
 void APEItemBase::AddItemCount(int32 Count)
@@ -145,17 +152,14 @@ void APEItemBase::SplitAndDropItem(int32 Count, const FVector& Location, const F
 	// 복제된 아이템을 생성
 	if (GetWorld())
 	{
-		APEItemBase* DuplicatedItem = GetWorld()->SpawnActor<APEItemBase>(GetClass(), Location, Rotation);
-		if (DuplicatedItem)
+		if (APEItemBase* DuplicatedItem = GetWorld()->SpawnActor<APEItemBase>(GetClass(), Location, Rotation))
 		{
 			// 복제된 아이템의 속성을 설정
-			// NOTE: 아이템 데이터 구조가 확정되지 않아 임시로 구현
 			DuplicatedItem->ItemCount = Count;
 			DuplicatedItem->StackCount = CalculateStackCount(Count);
-			DuplicatedItem->StackCapacity = StackCapacity;
+			DuplicatedItem->ItemStats.StackCapacity = ItemStats.StackCapacity;;
 			DuplicatedItem->ItemOwnerActor = nullptr;
-				
-			DuplicatedItem->OnDuplicated();
+			
 			DuplicatedItem->OnDropToWorld(Location, Rotation);
 				
 			UE_LOG(LogTemp, Warning, TEXT("Item duplicated: Original count %d, Duplicated count %d"), ItemCount, Count);
@@ -179,3 +183,4 @@ void APEItemBase::DestoryItem()
 		UE_LOG(LogTemp, Error, TEXT("APEItemBase::DestoryItem failed: World is null"));
 	}
 }
+
