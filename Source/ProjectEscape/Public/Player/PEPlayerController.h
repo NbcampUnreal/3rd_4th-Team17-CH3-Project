@@ -26,6 +26,10 @@ public:
 	void OnChangeStamina(float HealthPoint, float MaxHealthPoint);
 
 	void PlayDamageAnimOfHUDWidget();
+	void PlayHitMarkerAnimOfHUDWIdget();
+	void PlayKillMarkerAnimOfHUDWidget();
+	void PlayAimAnimOfHUDWidget();
+
 	void ChangeHealthBar(float HealthPoint, float MaxHealthPoint);
 	void ChangeStaminaBar(float Stamina, float MaxStamina);
 
