@@ -43,7 +43,7 @@ public:
 	void OnItemPickedUp();
 
 	UFUNCTION()
-	void OnItemDropped();
+	void OnItemDropped(const FVector& Location, const FRotator& Rotation);
 
 	UFUNCTION()
 	EPEEquipmentType GetEquipmentType() const;

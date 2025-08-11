@@ -4,6 +4,7 @@
 #include "Items/Components/PEUseableComponent.h"
 
 #include "Core/PELogChannels.h"
+#include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Interface/PEUseable.h"
 
 
@@ -23,13 +24,31 @@ void UPEUseableComponent::BeginPlay()
 
 void UPEUseableComponent::Hold()
 {
-	
-	bIsHold = true;
+	if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+	{
+		UseableInterface->OnHand(GetOwner());
+		bIsHold = true;
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+	}
+	UE_LOG(LogPE, Log, TEXT("UPEUseableComponent::Hold called on %s"), *GetOwner()->GetName());
 }
 
 void UPEUseableComponent::Release()
 {
-	bIsHold = false;
+	if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+	{
+		UseableInterface->OnRelease();
+		bIsHold = false;
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+	}
+	UE_LOG(LogPE, Log, TEXT("UPEUseableComponent::Hold called on %s"), *GetOwner()->GetName());
+
 }
 
 void UPEUseableComponent::DoPrimaryAction(AActor* User)
@@ -99,4 +118,14 @@ void UPEUseableComponent::DoTertiaryAction(AActor* User)
 bool UPEUseableComponent::IsHolding() const
 {
 	return bIsHold;
+}
+
+EPEEquipmentType UPEUseableComponent::GetEquipmentType() const
+{
+	if (IPEQuickSlotItem* QuickSlotItemInterface = Cast<IPEQuickSlotItem>(GetOwner()))
+	{
+		return QuickSlotItemInterface->GetEquipmentType();
+	}
+	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::GetEquipmentType: Owner %s does not implement IPEQuickSlotItem interface!"), *GetOwner()->GetName());
+	return EPEEquipmentType::None; // 기본값 반환
 }
