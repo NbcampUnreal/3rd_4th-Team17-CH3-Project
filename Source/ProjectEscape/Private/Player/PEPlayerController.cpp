@@ -21,9 +21,6 @@ void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealth
 {
 	PlayDamageAnimOfHUDWidget();
 	ChangeHealthBar(HealthPoint, MaxHealthPoint);
-
-	// 테스트 코드 사용후 제거
-	TestPlayHUDAnim();
 }
 
 void APEPlayerController::OnChangeStamina(float Stamina, float MaxStamina)
@@ -79,12 +76,6 @@ void APEPlayerController::PlayAimAnimOfHUDWidget()
 			HUDWidget->ProcessEvent(AimFunc, nullptr);
 		}
 	}
-}
-
-void APEPlayerController::TestPlayHUDAnim()
-{
-	PlayHitMarkerAnimOfHUDWIdget();
-	PlayAimAnimOfHUDWidget();
 }
 
 void APEPlayerController::ChangeHealthBar(float HealthPoint, float MaxHealthPoint)
