@@ -1,12 +1,38 @@
-#include "Characters/Hero/Components/PEHeroInputComponent.h"
-#include "GameFramework/Character.h"
+癤�#include "Characters/Hero/Components/PEHeroInputComponent.h"
+#include "Player/PEPlayerState.h"
 #include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
+#include "Characters/Hero/PEHero.h"
+#include "Characters/Hero/Components/PEInteractManagerComponent.h"
+#include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
+#include "Player/PEPlayerController.h"
+#include "Items/Components/PEUseableComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "EnhancedInputComponent.h"
 
 UPEHeroInputComponent::UPEHeroInputComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = true;
+
+	bIsSprint = false;
+}
+
+void UPEHeroInputComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
+	{
+		bool isMoving = !FMath::IsNearlyZero(MovementComponent->Velocity.Length());
+		if (bIsSprint && isMoving)
+		{
+			if (!CheckCanSprintAndCommitSprint(DeltaTime))
+			{
+				StopSprint();
+			}
+		}
+		else
+		{
+			RecoverCostWhileNotSprinting(DeltaTime);
+		}
+	}
 }
 
 void UPEHeroInputComponent::InputConfiguration()
@@ -68,6 +94,10 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 			{
 				EIC->BindAction(ReloadInputAction, ETriggerEvent::Started, this, &ThisClass::OnInputReload);
 			}
+			if (InteractInputAction)
+			{
+				EIC->BindAction(InteractInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputInteract);
+			}
 			if (PrimayActionInputAction)
 			{
 				EIC->BindAction(PrimayActionInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputPrimaryActionTriggered);
@@ -78,6 +108,10 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 				EIC->BindAction(SecondaryActionInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputSecondaryActionTriggered);
 				EIC->BindAction(SecondaryActionInputAction, ETriggerEvent::Completed, this, &ThisClass::OnInputSecondaryActionCompleted);
 			}
+			if (OpenPauseMenuAction)
+			{
+				EIC->BindAction(OpenPauseMenuAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputOpenPauseMenu);
+			}
 		}
 		
 	}
@@ -85,7 +119,7 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 
 void UPEHeroInputComponent::OnInputMove(const FInputActionValue& Value)
 {
-	if (ACharacter* Hero = GetOwnerCharacter())
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		FVector2D MoveVector = Value.Get<FVector2D>();
 		if (!FMath::IsNearlyZero(MoveVector.Length()))
@@ -100,7 +134,7 @@ void UPEHeroInputComponent::OnInputMove(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputLook(const FInputActionValue& Value)
 {
-	if (ACharacter* Hero = GetOwnerCharacter())
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		FVector2D LookVector = Value.Get<FVector2D>();
 		if (!FMath::IsNearlyZero(LookVector.Length()))
@@ -113,24 +147,29 @@ void UPEHeroInputComponent::OnInputLook(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputStartSprint(const FInputActionValue& Value)
 {
-	// TODO: 스태미너 관련 기능 구현...
-	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
+	if (!bIsSprint)
 	{
-		MovementComponent->MaxWalkSpeed = SprintSpeed;
+		if (CheckCanStartSprint())
+		{
+			StartSprint();
+			bIsSprint = true;
+		}
 	}
+	
 }
 
 void UPEHeroInputComponent::OnInputStopSprint(const FInputActionValue& Value)
 {
-	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
+	if (bIsSprint)
 	{
-		MovementComponent->MaxWalkSpeed = NormalSpeed;
+		StopSprint();
+		bIsSprint = false;
 	}
 }
 
 void UPEHeroInputComponent::OnInputStartJump(const FInputActionValue& Value)
 {
-	if (ACharacter* Hero = GetOwnerCharacter())
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		Hero->Jump();
 	}
@@ -138,7 +177,7 @@ void UPEHeroInputComponent::OnInputStartJump(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputStopJump(const FInputActionValue& Value)
 {
-	if (ACharacter* Hero = GetOwnerCharacter())
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		Hero->StopJumping();
 	}
@@ -147,7 +186,7 @@ void UPEHeroInputComponent::OnInputStopJump(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnInputToggleCrouch(const FInputActionValue& Value)
 {
-	if (ACharacter* Hero = GetOwnerCharacter())
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		if (Hero->CanCrouch())
 		{
@@ -180,6 +219,20 @@ void UPEHeroInputComponent::OnInputReload(const FInputActionValue& Value)
 #endif
 }
 
+void UPEHeroInputComponent::OnInputInteract(const FInputActionValue& Value)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Interact Triggered!!")));
+	}
+#endif
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		Hero->GetInteractManagerComponent()->TryInteract();
+	}
+}
+
 void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValue& Value)
 {
 #ifdef WITH_EDITOR
@@ -188,6 +241,10 @@ void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValu
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Primary Action Triggered!!")));
 	}
 #endif
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		Hero->Use();
+	}
 }
 
 void UPEHeroInputComponent::OnInputPrimaryActionCompleted(const FInputActionValue& Value)
@@ -220,19 +277,20 @@ void UPEHeroInputComponent::OnInputSecondaryActionCompleted(const FInputActionVa
 #endif
 }
 
-
-ACharacter* UPEHeroInputComponent::GetOwnerCharacter()
+void UPEHeroInputComponent::OnInputOpenPauseMenu(const FInputActionValue& Value)
 {
-	if (ACharacter* Hero = Cast<ACharacter>(GetOwner()))
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
-		return Hero;
+		if (APEPlayerController* PC = GetOwnerPlayerController<APEPlayerController>())
+		{
+			PC->PauseGameAndShowPauseMenu();
+		}
 	}
-	return nullptr;
 }
 
 UCharacterMovementComponent* UPEHeroInputComponent::GetOwnerMovementComponent()
 {
-	if (ACharacter* Hero = GetOwnerCharacter())
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		if (UCharacterMovementComponent* MovementComponent = Cast<UCharacterMovementComponent>(Hero->GetMovementComponent()))
 		{
@@ -244,7 +302,7 @@ UCharacterMovementComponent* UPEHeroInputComponent::GetOwnerMovementComponent()
 
 UEnhancedInputLocalPlayerSubsystem* UPEHeroInputComponent::GetEnhancedInputLocalPlayerSubsystem()
 {
-	if (ACharacter* Hero = GetOwnerCharacter())
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
 	{
 		if (const APlayerController* PC = Hero->GetController<APlayerController>())
 		{
@@ -258,4 +316,50 @@ UEnhancedInputLocalPlayerSubsystem* UPEHeroInputComponent::GetEnhancedInputLocal
 		}
 	}
 	return nullptr;
+}
+
+bool UPEHeroInputComponent::CheckCanStartSprint()
+{
+	if (APEPlayerState* PlayerState = GetOwnerPlayerState<APEPlayerState>())
+	{
+		return PlayerState->CanStartSprint();
+	}
+	return false;
+}
+
+bool UPEHeroInputComponent::CheckCanSprintAndCommitSprint(float DeltaTime)
+{
+	if (APEPlayerState* PlayerState = GetOwnerPlayerState<APEPlayerState>())
+	{
+		if (PlayerState->CanSprint(DeltaTime))
+		{
+			PlayerState->CommitSprint(DeltaTime);
+			return true;
+		}
+	}
+	return false;
+}
+
+void UPEHeroInputComponent::RecoverCostWhileNotSprinting(float DeltaTime)
+{
+	if (APEPlayerState* PlayerState = GetOwnerPlayerState<APEPlayerState>())
+	{
+		PlayerState->RecoverStamina(DeltaTime);
+	}
+}
+
+void UPEHeroInputComponent::StartSprint()
+{
+	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
+	{
+		MovementComponent->MaxWalkSpeed = SprintSpeed;
+	}
+}
+
+void UPEHeroInputComponent::StopSprint()
+{
+	if (UCharacterMovementComponent* MovementComponent = GetOwnerMovementComponent())
+	{
+		MovementComponent->MaxWalkSpeed = NormalSpeed;
+	}
 }

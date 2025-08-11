@@ -19,18 +19,6 @@ void APEWeaponHitscan::BeginPlay()
 	
 }
 
-void APEWeaponHitscan::Use(AActor* Holder)
-{
-	Super::Use(Holder);
-
-	FPEAttackStats AttackStats;
-	// 테스트용 임시 스탯 설정
-	AttackStats.AttackRange = 1000.0f;
-	AttackStats.DamageAmount = 17.0f;
-	AttackStats.CollisionChannel = ECC_Visibility;
-	AttackComponent->ExcuteAttack(AttackStats);
-}
-
 UPEAttackBaseComponent* APEWeaponHitscan::CreateAttackComponent()
 {
 	UE_LOG(LogPE, Warning, TEXT("APEWeaponHitscan::CreateAttackComponent() called!!!"));

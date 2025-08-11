@@ -1,7 +1,8 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "GameFramework/Character.h"
 #include "PEHeroInputComponent.generated.h"
 
 class UInputAction;
@@ -19,6 +20,7 @@ class PROJECTESCAPE_API UPEHeroInputComponent : public UActorComponent
 
 public:
 	UPEHeroInputComponent();
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	void InputConfiguration();
 	void SetupEnhancedInput(UInputComponent* PlayerInputComponent);
@@ -32,10 +34,12 @@ public:
 	void OnInputToggleCrouch(const FInputActionValue& Value);
 	void OnInputQuickSlotNumber(const FInputActionValue& Value, int32 SlotNumber);
 	void OnInputReload(const FInputActionValue& Value);
+	void OnInputInteract(const FInputActionValue& Value);
 	void OnInputPrimaryActionTriggered(const FInputActionValue& Value);
 	void OnInputPrimaryActionCompleted(const FInputActionValue& Value);
 	void OnInputSecondaryActionTriggered(const FInputActionValue& Value);
 	void OnInputSecondaryActionCompleted(const FInputActionValue& Value);
+	void OnInputOpenPauseMenu(const FInputActionValue& Value);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> MoveInputAction;
@@ -59,10 +63,16 @@ public:
 	TObjectPtr<UInputAction> ReloadInputAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> InteractInputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> PrimayActionInputAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> SecondaryActionInputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> OpenPauseMenuAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Mapping")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
@@ -76,8 +86,63 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Configuration")
 	bool bCanCrouch = true;
 
+	/* movement state control */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Input|MovementState")
+	bool bIsSprint = false;
+
 protected:
-	ACharacter* GetOwnerCharacter();
+	template<class T>
+	T* GetOwnerCharacter();
+
+	template<class T>
+	T* GetOwnerPlayerController();
+
+	template<class T>
+	T* GetOwnerPlayerState();
+
 	UCharacterMovementComponent* GetOwnerMovementComponent();
 	UEnhancedInputLocalPlayerSubsystem* GetEnhancedInputLocalPlayerSubsystem();
+
+	bool CheckCanStartSprint();
+	bool CheckCanSprintAndCommitSprint(float DeltaTime);
+	void RecoverCostWhileNotSprinting(float DeltaTime);
+	void StartSprint();
+	void StopSprint();
 };
+
+template<class T>
+T* UPEHeroInputComponent::GetOwnerCharacter()
+{
+	if (T* Hero = Cast<T>(GetOwner()))
+	{
+		return Hero;
+	}
+	return nullptr;
+}
+
+template<class T>
+T* UPEHeroInputComponent::GetOwnerPlayerController()
+{
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
+	{
+		if (T* PC = Cast<T>(Hero->GetController()))
+		{
+			return PC;
+		}
+	}
+	return nullptr;
+}
+
+template<class T>
+T* UPEHeroInputComponent::GetOwnerPlayerState()
+{
+	if (ACharacter* Hero = GetOwnerCharacter<ACharacter>())
+	{
+		if (T* PS = Cast<T>(Hero->GetPlayerState()))
+		{
+			return PS;
+		}
+	}
+	return nullptr;
+}
+
