@@ -60,11 +60,27 @@ void UPEStorableItemComponent::OnItemDropped(int32 Count, const FVector& Locatio
 	}
 }
 
+void UPEStorableItemComponent::ReduceItemCount(int32 Count)
+{
+	if (ComponentOwnerInterface)
+	{
+		ComponentOwnerInterface->ReduceItemCount(Count);
+	}
+}
+
 void UPEStorableItemComponent::DestroyItem() const
 {
 	if (ComponentOwnerInterface)
 	{
 		ComponentOwnerInterface->DestoryItem();
+	}
+}
+
+void UPEStorableItemComponent::SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface)
+{
+	if (ComponentOwnerInterface)
+	{
+		return ComponentOwnerInterface->SetInventroyManagerComponent(NewComponentOwnerInterface);
 	}
 }
 

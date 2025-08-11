@@ -14,9 +14,13 @@ APEWeaponBase::APEWeaponBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Mesh 생성 및 설정
+	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
+	RootComponent = WeaponMesh;
+
 	// 상호작용 컴포넌트 생성 및 설정
 	InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
-	InteractableComponent->SetupAttachment(RootComponent);
+	InteractableComponent->SetupAttachment(WeaponMesh);
 	InteractableComponent->SetHiddenInGame(false);
 
 	// 장착 컴포넌트 생성 및 설정
@@ -25,8 +29,11 @@ APEWeaponBase::APEWeaponBase()
 	// 퀵슬롯 아이템 컴포넌트 생성 및 설정
 	QuickSlotItemComponent = CreateDefaultSubobject<UPEQuickSlotItemComponent>(TEXT("QuickSlotItemComponent"));
 
-	bIsInHand = false;
+	bIsFiring = false;
+	bIsReloading = false;
 	LastAttackTime = 0.0f;
+	CurrentAmmoCount = 0;
+
 }
 
 void APEWeaponBase::BeginPlay()
@@ -64,6 +71,91 @@ void APEWeaponBase::PostInitializeComponents()
 	}
 }
 
+void APEWeaponBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	GetWorldTimerManager().ClearTimer(ReloadTimerHandle);
+}
+
+bool APEWeaponBase::TryReload()
+{
+	if (bIsReloading)
+	{
+		UE_LOG(LogPE, Warning, TEXT("Weapon is already reloading."));
+		return false;
+	}
+
+	if (CurrentAmmoCount >= WeaponStats.MaxAmmo)
+	{
+		UE_LOG(LogPE, Warning, TEXT("Weapon already has maximum ammo: %d"), CurrentAmmoCount);
+		return false;
+	}
+	
+	if (IPEAttackable* IPEAttackableInterface = Cast<IPEAttackable>(WeaponOwnerActor))
+	{
+		AmmoComponent = IPEAttackableInterface->GetStorableItemComponent(WeaponStats.AmmoType);
+		UE_LOG(LogPE, Log, TEXT("AmmoComponent set for %s with AmmoType: %s"), 
+			*GetNameSafe(WeaponOwnerActor), *WeaponStats.AmmoType.ToString());
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("WeaponOwnerActor does not implement IPEAttackable interface"));
+		return false;
+	}
+
+	if (!AmmoComponent.IsValid())
+	{
+		UE_LOG(LogPE, Warning, TEXT("AmmoComponent is not valid for %s"), *GetName());
+		return false;
+	}
+	
+	if (AmmoComponent->GetItemCount() > 0)
+	{
+		bIsReloading = true;
+	
+		GetWorldTimerManager().SetTimer(
+			ReloadTimerHandle,
+			this,
+			&APEWeaponBase::PerformReload,
+			WeaponStats.ReloadTime,
+			false);
+		UE_LOG(LogPE, Log, TEXT("Reloading..."));
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("No ammo available for reloading."));
+		return false;
+	}
+
+	return true;
+}
+
+void APEWeaponBase::PerformReload()
+{
+	if (!GetUseableComponent()->IsHolding())
+	{
+		bIsReloading = false;
+		return;
+	}
+	
+	if (AmmoComponent.IsValid() && AmmoComponent->GetItemCount() > 0)
+	{
+		int AmmoToReload = FMath::Min(WeaponStats.MaxAmmo - CurrentAmmoCount, AmmoComponent->GetItemCount());
+		CurrentAmmoCount += AmmoToReload;
+		AmmoComponent->ReduceItemCount(AmmoToReload);
+	}
+	
+	bIsReloading = false;
+	UE_LOG(LogPE, Log, TEXT("Reload complete. Current ammo: %d"), CurrentAmmoCount);
+}
+
+void APEWeaponBase::CancleReload()
+{
+	GetWorldTimerManager().ClearTimer(ReloadTimerHandle);
+	bIsReloading = false;
+}
+
 void APEWeaponBase::Interact(AActor* Interactor)
 {
 	UE_LOG(LogPE, Warning, TEXT("Interact called on %s by %s"), *GetName(), *Interactor->GetName());
@@ -80,15 +172,31 @@ void APEWeaponBase::Interact(AActor* Interactor)
 	}
 }
 
-void APEWeaponBase::Use(AActor* Holder)
+void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Use called on %s by %s"), *GetName(), *Holder->GetName());
+	if (CurrentAmmoCount <= 0)
+	{
+		return; 
+	}
+
+	// NOTE: 무기 발사 불가능 상태가 많아지면 Tag로 전환하는 것을 고려해야 함
+	if (bIsReloading)
+	{
+		return;
+	}
+
+	if (!WeaponStats.IsAutomatic && bIsFiring)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Weapon is not automatic and already firing. Ignoring primary action."));
+		return;
+	}
 	
 	// FireRate 체크 (RPM을 초당 발사 횟수로 변환)
 	if (WeaponStats.FireRate > 0.0f)
 	{
 		float CurrentTime = GetWorld()->GetTimeSeconds();
-		float TimeBetweenShots = 60.0f / WeaponStats.FireRate; // RPM을 초 단위 간격으로 변환
+		float TimeBetweenShots = 60.0f / WeaponStats.FireRate;
 		
 		if (CurrentTime - LastAttackTime < TimeBetweenShots)
 		{
@@ -100,18 +208,46 @@ void APEWeaponBase::Use(AActor* Holder)
 		
 		LastAttackTime = CurrentTime;
 	}
-	
+
 	FPEAttackStats AttackStats;
 	AttackStats.AttackRange = WeaponStats.Range;
 	AttackStats.DamageAmount = WeaponStats.Damage;
+	AttackStats.SpreadAngle = WeaponStats.Spread;
 	AttackStats.CollisionChannel = ECC_Visibility;
 
-	AttackComponent->ExcuteAttack(AttackStats);
+	// 1회 발사 시 몇 개의 탄환을 발사할지 설정 (e.g. 산탄총은 12개의 펠릿이 발사됌)
+	for (int32 i = 0; i < WeaponStats.BulletsPerShot; ++i)
+	{
+		AttackComponent->ExcuteAttack(AttackStats);
+	}
+
+	CurrentAmmoCount--;
+	bIsFiring = true;
+}
+
+void APEWeaponBase::CompletePrimaryAction(AActor* Holder)
+{
+	bIsFiring = false;
+}
+
+void APEWeaponBase::DoSecondaryAction(AActor* Holder)
+{
+	// NOTE: 보조 액션이 필요한 무기에만 구현됩니다.
+}
+
+void APEWeaponBase::DoTertiaryAction(AActor* Holder)
+{	
+	TryReload();
 }
 
 void APEWeaponBase::OnHand(AActor* NewOwner)
 {
-	bIsInHand = true;
+	//bIsInHand = true;
+}
+
+void APEWeaponBase::OnRelease(AActor* NewOwner)
+{
+	//bIsInHand = false;
 }
 
 bool APEWeaponBase::IsInteractable() const

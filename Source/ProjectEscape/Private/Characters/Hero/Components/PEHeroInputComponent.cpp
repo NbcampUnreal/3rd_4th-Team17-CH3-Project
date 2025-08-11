@@ -8,6 +8,8 @@
 #include "Items/Components/PEUseableComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "EnhancedInputComponent.h"
+#include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
+#include "Items/PEEquipmentType.h"
 
 UPEHeroInputComponent::UPEHeroInputComponent()
 {
@@ -207,6 +209,15 @@ void UPEHeroInputComponent::OnInputQuickSlotNumber(const FInputActionValue& Valu
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("SlotNumber: %d"), SlotNumber));
 	}
 #endif
+	
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		if (SlotNumber >= 0 && SlotNumber < static_cast<int32>(EPEEquipmentType::MAX))
+		{
+			EPEEquipmentType EquipmentType = static_cast<EPEEquipmentType>(SlotNumber);
+			Hero->HandEquipment(EquipmentType); // 매개변수 전달
+		}
+	}
 }
 
 void UPEHeroInputComponent::OnInputReload(const FInputActionValue& Value)
@@ -217,6 +228,10 @@ void UPEHeroInputComponent::OnInputReload(const FInputActionValue& Value)
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Reload")));
 	}
 #endif
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		Hero->DoTertiaryAction();
+	}
 }
 
 void UPEHeroInputComponent::OnInputInteract(const FInputActionValue& Value)
@@ -243,7 +258,7 @@ void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValu
 #endif
 	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
 	{
-		Hero->Use();
+		Hero->DoPrimaryAction();
 	}
 }
 
@@ -255,6 +270,10 @@ void UPEHeroInputComponent::OnInputPrimaryActionCompleted(const FInputActionValu
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Black, FString::Printf(TEXT("On Input Primary Action Complete...")));
 	}
 #endif
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		Hero->CompletePrimaryAction();
+	}
 }
 
 void UPEHeroInputComponent::OnInputSecondaryActionTriggered(const FInputActionValue& Value)
@@ -265,6 +284,10 @@ void UPEHeroInputComponent::OnInputSecondaryActionTriggered(const FInputActionVa
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Secondary Action Triggered!!")));
 	}
 #endif
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		Hero->DoSecondaryAction();
+	}
 }
 
 void UPEHeroInputComponent::OnInputSecondaryActionCompleted(const FInputActionValue& Value)

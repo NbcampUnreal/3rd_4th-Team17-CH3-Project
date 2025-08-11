@@ -29,9 +29,6 @@ protected:
 	/* 장착 관련 섹션 */
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Useable")
-	TObjectPtr<AActor> CurrentHolder;
-
-	UPROPERTY(VisibleAnywhere, Category = "Useable")
 	bool bIsHold;
 	
 public:
@@ -42,7 +39,16 @@ public:
 	void Release();
 
 	UFUNCTION(BlueprintCallable, Category = "Useable")
-	void Use(AActor* User);
+	void DoPrimaryAction(AActor* User);
 	
-	FORCEINLINE void SetOwner(AActor* NewOwner) { CurrentHolder = NewOwner; }
+	UFUNCTION(BlueprintCallable, Category = "Useable")
+	void CompletePrimaryAction(AActor* User);
+	
+	UFUNCTION(BlueprintCallable, Category = "Useable")
+	void DoSecondaryAction(AActor* User);
+	
+	UFUNCTION(BlueprintCallable, Category = "Useable")
+	void DoTertiaryAction(AActor* User);
+
+	bool IsHolding() const;
 };
