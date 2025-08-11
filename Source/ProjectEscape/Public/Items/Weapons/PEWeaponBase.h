@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "FPEWeaponData.h"
 #include "GameFramework/Actor.h"
+#include "Items/Components/PEStorableItemComponent.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Interface/PEInteractable.h"
 #include "Items/Interface/PEUseable.h"
@@ -28,17 +29,13 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	/* Interact 관련 섹션 */
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
-	TObjectPtr<UPEInteractableComponent> InteractableComponent;
-	
-	/* IPEInteractable 인터페이스 선언 */
+	/* Mesh 관련 섹션 */
 public:
-	virtual void Interact(AActor* Interactor) override;
-	virtual bool IsInteractable() const override;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
+	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
+	
 	/* Weapon Stat 관련 섹션 */
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
@@ -51,10 +48,35 @@ protected:
 	FPEWeaponData WeaponStats;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
-	TObjectPtr<AActor> WeaponOwnerActor; // 아이템을 소유한 액터
-	
-	bool bIsInHand;
+	TObjectPtr<AActor> WeaponOwnerActor;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
+	TWeakObjectPtr<UPEStorableItemComponent> AmmoComponent; // 소모되는 탄약으로 선택된 액터의 컴포넌트
+	
+	UPROPERTY()
+	FTimerHandle ReloadTimerHandle;
+	
+	bool bIsFiring;
+	bool bIsReloading;
+	int32 CurrentAmmoCount;
+	
+public:
+	bool TryReload();
+	void CancleReload();
+
+protected:
+	void PerformReload();
+
+	/* Interact 관련 섹션 */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
+	TObjectPtr<UPEInteractableComponent> InteractableComponent;
+	
+	/* IPEInteractable 인터페이스 선언 */
+public:
+	virtual void Interact(AActor* Interactor) override;
+	virtual bool IsInteractable() const override;
+	
 	/* 퀵슬롯 관련 섹션 */
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
@@ -74,9 +96,13 @@ protected:
 
 	/* IPEUseable 인터페이스 선언 */
 public:
-	virtual void Use(AActor* Holder) override;
+	virtual void DoPrimaryAction(AActor* Holder) override;
+	virtual void CompletePrimaryAction(AActor* Holder) override;
+	virtual void DoSecondaryAction(AActor* Holder) override;
+	virtual void DoTertiaryAction(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
-	virtual UPEUseableComponent* GetUseableComponent() const override; // 사용 가능한 컴포넌트를 반환합니다
+	virtual void OnRelease(AActor* NewOwner) override;
+	virtual UPEUseableComponent* GetUseableComponent() const override;
 
 	/* Combat(Attack) 관련 섹션 */
 protected:

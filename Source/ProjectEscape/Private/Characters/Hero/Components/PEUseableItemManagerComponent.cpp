@@ -59,10 +59,34 @@ void UPEUseableItemManagerComponent::ReleaseHandItem()
 	}
 }
 
-void UPEUseableItemManagerComponent::UseCurrentItem(AActor* Holder)
+void UPEUseableItemManagerComponent::DoPrimaryActionCurrentItem(AActor* Holder)
 {
 	if (CurrentItemComponent)
 	{
-		CurrentItemComponent->Use(Holder);
+		CurrentItemComponent->DoPrimaryAction(Holder);
+	}
+}
+
+void UPEUseableItemManagerComponent::CompletePrimaryActionCurrentItem(AActor* Holder)
+{
+	if (CurrentItemComponent)
+	{
+		CurrentItemComponent->CompletePrimaryAction(Holder);
+	}
+}
+
+void UPEUseableItemManagerComponent::DoSecondaryActionCurrentItem(AActor* Holder)
+{
+	if (CurrentItemComponent)
+	{
+		CurrentItemComponent->DoSecondaryAction(Holder);
+	}
+}
+
+void UPEUseableItemManagerComponent::DoTertiaryActionCurrentItem(AActor* Holder)
+{
+	if (CurrentItemComponent)
+	{
+		CurrentItemComponent->DoTertiaryAction(Holder);
 	}
 }

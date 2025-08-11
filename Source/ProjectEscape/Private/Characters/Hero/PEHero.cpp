@@ -27,7 +27,7 @@ APEHero::APEHero()
 	
 	// Create Interact Manager Component
 	InteractManagerComponent = CreateDefaultSubobject<UPEInteractManagerComponent>(TEXT("InteractManagerComponent"));
-
+	
 	// Create Useable Item Component
 	UseableItemManagerComponent = CreateDefaultSubobject<UPEUseableItemManagerComponent>(TEXT("UseableItemManagerComponent"));
 
@@ -111,13 +111,51 @@ UPEInteractManagerComponent* APEHero::GetInteractManagerComponent() const
 	return InteractManagerComponent; 
 }
 
-void APEHero::Use()
+void APEHero::DoPrimaryAction()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Use called"));
 	if (UseableItemManagerComponent)
 	{
-		UseableItemManagerComponent->UseCurrentItem(this);
-		UE_LOG(LogTemp, Warning, TEXT("Use called with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
+		UseableItemManagerComponent->DoPrimaryActionCurrentItem(this);
+		UE_LOG(LogTemp, Warning, TEXT("Primary Action with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UseableComponent is not initialized!"));
+	}
+}
+
+void APEHero::CompletePrimaryAction()
+{
+	if (UseableItemManagerComponent)
+	{
+		UseableItemManagerComponent->CompletePrimaryActionCurrentItem(this);
+		UE_LOG(LogTemp, Warning, TEXT("Primary Action Complete with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UseableComponent is not initialized!"));
+	}
+}
+
+void APEHero::DoSecondaryAction()
+{
+	if (UseableItemManagerComponent)
+	{
+		UseableItemManagerComponent->DoSecondaryActionCurrentItem(this);
+		UE_LOG(LogTemp, Warning, TEXT("Secondary Action called with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("UseableComponent is not initialized!"));
+	}
+}
+
+void APEHero::DoTertiaryAction()
+{
+	if (UseableItemManagerComponent)
+	{
+		UseableItemManagerComponent->DoTertiaryActionCurrentItem(this);
+		UE_LOG(LogTemp, Warning, TEXT("Tertiary Action called with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
 	{
@@ -142,12 +180,6 @@ void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 			// 아이템을 손에 들고 있는 상태로 설정
 			UseableItemManagerComponent->SetHandItem(UseableComponent);
 			
-			// 인터페이스가 구현되어 있다면 OnHand 호출
-			if (IPEUseable* UseableInterface = Cast<IPEUseable>(HandItem))
-			{
-				UseableInterface->OnHand(this);
-			}
-			
 			UE_LOG(LogTemp, Warning, TEXT("HandEquipment: %s is now in hand"), *HandItem->GetName());
 		}
 		else
@@ -161,7 +193,6 @@ void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 	}
 }
 
-
 void APEHero::InventroyDropTest()
 {
 	if (InventoryManagerComponent)
@@ -173,5 +204,10 @@ void APEHero::InventroyDropTest()
 USceneComponent* APEHero::GetAttackStartPoint() const
 {
 	return FirstPersonCameraComponent;
+}
+
+UPEStorableItemComponent* APEHero::GetStorableItemComponent(FGameplayTag Tag) const
+{
+	return InventoryManagerComponent->GetItemByTag(Tag);
 }
 

@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "UObject/Interface.h"
 #include "PEAttackable.generated.h"
 
+class UPEStorableItemComponent;
 // This class does not need to be modified.
 UINTERFACE()
 class UPEAttackable : public UInterface
@@ -22,4 +24,5 @@ class PROJECTESCAPE_API IPEAttackable
 
 public:
 	virtual USceneComponent* GetAttackStartPoint() const = 0;
+	virtual UPEStorableItemComponent* GetStorableItemComponent(FGameplayTag Tag) const = 0;
 };
