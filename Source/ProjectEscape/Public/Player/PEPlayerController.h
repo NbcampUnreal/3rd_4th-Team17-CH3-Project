@@ -29,7 +29,6 @@ public:
 	void PlayHitMarkerAnimOfHUDWIdget();
 	void PlayKillMarkerAnimOfHUDWidget();
 	void PlayAimAnimOfHUDWidget();
-	void TestPlayHUDAnim();
 
 	void ChangeHealthBar(float HealthPoint, float MaxHealthPoint);
 	void ChangeStaminaBar(float Stamina, float MaxStamina);
