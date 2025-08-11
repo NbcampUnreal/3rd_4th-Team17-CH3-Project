@@ -16,6 +16,9 @@ public:
 
 protected:
     virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+    virtual void OnInstanceDestroyed(UBehaviorTreeComponent& OwnerComp) override;
+    virtual void OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult) override;
+    virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Attack")
     float AttackRange = 150.0f; // 공격 가능한 최대 거리
@@ -28,5 +31,8 @@ protected:
 
 private:
 	FTimerHandle AttackTimerHandle;
+    FDelegateHandle PawnDeathDelegateHandle;
+    TWeakObjectPtr<UBehaviorTreeComponent> CachedOwnerComp;
+    void ClearAttackTimer();
 
 };

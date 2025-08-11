@@ -5,6 +5,8 @@
 #include "Characters/Enemies/AI/PEAIController.h"
 #include "PEAICharacter.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnPawnDeath);
+
 class APEAIController;
 
 UCLASS()
@@ -15,6 +17,8 @@ class PROJECTESCAPE_API APEAICharacter : public ACharacter
 public:
 	APEAICharacter();
 	virtual void PreInitializeComponents() override;
+
+	FOnPawnDeath OnPawnDeath;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	TSubclassOf<APEAIController> AIControllerClassBP = nullptr;
@@ -33,6 +37,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void BeginDestroy() override;
 
 public:	
 

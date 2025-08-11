@@ -61,3 +61,11 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 		UE_LOG(LogTemp, Warning, TEXT("Failed to set movement speed: Movement component not found"));
 	}
 }
+
+void APEAICharacter::BeginDestroy()
+{
+	// AI 사망 시 델리게이트 브로드캐스트
+	OnPawnDeath.Broadcast();
+
+	Super::BeginDestroy();
+}

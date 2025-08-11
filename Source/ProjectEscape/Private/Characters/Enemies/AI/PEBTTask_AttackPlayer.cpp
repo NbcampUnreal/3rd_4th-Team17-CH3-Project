@@ -3,6 +3,7 @@
 
 #include "Characters/Enemies/AI/PEBTTask_AttackPlayer.h"
 #include "Characters/Enemies/AI/PEAIController.h"
+#include "Characters/Enemies/AI/PEAICharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
@@ -11,16 +12,17 @@
 UPEBTTask_AttackPlayer::UPEBTTask_AttackPlayer()
 {
     NodeName = TEXT("Attack Player");
-    // bNotifyTick = true; // Tick 이벤트 사용 (공격 지속 시간 관리)
+    bCreateNodeInstance = true;
 }
 
 
 EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-    if (AttackTimerHandle.IsValid())
-    {
-        GetWorld()->GetTimerManager().ClearTimer(AttackTimerHandle);
-    }
+    // OwnerComp 캐싱 (AI 사망 시 FinishLatentTask 호출용)
+    CachedOwnerComp = &OwnerComp;
+
+    // 기존 타이머 정리
+    ClearAttackTimer();
 
     AAIController* AIController = OwnerComp.GetAIOwner();
     if (!AIController)
@@ -34,6 +36,19 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
         return EBTNodeResult::Failed;
     }
 
+    // AI 사망 시 델리게이트 바인딩
+    if (APEAICharacter* AICharacter = Cast<APEAICharacter>(MyPawn))
+    {
+        // 기존 바인딩 해제 후 새로 바인딩
+        if (PawnDeathDelegateHandle.IsValid())
+        {
+            AICharacter->OnPawnDeath.Remove(PawnDeathDelegateHandle);
+        }
+
+        PawnDeathDelegateHandle = AICharacter->OnPawnDeath.AddUObject(
+            this, &UPEBTTask_AttackPlayer::ClearAttackTimer);
+    }
+
     // 블랙보드에서 타겟 액터(플레이어) 가져오기
     UBlackboardComponent* BlackboardComp = OwnerComp.GetBlackboardComponent();
     if (!BlackboardComp)
@@ -45,6 +60,14 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
     if (!TargetActor)
     {
         UE_LOG(LogTemp, Warning, TEXT("Attack Failed: No Target Actor"));
+        return EBTNodeResult::Failed;
+    }
+
+    // 플레이어와의 거리 체크
+    float DistanceToPlayer = FVector::Dist(MyPawn->GetActorLocation(), TargetActor->GetActorLocation());
+    if (DistanceToPlayer > AttackRange)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Attack Fail: Player too far (%.1f > %.1f)"), DistanceToPlayer, AttackRange);
         return EBTNodeResult::Failed;
     }
 
@@ -76,15 +99,6 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
         return EBTNodeResult::InProgress;
     }
 
-
-    // 플레이어와의 거리 체크
-    float DistanceToPlayer = FVector::Dist(MyPawn->GetActorLocation(), TargetActor->GetActorLocation());
-    if (DistanceToPlayer > AttackRange)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Attack Fail: Player too far (%.1f > %.1f)"), DistanceToPlayer, AttackRange);
-        return EBTNodeResult::Failed;
-    }
-
     // 플레이어를 바라보도록 회전
     FVector Direction = (TargetActor->GetActorLocation() - MyPawn->GetActorLocation()).GetSafeNormal();
     FRotator LookRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
@@ -106,4 +120,93 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
     // 간단한 구현을 위해 바로 성공 반환
 
     return EBTNodeResult::Succeeded;
+}
+
+void UPEBTTask_AttackPlayer::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult)
+{
+    // 정상 완료 시 타이머 정리
+    ClearAttackTimer();
+
+    // 캐시 정리
+    CachedOwnerComp.Reset();
+
+    // 델리게이트 바인딩 해제
+    if (PawnDeathDelegateHandle.IsValid())
+    {
+        if (AAIController* AIController = OwnerComp.GetAIOwner())
+        {
+            if (APEAICharacter* AICharacter = Cast<APEAICharacter>(AIController->GetPawn()))
+            {
+                AICharacter->OnPawnDeath.Remove(PawnDeathDelegateHandle);
+            }
+        }
+        PawnDeathDelegateHandle.Reset();
+    }
+
+    Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
+}
+
+
+void UPEBTTask_AttackPlayer::OnInstanceDestroyed(UBehaviorTreeComponent& OwnerComp)
+{
+    // 비정상 종료 시 타이머 정리 (안전장치)
+    ClearAttackTimer();
+
+    // 캐시 정리
+    CachedOwnerComp.Reset();
+
+    // 델리게이트 바인딩 해제
+    if (PawnDeathDelegateHandle.IsValid())
+    {
+        if (AAIController* AIController = OwnerComp.GetAIOwner())
+        {
+            if (APEAICharacter* AICharacter = Cast<APEAICharacter>(AIController->GetPawn()))
+            {
+                AICharacter->OnPawnDeath.Remove(PawnDeathDelegateHandle);
+            }
+        }
+        PawnDeathDelegateHandle.Reset();
+    }
+
+    Super::OnInstanceDestroyed(OwnerComp);
+}
+
+EBTNodeResult::Type UPEBTTask_AttackPlayer::AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+    // 타이머 정리
+    ClearAttackTimer();
+    // 캐시 정리
+    CachedOwnerComp.Reset();
+    // 델리게이트 바인딩 해제
+    if (PawnDeathDelegateHandle.IsValid())
+    {
+        if (AAIController* AIController = OwnerComp.GetAIOwner())
+        {
+            if (APEAICharacter* AICharacter = Cast<APEAICharacter>(AIController->GetPawn()))
+            {
+                AICharacter->OnPawnDeath.Remove(PawnDeathDelegateHandle);
+            }
+        }
+        PawnDeathDelegateHandle.Reset();
+    }
+    return EBTNodeResult::Aborted;
+}
+
+void UPEBTTask_AttackPlayer::ClearAttackTimer()
+{
+    // 타이머 정리
+    if (AttackTimerHandle.IsValid())
+    {
+        if (UWorld* World = GetWorld())
+        {
+            World->GetTimerManager().ClearTimer(AttackTimerHandle);
+            UE_LOG(LogTemp, Log, TEXT("Attack Timer Cleared"));
+        }
+    }
+
+    // InProgress 상태였다면 강제 종료 (AI 사망 시 대응)
+    if (CachedOwnerComp.IsValid() && IsValid(CachedOwnerComp.Get()))
+    {
+        FinishLatentTask(*CachedOwnerComp.Get(), EBTNodeResult::Aborted);
+    }
 }
