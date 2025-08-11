@@ -16,14 +16,14 @@ struct FPEItemData: public FTableRowBase
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-	FName Name;
+	FName Name = NAME_None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-	int32 StackCapacity;
+	int32 StackCapacity = 1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-	FGameplayTag ItemTag;
+	FGameplayTag ItemTag = FGameplayTag::EmptyTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-	FString Description;
+	FString Description = TEXT("No Description");
 };
