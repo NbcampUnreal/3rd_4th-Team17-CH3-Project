@@ -9,6 +9,21 @@
 #include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
+// 인벤토리 리스트 구조체
+USTRUCT(BlueprintType)
+struct PROJECTESCAPE_API FInventoryList
+{
+	GENERATED_BODY()
+
+public:
+	// 내부 선언은 비워둠 (추후 확장 가능)
+};
+
+// 델리게이트 선언
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemDrop, FGameplayTag, ItemTag, int32, DropCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryList, InventoryList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemUse, FGameplayTag, ItemTag);
+
 class UCameraComponent;
 class UPEInteractManagerComponent;
 class UPEReceiveAttackComponent;
@@ -74,6 +89,25 @@ protected:
 	TObjectPtr<UPEInventoryManagerComponent> InventoryManagerComponent;
 
 	void InventroyDropTest(); // 인벤토리 드랍 테스트용 함수
+	
+	UFUNCTION()
+	void HandleInventoryItemDrop(FGameplayTag ItemTag, int32 DropCount);
+
+	UFUNCTION()
+	void HandleInventoryItemUse(FGameplayTag ItemTag);
+
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnInventoryItemDrop OnInventoryItemDrop;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnInventoryChanged OnInventoryChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnInventoryItemUse OnInventoryItemUse;
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void UseItemByInventory(FGameplayTag ItemTag);
 
 	/* Combat 관련 섹션 */
 public:

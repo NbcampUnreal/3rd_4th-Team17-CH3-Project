@@ -28,6 +28,7 @@ public:
 	virtual void SplitAndDropItem(int32 Count, const FVector& Location, const FRotator& Rotation) = 0;
 	virtual int32 GetItemCount() const = 0;
 	virtual int32 GetItemStackCount() const = 0;
+	virtual int32 GetStackCapacity() const = 0;
 	virtual void SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface) = 0;
 	virtual void AddItemCount(int32 Count) = 0;
 	virtual void ReduceItemCount(int32 Count) = 0;
