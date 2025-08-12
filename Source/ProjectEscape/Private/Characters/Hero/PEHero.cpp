@@ -122,7 +122,7 @@ void APEHero::DoPrimaryAction()
 	if (UseableItemManagerComponent)
 	{
 		UseableItemManagerComponent->DoPrimaryActionCurrentItem(this);
-		PlayMontageAnimation(FireWeaponAnimMontage);
+		PlayFireWeaponAnimation();
 		UE_LOG(LogTemp, Warning, TEXT("Primary Action with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
@@ -162,7 +162,6 @@ void APEHero::DoTertiaryAction()
 	if (UseableItemManagerComponent)
 	{
 		UseableItemManagerComponent->DoTertiaryActionCurrentItem(this);
-		PlayMontageAnimation(ReloadAnimMontage);
 		UE_LOG(LogTemp, Warning, TEXT("Tertiary Action called with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
@@ -288,33 +287,37 @@ void APEHero::AttachWeapon(AActor* WeaponActor, FTransform Transform)
 			WeaponActor->SetActorRelativeTransform(Transform);
 			WeaponActor->AttachToComponent(FirstPersonSkeletalMesh, Rule, SocketName);
 
-			PlayMontageAnimation(EquipAnimMontage);
-		}
-	}
-}
-
-void APEHero::PlayMontageAnimation(UAnimMontage* Animation)
-{
-	if (Animation && EquipAnimMontage)
-	{
-		if (UAnimInstance* AnimInstance = FirstPersonSkeletalMesh->GetAnimInstance())
-		{
-			AnimInstance->Montage_Play(Animation);
+			PlayEquipAnimation();
 		}
 	}
 }
 
 void APEHero::PlayEquipAnimation()
 {
-	PlayMontageAnimation(EquipAnimMontage);
+	float PlayRate = 1.0f;
+	PlayMontageAnimation(EquipAnimMontage, PlayRate);
 }
 
-void APEHero::PlayReloadAnimation()
+void APEHero::PlayReloadAnimation(float ReloadDelay)
 {
-	PlayMontageAnimation(ReloadAnimMontage);
+	float AnimationLength = ReloadAnimMontage->GetPlayLength();
+	float PlayRate = ReloadDelay == 0 ? 1.0f : AnimationLength / ReloadDelay;
+	PlayMontageAnimation(ReloadAnimMontage, PlayRate);
 }
 
 void APEHero::PlayFireWeaponAnimation()
 {
-	PlayMontageAnimation(FireWeaponAnimMontage);
+	float PlayRate = 1.0f;
+	PlayMontageAnimation(FireWeaponAnimMontage, PlayRate);
+}
+
+void APEHero::PlayMontageAnimation(UAnimMontage* Animation, float PlayRate)
+{
+	if (Animation && EquipAnimMontage)
+	{
+		if (UAnimInstance* AnimInstance = FirstPersonSkeletalMesh->GetAnimInstance())
+		{
+			AnimInstance->Montage_Play(Animation, PlayRate);
+		}
+	}
 }

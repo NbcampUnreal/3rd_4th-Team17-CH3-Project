@@ -124,6 +124,9 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	bool HasWeapon() const;
+	void PlayEquipAnimation();
+	void PlayReloadAnimation(float ReloadDelay);
+	void PlayFireWeaponAnimation();
 
 	virtual void AttachWeapon(AActor* WeaponActor, FTransform Transform) override;
 
@@ -140,8 +143,5 @@ public:
 	TObjectPtr<UAnimMontage> FireWeaponAnimMontage;
 
 protected:
-	void PlayMontageAnimation(UAnimMontage* Animation);
-	void PlayEquipAnimation();
-	void PlayReloadAnimation();
-	void PlayFireWeaponAnimation();
+	void PlayMontageAnimation(UAnimMontage* Animation, float PlayRate);
 };

@@ -10,6 +10,7 @@
 #include "Items/Components/PEUseableComponent.h"
 #include "Items/Components/PEInteractableComponent.h"
 #include "Characters/Hero/Interface/PEWeaponAttachable.h"
+#include "Characters/Hero/PEHero.h"
 
 APEWeaponBase::APEWeaponBase()
 {
@@ -122,6 +123,11 @@ bool APEWeaponBase::TryReload()
 			WeaponStats.ReloadTime,
 			false);
 		UE_LOG(LogPE, Log, TEXT("Reloading..."));
+
+		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+		{
+			PEHero->PlayReloadAnimation(WeaponStats.ReloadTime);
+		}
 	}
 	else
 	{
