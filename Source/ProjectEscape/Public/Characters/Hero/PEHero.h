@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Interface/PEInteractManagerHandler.h"
 #include "Interface/PEQuickSlotHandler.h"
+#include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
 // 인벤토리 리스트 구조체
@@ -32,7 +33,7 @@ class UPEQuickSlotManagerComponent;
 class UPEHeroInputComponent;
 
 UCLASS()
-class PROJECTESCAPE_API APEHero : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler, public IPEAttackable
+class PROJECTESCAPE_API APEHero : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler, public IPEAttackable, public IPEWeaponAttachable
 {
 	GENERATED_BODY()
 
@@ -117,4 +118,13 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
 
+	/* Visual and Animation 관련 섹션 */
+public:
+	UFUNCTION(BlueprintCallable)
+	bool HasWeapon() const;
+
+	virtual void AttachWeapon(AActor* WeaponActor, FTransform Transform) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<USkeletalMeshComponent> FirstPersonSkeletalMesh;
 };
