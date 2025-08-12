@@ -134,5 +134,5 @@ protected:
 	TObjectPtr<AActor> AttachedActor = nullptr;
 
 	void AttachToOwner();
-	void RemoveFromOwner();
+	void DetachFromOwner();
 };

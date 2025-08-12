@@ -15,6 +15,5 @@ class PROJECTESCAPE_API IPEWeaponAttachable
 	GENERATED_BODY()
 
 public:
-	virtual void AttachWeapon(AActor* WeaponActor) = 0;
-	virtual void DetachWeapon(AActor* WeaponActor) = 0;
+	virtual void AttachWeapon(AActor* WeaponActor, FTransform Transform) = 0;
 };

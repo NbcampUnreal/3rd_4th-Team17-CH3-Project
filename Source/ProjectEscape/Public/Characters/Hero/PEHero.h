@@ -89,6 +89,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool HasWeapon() const;
 
-	virtual void AttachWeapon(AActor* WeaponActor) override;
-	virtual void DetachWeapon(AActor* WeaponActor) override;
+	virtual void AttachWeapon(AActor* WeaponActor, FTransform Transform) override;
 };

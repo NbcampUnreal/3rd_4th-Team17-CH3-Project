@@ -241,7 +241,7 @@ bool APEHero::HasWeapon() const
 	return false;
 }
 
-void APEHero::AttachWeapon(AActor* WeaponActor)
+void APEHero::AttachWeapon(AActor* WeaponActor, FTransform Transform)
 {
 	if (WeaponActor)
 	{
@@ -249,17 +249,8 @@ void APEHero::AttachWeapon(AActor* WeaponActor)
 		{
 			FAttachmentTransformRules Rule = FAttachmentTransformRules::KeepRelativeTransform;
 			FName SocketName = FName(TEXT("weapon_r"));
+			WeaponActor->SetActorRelativeTransform(Transform);
 			WeaponActor->AttachToComponent(SKeletonMeshComp, Rule, SocketName);
 		}
 	}
 }
-
-void APEHero::DetachWeapon(AActor* WeaponActor)
-{
-	if (WeaponActor)
-	{
-		FDetachmentTransformRules Rule = FDetachmentTransformRules::KeepRelativeTransform;
-		WeaponActor->DetachFromActor(Rule);
-	}
-}
-

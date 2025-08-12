@@ -258,7 +258,7 @@ void APEWeaponBase::OnRelease()
 	bIsFiring = false;
 	bIsReloading = false;
 
-	RemoveFromOwner();
+	DetachFromOwner();
 	
 	// 무기를 놓으면 맨손 상태가 되므로 빈 FPEEquipmentInfo를 브로드캐스트
 	BroadcastEmptyWeaponState();
@@ -350,6 +350,12 @@ void APEWeaponBase::BroadcastEmptyWeaponState()
 
 void APEWeaponBase::AttachToOwner()
 {
+	// Remove existing weapon Actor
+	if (AttachedActor)
+	{
+		DetachFromOwner();
+	}
+
 	if (WeaponStats.ActorToAttach)
 	{
 		if (IPEWeaponAttachable* AttachParent = Cast<IPEWeaponAttachable>(WeaponOwnerActor))
@@ -358,21 +364,19 @@ void APEWeaponBase::AttachToOwner()
 			{
 				FActorSpawnParameters Params;
 				AttachedActor = World->SpawnActor<AActor>(WeaponStats.ActorToAttach, Params);
-				AttachParent->AttachWeapon(AttachedActor);
+				AttachParent->AttachWeapon(AttachedActor, WeaponStats.AttachTransform);
 			}
 		}
 	}
 }
 
-void APEWeaponBase::RemoveFromOwner()
+void APEWeaponBase::DetachFromOwner()
 {
 	if (AttachedActor)
 	{
-		if (IPEWeaponAttachable* AttachParent = Cast<IPEWeaponAttachable>(WeaponOwnerActor))
-		{
-			AttachParent->DetachWeapon(AttachedActor);
-			AttachedActor->Destroy();
-			AttachedActor = nullptr;
-		}
+		FDetachmentTransformRules Rule = FDetachmentTransformRules::KeepWorldTransform;
+		AttachedActor->DetachFromActor(Rule);
+		AttachedActor->Destroy();
+		AttachedActor = nullptr;
 	}
 }
