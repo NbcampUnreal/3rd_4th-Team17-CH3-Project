@@ -6,6 +6,9 @@
 #include "PEWeaponBase.h"
 #include "PEWeaponProjectile.generated.h"
 
+class APEProjectileBase;
+struct FPEAttackStats;
+
 UCLASS()
 class PROJECTESCAPE_API APEWeaponProjectile : public APEWeaponBase
 {
@@ -20,5 +23,8 @@ protected:
 
 	/* Projectile 관련 섹션 */	
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
+	TSubclassOf<APEProjectileBase> ProjectileClass; // 발사할 Projectile 클래스
+	
 	virtual UPEAttackBaseComponent* CreateAttackComponent() override;
 };

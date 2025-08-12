@@ -3,8 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Combat/Components/PEAttackBaseComponent.h"
 #include "GameFramework/Actor.h"
+#include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
 #include "PEProjectileBase.generated.h"
+
+struct FPEAttackStats;
 
 UCLASS()
 class PROJECTESCAPE_API APEProjectileBase : public AActor
@@ -20,5 +26,34 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
-};
 
+	/* Components 섹션 */
+protected:
+	// 충돌 컴포넌트
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	TObjectPtr<UBoxComponent> CollisionComponent;
+
+	// 메시 컴포넌트
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
+
+	// 투사체 이동 컴포넌트 (물리 연산 담당)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile")
+	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
+
+	/* Projectile 관련 섹션 */
+public:
+	void Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
+
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Projectile")
+	FPEAttackStats ProjectileStats;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float ElapsedTime;
+
+private:
+	// 충돌 처리 함수
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+};

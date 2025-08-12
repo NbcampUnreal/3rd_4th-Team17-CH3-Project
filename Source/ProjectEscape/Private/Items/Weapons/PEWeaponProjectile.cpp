@@ -22,3 +22,4 @@ UPEAttackBaseComponent* APEWeaponProjectile::CreateAttackComponent()
 	UE_LOG(LogPE, Warning, TEXT("APEWeaponHitscan::CreateAttackComponent() called!!!"));
 	return NewObject<UPEAttackProjectileComponent>(this);
 }
+

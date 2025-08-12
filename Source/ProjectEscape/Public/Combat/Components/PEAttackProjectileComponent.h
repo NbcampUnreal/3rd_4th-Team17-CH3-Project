@@ -22,10 +22,6 @@ protected:
 	virtual void BeginPlay() override;
 
 	/* Projectile 공격을 위한 섹션 */
-public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Projectile")
-	TSubclassOf<APEProjectileBase> ProjectileClass;
-	
 protected:
 	virtual void PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction) override;
 
