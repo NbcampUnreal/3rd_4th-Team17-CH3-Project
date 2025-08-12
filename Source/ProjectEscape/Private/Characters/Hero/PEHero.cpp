@@ -122,6 +122,7 @@ void APEHero::DoPrimaryAction()
 	if (UseableItemManagerComponent)
 	{
 		UseableItemManagerComponent->DoPrimaryActionCurrentItem(this);
+		PlayMontageAnimation(FireWeaponAnimMontage);
 		UE_LOG(LogTemp, Warning, TEXT("Primary Action with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
@@ -161,6 +162,7 @@ void APEHero::DoTertiaryAction()
 	if (UseableItemManagerComponent)
 	{
 		UseableItemManagerComponent->DoTertiaryActionCurrentItem(this);
+		PlayMontageAnimation(ReloadAnimMontage);
 		UE_LOG(LogTemp, Warning, TEXT("Tertiary Action called with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
@@ -285,6 +287,34 @@ void APEHero::AttachWeapon(AActor* WeaponActor, FTransform Transform)
 			FName SocketName = FName(TEXT("weapon_r"));
 			WeaponActor->SetActorRelativeTransform(Transform);
 			WeaponActor->AttachToComponent(FirstPersonSkeletalMesh, Rule, SocketName);
+
+			PlayMontageAnimation(EquipAnimMontage);
 		}
 	}
+}
+
+void APEHero::PlayMontageAnimation(UAnimMontage* Animation)
+{
+	if (Animation && EquipAnimMontage)
+	{
+		if (UAnimInstance* AnimInstance = FirstPersonSkeletalMesh->GetAnimInstance())
+		{
+			AnimInstance->Montage_Play(Animation);
+		}
+	}
+}
+
+void APEHero::PlayEquipAnimation()
+{
+	PlayMontageAnimation(EquipAnimMontage);
+}
+
+void APEHero::PlayReloadAnimation()
+{
+	PlayMontageAnimation(ReloadAnimMontage);
+}
+
+void APEHero::PlayFireWeaponAnimation()
+{
+	PlayMontageAnimation(FireWeaponAnimMontage);
 }

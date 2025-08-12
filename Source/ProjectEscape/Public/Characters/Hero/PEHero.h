@@ -9,6 +9,8 @@
 #include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
+class UAnimMontage;
+
 // 인벤토리 리스트 구조체
 USTRUCT(BlueprintType)
 struct PROJECTESCAPE_API FInventoryList
@@ -127,4 +129,19 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USkeletalMeshComponent> FirstPersonSkeletalMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> EquipAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> ReloadAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> FireWeaponAnimMontage;
+
+protected:
+	void PlayMontageAnimation(UAnimMontage* Animation);
+	void PlayEquipAnimation();
+	void PlayReloadAnimation();
+	void PlayFireWeaponAnimation();
 };
