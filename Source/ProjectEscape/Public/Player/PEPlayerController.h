@@ -4,6 +4,8 @@
 #include "GameFramework/PlayerController.h"
 #include "PEPlayerController.generated.h"
 
+struct FInventoryInfo;
+
 UCLASS()
 class PROJECTESCAPE_API APEPlayerController : public APlayerController
 {
@@ -25,6 +27,9 @@ public:
 	UFUNCTION()
 	void OnChangeStamina(float HealthPoint, float MaxHealthPoint);
 
+	UFUNCTION()
+	void OnInventoryAndQuickSlotUpdate(FInventoryInfo& InInventoryInfo);
+
 	void PlayDamageAnimOfHUDWidget();
 	void PlayHitMarkerAnimOfHUDWIdget();
 	void PlayKillMarkerAnimOfHUDWidget();
@@ -33,6 +38,10 @@ public:
 	void ChangeHealthBar(float HealthPoint, float MaxHealthPoint);
 	void ChangeStaminaBar(float Stamina, float MaxStamina);
 
+	void ToggleInventoryWidget();
+	void OpenInventoryWidget();
+	void CloseInventoryWidget();
+	bool IsOpenInventory() const;
 
 protected:
 	virtual void BeginPlay() override;
@@ -43,6 +52,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
 	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
+	TSubclassOf<UUserWidget> InventoryWidgetClass;
+
 	UUserWidget* HUDWidget;
 	UUserWidget* PauseMenuWidget;
+	UUserWidget* InventoryWidget;
 };
