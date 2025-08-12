@@ -42,8 +42,5 @@ protected:
 	const int32 BagColCount = 5;
 
 	void ResetBagSlots();
-	void InitBagSlots();
-
 	void ResetSlot(int32 Index);
-	void SwapSlot(int32 Index, int32 OtherIndex);
 };

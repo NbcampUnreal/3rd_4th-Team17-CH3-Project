@@ -54,7 +54,7 @@ void UPEInventoryBagSlot_Element::SetImageFromSprite(UPaperSprite* Sprite)
 {
 	if (ItemImage)
 	{
-		// TODO Sprite를 이용한 SetBrush가 먹히지 않음..
+		// TODO: Sprite does not work (https://github.com/NbcampUnreal/3rd_4th-Team17-CH3-Project/issues/51)
 		if (Sprite)
 		{
 			const FSlateAtlasData SpriteAtlasData = Sprite->GetSlateAtlasData();

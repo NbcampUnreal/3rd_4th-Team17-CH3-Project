@@ -72,9 +72,3 @@ void UPEInventoryBagSlot_Widget::ResetSlot(int32 Index)
 		}
 	}
 }
-
-void UPEInventoryBagSlot_Widget::SwapSlot(int32 Index, int32 OtherIndex)
-{
-}
-
-
