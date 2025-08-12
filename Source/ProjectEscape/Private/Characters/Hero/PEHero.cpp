@@ -241,3 +241,11 @@ bool APEHero::HasWeapon() const
 	return false;
 }
 
+void APEHero::AttachWeapon(AActor* WeaponActor)
+{
+}
+
+void APEHero::RemoveWeapon(AActor* WeaponActor)
+{
+}
+

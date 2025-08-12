@@ -9,6 +9,7 @@
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 #include "Items/Components/PEInteractableComponent.h"
+#include "Characters/Hero/Interface/PEWeaponAttachable.h"
 
 APEWeaponBase::APEWeaponBase()
 {
@@ -246,6 +247,8 @@ void APEWeaponBase::DoTertiaryAction(AActor* Holder)
 
 void APEWeaponBase::OnHand(AActor* NewOwner)
 {
+	AttachToOwner();
+
 	// 2. 무기를 들었을 때 델리게이트 브로드캐스트
 	BroadcastWeaponStateChanged();
 }
@@ -254,6 +257,8 @@ void APEWeaponBase::OnRelease()
 {
 	bIsFiring = false;
 	bIsReloading = false;
+
+	RemoveFromOwner();
 	
 	// 무기를 놓으면 맨손 상태가 되므로 빈 FPEEquipmentInfo를 브로드캐스트
 	BroadcastEmptyWeaponState();
@@ -341,4 +346,28 @@ void APEWeaponBase::BroadcastEmptyWeaponState()
 	
 	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Empty Weapon State"));
 	OnWeaponStateChanged.Broadcast(EmptyEquipmentInfo);
+}
+
+void APEWeaponBase::AttachToOwner()
+{
+	if (WeaponStats.ActorToAttach)
+	{
+		if (IPEWeaponAttachable* AttachParent = Cast<IPEWeaponAttachable>(WeaponOwnerActor))
+		{
+			AttachedActor = nullptr;
+			AttachParent->AttachWeapon(AttachedActor);
+		}
+	}
+}
+
+void APEWeaponBase::RemoveFromOwner()
+{
+	if (AttachedActor)
+	{
+		if (IPEWeaponAttachable* AttachParent = Cast<IPEWeaponAttachable>(WeaponOwnerActor))
+		{
+			AttachParent->RemoveWeapon(AttachedActor);
+			AttachedActor = nullptr;
+		}
+	}
 }

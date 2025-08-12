@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Interface/PEInteractManagerHandler.h"
 #include "Interface/PEQuickSlotHandler.h"
+#include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
 class UCameraComponent;
@@ -17,7 +18,7 @@ class UPEQuickSlotManagerComponent;
 class UPEHeroInputComponent;
 
 UCLASS()
-class PROJECTESCAPE_API APEHero : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler, public IPEAttackable
+class PROJECTESCAPE_API APEHero : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler, public IPEAttackable, public IPEWeaponAttachable
 {
 	GENERATED_BODY()
 
@@ -83,8 +84,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
 
-	/* Animation 관련 섹션 */
+	/* Visual and Animation 관련 섹션 */
 public:
 	UFUNCTION(BlueprintCallable)
 	bool HasWeapon() const;
+
+	virtual void AttachWeapon(AActor* WeaponActor) override;
+	virtual void RemoveWeapon(AActor* WeaponActor) override;
 };
