@@ -35,10 +35,23 @@ void UPEInventoryBagSlot_Widget::UpdateInventoryUI(FInventoryInfo& InInventoryIn
 {
 	ResetBagSlots();
 
+	for (int32 i = 0; i < InInventoryInfo.Bags.Num(); i++)
+	{
+		FInventoryBagSlotInfo& ItemInfo = InInventoryInfo.Bags[i];
+		if (BagSlots.Contains(i))
+		{
+			if (UPEInventoryBagSlot_Element* BagSlot = BagSlots[i])
+			{
+				BagSlot->SetSlot(ItemInfo);
+			}
+		}
+	}
+
+	/*
 	for (auto& BagInfo : InInventoryInfo.Bags)
 	{
 		int32 Index = BagInfo.Key;
-		FInventoryBagSlotInfo& ItemInfo = BagInfo.Value;
+		FInventoryBagSlotInfo& ItemInfo = BagInfo;
 
 		if (BagSlots.Contains(Index))
 		{
@@ -48,6 +61,7 @@ void UPEInventoryBagSlot_Widget::UpdateInventoryUI(FInventoryInfo& InInventoryIn
 			}
 		}
 	}
+	*/
 }
 
 void UPEInventoryBagSlot_Widget::ResetBagSlots()

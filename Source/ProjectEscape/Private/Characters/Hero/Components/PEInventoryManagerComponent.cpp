@@ -6,6 +6,7 @@
 #include "Core/PELogChannels.h"
 #include "Items/Components/PEStorableItemComponent.h"
 #include "Characters/Hero/PEHero.h"
+#include "UI/Inventory/PEInventoryType.h"
 
 UPEInventoryManagerComponent::UPEInventoryManagerComponent()
 {
@@ -178,19 +179,62 @@ void UPEInventoryManagerComponent::ItemDropTest()
 	DropItemFromInventoryByTag(1, Tag);
 }
 
-FInventoryList UPEInventoryManagerComponent::ConvertToInventoryList() const
+FInventoryInfo UPEInventoryManagerComponent::ConvertToInventoryList() const
 {
-	FInventoryList InventoryList;
-	// TODO: 내부 구현에 대한 협의 필요
-	// 예시: InventoryItems Map을 FInventoryList 구조체로 변환
-	return InventoryList;
+	FInventoryInfo InventoryInfo;
+	FInventoryBagSlotInfo BagSlotInfo;
+
+	for (const auto &Item: InventoryItems)
+	{
+		if (Item.Value)
+		{
+			/*
+				TObjectPtr<UTexture2D> ItemTexture;
+				TObjectPtr<UPaperSprite> ItemSprite;
+				FText ItemDescription;
+				FGameplayTag ItemTag;
+
+				int32 StackCount;
+				int32 MaxStackCount;
+				bool IsStackable;
+			 */
+			int32 ItemCount = Item.Value->GetItemCount();
+			int32 ItemCapacity = Item.Value->GetStackCapacity();
+			while (ItemCount > 0)
+			{
+				FPEItemData ItemData = Item.Value->GetItemStats();
+				BagSlotInfo.ItemTag = Item.Key;
+				BagSlotInfo.ItemSprite = ItemData.IconSprite;
+				BagSlotInfo.ItemTexture = ItemData.IconTexture;
+				//BagSlotInfo.ItemDescription = ItemData.Description; // FText로 변경 필요
+				if (ItemCount > ItemCapacity)
+				{
+					BagSlotInfo.StackCount = ItemCapacity;
+					ItemCount -= ItemCapacity;
+				}
+				else
+				{
+					BagSlotInfo.StackCount = ItemCount;
+					ItemCount = 0;
+				}
+				
+				InventoryInfo.Bags.Add(BagSlotInfo);
+			}
+		}
+		else
+		{
+			UE_LOG(LogPE, Warning, TEXT("ConvertToInventoryList: Item is null for tag %s"), *Item.Key.ToString());
+		}
+	}
+	
+	return InventoryInfo;
 }
 
 void UPEInventoryManagerComponent::BroadcastInventoryChanged()
 {
 	if (APEHero* Hero = Cast<APEHero>(GetOwner()))
 	{
-		FInventoryList CurrentInventoryList = ConvertToInventoryList();
+		FInventoryInfo CurrentInventoryList = ConvertToInventoryList();
 		Hero->OnInventoryChanged.Broadcast(CurrentInventoryList);
 		UE_LOG(LogPE, Log, TEXT("BroadcastInventoryChanged: Inventory change broadcasted to UI"));
 	}

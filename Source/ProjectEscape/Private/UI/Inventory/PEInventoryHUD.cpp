@@ -1,4 +1,6 @@
 #include "UI/Inventory/PEInventoryHUD.h"
+
+#include "Characters/Hero/PEHero.h"
 #include "UI/Inventory/PEInventoryBagSlot_Widget.h"
 #include "UI/Inventory/PEInventoryQuickSlot_Widget.h"
 #include "UI/Inventory/PEInventoryType.h"
@@ -17,11 +19,12 @@ void UPEInventoryHUD::NativeOnInitialized()
 	}
 }
 
-void UPEInventoryHUD::SetupComponentReference(UActorComponent* InIntenvoryBagComponent, UActorComponent* InEquipmentQuickSlotComponent)
+void UPEInventoryHUD::SetupComponentReference(UActorComponent* InIntenvoryBagComponent, UActorComponent* InEquipmentQuickSlotComponent, AActor* InHero)
 {
 	// Interface, To be confirmed.
 	IntenvoryBagComponent = InIntenvoryBagComponent;
 	EquipmentQuickSlotComponent = InEquipmentQuickSlotComponent;
+	Hero = InHero;
 }
 
 void UPEInventoryHUD::UpdateInventoryUI(UPARAM(ref) FInventoryInfo& InInventoryInfo)
@@ -37,12 +40,18 @@ void UPEInventoryHUD::UpdateInventoryUI(UPARAM(ref) FInventoryInfo& InInventoryI
 	}
 }
 
-void UPEInventoryHUD::DropItemFromBagToLand(int32 Index)
+void UPEInventoryHUD::DropItemFromBagToLand(const FGameplayTag& Tag, const int32& Count)
 {
-	UE_LOG(LogTemp, Display, TEXT("[DEBUG] DropItemFromBagToLand Index: %d"), Index);
+	UE_LOG(LogTemp, Display, TEXT("[DEBUG] DropItemFromBagToLand Tag: %s"), *Tag.ToString());
 
-	// Notify to Character Component
-	// To Be Added.
+	if (APEHero* HeroActor = Cast<APEHero>(Hero))
+	{
+		HeroActor->OnInventoryItemDrop.Broadcast(Tag, Count);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("[DEBUG] Failed to cast Hero to APEHero"));
+	}
 }
 
 void UPEInventoryHUD::UnequipWeaponAndDropToLand(FGameplayTag WeaponTag)
