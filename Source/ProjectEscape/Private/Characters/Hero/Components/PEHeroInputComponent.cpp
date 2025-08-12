@@ -100,6 +100,10 @@ void UPEHeroInputComponent::SetupEnhancedInput(UInputComponent* PlayerInputCompo
 			{
 				EIC->BindAction(InteractInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputInteract);
 			}
+			if (DropEquipmentInputAction)
+			{
+				EIC->BindAction(DropEquipmentInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnDropHandEquipmentToWorld);
+			}
 			if (PrimayActionInputAction)
 			{
 				EIC->BindAction(PrimayActionInputAction, ETriggerEvent::Triggered, this, &ThisClass::OnInputPrimaryActionTriggered);
@@ -258,7 +262,7 @@ void UPEHeroInputComponent::OnInputQuickSlotNumber(const FInputActionValue& Valu
 		if (SlotNumber >= 0 && SlotNumber < static_cast<int32>(EPEEquipmentType::MAX))
 		{
 			EPEEquipmentType EquipmentType = static_cast<EPEEquipmentType>(SlotNumber);
-			Hero->HandEquipment(EquipmentType); // 매개변수 전달
+			Hero->HandEquipment(EquipmentType); 
 		}
 	}
 }
@@ -296,6 +300,20 @@ void UPEHeroInputComponent::OnInputInteract(const FInputActionValue& Value)
 	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
 	{
 		Hero->GetInteractManagerComponent()->TryInteract();
+	}
+}
+
+void UPEHeroInputComponent::OnDropHandEquipmentToWorld(const FInputActionValue& Value)
+{
+#ifdef WITH_EDITOR
+	if (GEngine)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Drop Hand Item Triggered!!")));
+	}
+#endif
+	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
+	{
+		Hero->DropHandEquipmentToWorld();
 	}
 }
 

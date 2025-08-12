@@ -30,7 +30,7 @@ void UPEQuickSlotItemComponent::OnItemPickedUp()
 	}
 }
 
-void UPEQuickSlotItemComponent::OnItemDropped()
+void UPEQuickSlotItemComponent::OnItemDropped(const FVector& Location, const FRotator& Rotation)
 {
 	if (ComponentOwnerActor)
 	{
@@ -44,7 +44,7 @@ void UPEQuickSlotItemComponent::OnItemDropped()
 	
 	if (ComponentOwnerActorInterface)
 	{
-		ComponentOwnerActorInterface->OnDropped();
+		ComponentOwnerActorInterface->OnDropped(Location, Rotation);
 	}
 	else
 	{

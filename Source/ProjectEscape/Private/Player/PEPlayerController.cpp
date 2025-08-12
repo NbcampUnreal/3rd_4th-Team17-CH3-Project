@@ -63,6 +63,42 @@ void APEPlayerController::PlayDamageAnimOfHUDWidget()
 	}
 }
 
+void APEPlayerController::PlayHitMarkerAnimOfHUDWIdget()
+{
+	if (HUDWidget)
+	{
+		UFunction* HitMarkerFunc = HUDWidget->FindFunction(FName("PlayHitMarkerAnim"));
+		if (HitMarkerFunc)
+		{
+			HUDWidget->ProcessEvent(HitMarkerFunc, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::PlayKillMarkerAnimOfHUDWidget()
+{
+	if (HUDWidget)
+	{
+		UFunction* KillMarkerFunc = HUDWidget->FindFunction(FName("PlayKillMarkerAnim"));
+		if (KillMarkerFunc)
+		{
+			HUDWidget->ProcessEvent(KillMarkerFunc, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::PlayAimAnimOfHUDWidget()
+{
+	if (HUDWidget)
+	{
+		UFunction* AimFunc = HUDWidget->FindFunction(FName("PlayAimAnim"));
+		if (AimFunc)
+		{
+			HUDWidget->ProcessEvent(AimFunc, nullptr);
+		}
+	}
+}
+
 void APEPlayerController::ChangeHealthBar(float HealthPoint, float MaxHealthPoint)
 {
 	if (MaxHealthPoint <= 0)

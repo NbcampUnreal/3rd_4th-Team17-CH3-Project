@@ -4,6 +4,7 @@
 #include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Characters/Hero/Interface/PEQuickSlotHandler.h"
+#include "Core/PELogChannels.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 
 /*
@@ -32,7 +33,7 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 		UE_LOG(LogTemp, Warning, TEXT("SetQuickSlotItem: ItemActor is null!"));
 		return;
 	}
-
+	
 	// 아이템을 이미 퀵슬롯에 등록한 경우, 기존 아이템을 해제
 	if (QuickSlotItems.Contains(EquipmentType))
 	{
@@ -42,7 +43,10 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 			{
 				if (UPEQuickSlotItemComponent* QuickSlotItemComponent = QuickSlotItemInterface->GetQuickSlotItemComponent())
 				{
-					QuickSlotItemComponent->OnItemDropped();
+					const FVector& Location = EquipOwner->GetActorLocation();
+					const FRotator& Rotation = EquipOwner->GetActorRotation();
+					
+					QuickSlotItemComponent->OnItemDropped(Location, Rotation);
 				}
 			}
 		}
@@ -53,6 +57,14 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 	{
 		QuickSlotItems.Add(EquipmentType, ItemActor);
 		UE_LOG(LogTemp, Log, TEXT("Added quick slot item: %s for type: %d"), *ItemActor->GetName(), static_cast<int32>(EquipmentType));
+	}
+
+	if (IPEQuickSlotItem* QuickSlotItemInterface = Cast<IPEQuickSlotItem>(ItemActor))
+	{
+		if (UPEQuickSlotItemComponent* QuickSlotItemComponent = QuickSlotItemInterface->GetQuickSlotItemComponent())
+		{
+			QuickSlotItemComponent->OnItemPickedUp();
+		}
 	}
 }
 
@@ -75,6 +87,10 @@ AActor* UPEQuickSlotManagerComponent::SelectEquipment(EPEEquipmentType Equipment
 
 void UPEQuickSlotManagerComponent::RemoveQuickSlotItem(EPEEquipmentType EquipmentType)
 {
+	if (QuickSlotItems.Contains(EquipmentType))
+	{
+		QuickSlotItems[EquipmentType] = nullptr;
+	}
 }
 
 void UPEQuickSlotManagerComponent::ClearQuickSlots()
@@ -88,6 +104,29 @@ bool UPEQuickSlotManagerComponent::ContainWeaponType(EPEEquipmentType EquipmentT
 		return true;
 	}
 	return false;
+}
+
+void UPEQuickSlotManagerComponent::DropHandEquipmentToWorld(EPEEquipmentType EquipmentType, const FVector& Location, const FRotator& Rotation)
+{
+	if (QuickSlotItems.Contains(EquipmentType))
+	{
+		if (IPEQuickSlotItem* QuickSlotItem = Cast<IPEQuickSlotItem>(QuickSlotItems[EquipmentType]))
+		{
+			QuickSlotItem->OnDropped(Location, Rotation);
+			RemoveQuickSlotItem(EquipmentType);
+			
+			UE_LOG(LogPE, Log, TEXT("DropHandEquipmentToWorld: Dropped %d at Location: %s, Rotation: %s"),
+				static_cast<int8>(EquipmentType), *Location.ToString(), *Rotation.ToString());
+		}
+		else
+		{
+			UE_LOG(LogPE, Warning, TEXT("DropHandEquipmentToWorld: QuickSlotItemComponent not found for EquipmentType %d!"), static_cast<int32>(EquipmentType));
+		}
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("DropHandEquipmentToWorld: EquipmentType %d not found in QuickSlotItems!"), static_cast<int32>(EquipmentType));
+	}
 }
 
 AActor* UPEQuickSlotManagerComponent::GetActorFromQuickSlot(EPEEquipmentType EquipmentType) const
