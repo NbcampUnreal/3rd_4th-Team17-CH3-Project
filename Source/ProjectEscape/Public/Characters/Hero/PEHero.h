@@ -90,4 +90,7 @@ public:
 	bool HasWeapon() const;
 
 	virtual void AttachWeapon(AActor* WeaponActor, FTransform Transform) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<USkeletalMeshComponent> FirstPersonSkeletalMesh;
 };
