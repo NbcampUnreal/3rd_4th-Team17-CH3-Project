@@ -246,24 +246,17 @@ void APEWeaponBase::DoTertiaryAction(AActor* Holder)
 
 void APEWeaponBase::OnHand(AActor* NewOwner)
 {
-	//bIsInHand = true;
-	
 	// 2. 무기를 들었을 때 델리게이트 브로드캐스트
 	BroadcastWeaponStateChanged();
 }
 
-void APEWeaponBase::OnRelease(AActor* NewOwner)
+void APEWeaponBase::OnRelease()
 {
 	bIsFiring = false;
 	bIsReloading = false;
 	
 	// 무기를 놓으면 맨손 상태가 되므로 빈 FPEEquipmentInfo를 브로드캐스트
-	FPEEquipmentInfo EmptyEquipmentInfo;
-	EmptyEquipmentInfo.EquipmentName = FName();
-	EmptyEquipmentInfo.EquipmentCount = TEXT("");
-	EmptyEquipmentInfo.EquipmentDescription = TEXT("");
-	
-	OnWeaponStateChanged.Broadcast(EmptyEquipmentInfo);
+	BroadcastEmptyWeaponState();
 }
 
 bool APEWeaponBase::IsInteractable() const
@@ -288,6 +281,7 @@ AActor* APEWeaponBase::GetItemOwner() const
 void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 {
 	WeaponOwnerActor = nullptr;
+	OnRelease();
 	
 	SetActorLocation(Location);
 	SetActorRotation(Rotation);
@@ -317,7 +311,7 @@ FPEEquipmentInfo APEWeaponBase::CreateCurrentEquipmentInfo() const
 {
 	FPEEquipmentInfo EquipmentInfo;
 	EquipmentInfo.EquipmentName = WeaponRowName;
-	EquipmentInfo.EquipmentCount = FString::Printf(TEXT("%d/%d"), CurrentAmmoCount, WeaponStats.MaxAmmo);
+	EquipmentInfo.AmmoCount = FString::Printf(TEXT("%d/%d"), CurrentAmmoCount, WeaponStats.MaxAmmo);
 	EquipmentInfo.EquipmentDescription = FString::Printf(TEXT("Damage: %d, Range: %.1f"), 
 		WeaponStats.Damage, WeaponStats.Range);
 	// EquipmentInfo.EquipmentIcon = WeaponStats.WeaponIcon; // 필요시 추가
@@ -333,7 +327,18 @@ void APEWeaponBase::BroadcastWeaponStateChanged()
 	// 델리게이트 브로드캐스트 정보 로그 출력 (테스트 용 코드)
 	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
 		*EquipmentInfo.EquipmentName.ToString(),
-		*EquipmentInfo.EquipmentCount,
+		*EquipmentInfo.AmmoCount,
 		*EquipmentInfo.EquipmentDescription);
 	
+}
+
+void APEWeaponBase::BroadcastEmptyWeaponState()
+{
+	FPEEquipmentInfo EmptyEquipmentInfo;
+	EmptyEquipmentInfo.EquipmentName = FName();
+	EmptyEquipmentInfo.AmmoCount = TEXT("");
+	EmptyEquipmentInfo.EquipmentDescription = TEXT("");
+	
+	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Empty Weapon State"));
+	OnWeaponStateChanged.Broadcast(EmptyEquipmentInfo);
 }

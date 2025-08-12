@@ -262,7 +262,6 @@ void UPEHeroInputComponent::OnDropHandEquipmentToWorld(const FInputActionValue& 
 #endif
 	if (APEHero* Hero = GetOwnerCharacter<APEHero>())
 	{
-		// TODO: 현재 손에 든 아이템을 드랍하는 함수 연결, UseableItemManagerComponent로 부터 호출
 		Hero->DropHandEquipmentToWorld();
 	}
 }
