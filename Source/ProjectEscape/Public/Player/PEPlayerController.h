@@ -55,7 +55,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
 	TSubclassOf<UUserWidget> InventoryWidgetClass;
 
+	UPROPERTY()
 	UUserWidget* HUDWidget;
+
+	UPROPERTY()
 	UUserWidget* PauseMenuWidget;
+
+	UPROPERTY()
 	UUserWidget* InventoryWidget;
 };
