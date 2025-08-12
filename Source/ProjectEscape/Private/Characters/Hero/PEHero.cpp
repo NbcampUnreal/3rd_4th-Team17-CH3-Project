@@ -122,7 +122,6 @@ void APEHero::DoPrimaryAction()
 	if (UseableItemManagerComponent)
 	{
 		UseableItemManagerComponent->DoPrimaryActionCurrentItem(this);
-		PlayFireWeaponAnimation();
 		UE_LOG(LogTemp, Warning, TEXT("Primary Action with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
@@ -305,9 +304,10 @@ void APEHero::PlayReloadAnimation(float ReloadDelay)
 	PlayMontageAnimation(ReloadAnimMontage, PlayRate);
 }
 
-void APEHero::PlayFireWeaponAnimation()
+void APEHero::PlayFireWeaponAnimation(float ShotInterval)
 {
-	float PlayRate = 1.0f;
+	float AnimationLength = ReloadAnimMontage->GetPlayLength();
+	float PlayRate = ShotInterval == 0 ? 1.0f : AnimationLength / ShotInterval;
 	PlayMontageAnimation(FireWeaponAnimMontage, PlayRate);
 }
 

@@ -126,7 +126,7 @@ public:
 	bool HasWeapon() const;
 	void PlayEquipAnimation();
 	void PlayReloadAnimation(float ReloadDelay);
-	void PlayFireWeaponAnimation();
+	void PlayFireWeaponAnimation(float ShotInterval);
 
 	virtual void AttachWeapon(AActor* WeaponActor, FTransform Transform) override;
 

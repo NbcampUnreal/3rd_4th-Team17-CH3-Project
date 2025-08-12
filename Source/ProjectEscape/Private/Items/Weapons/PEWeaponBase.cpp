@@ -230,6 +230,19 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 		AttackComponent->ExcuteAttack(AttackStats);
 	}
 
+	if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+	{
+		if (WeaponStats.IsAutomatic)
+		{
+			float ShotIntervalSeconds = 60.0f / WeaponStats.FireRate;
+			PEHero->PlayFireWeaponAnimation(ShotIntervalSeconds);
+		}
+		else
+		{
+			PEHero->PlayFireWeaponAnimation(0);
+		}
+	}
+
 	CurrentAmmoCount--;
 	bIsFiring = true;
 	
