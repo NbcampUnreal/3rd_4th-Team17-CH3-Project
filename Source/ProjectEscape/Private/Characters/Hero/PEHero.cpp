@@ -51,6 +51,9 @@ void APEHero::BeginPlay()
 	{
 		HeroInputComponent->InputConfiguration();
 	}
+	
+	// 인벤토리 아이템 드롭 델리게이트 바인딩
+	OnInventoryItemDrop.AddDynamic(this, &APEHero::HandleInventoryItemDrop);
 }
 
 void APEHero::Tick(float DeltaTime)
@@ -228,3 +231,30 @@ UPEStorableItemComponent* APEHero::GetStorableItemComponent(FGameplayTag Tag) co
 	return InventoryManagerComponent->GetItemByTag(Tag);
 }
 
+void APEHero::HandleInventoryItemDrop(FGameplayTag ItemTag, int32 DropCount)
+{
+	if (!InventoryManagerComponent)
+	{
+		UE_LOG(LogTemp, Error, TEXT("HandleInventoryItemDrop: InventoryManagerComponent is null!"));
+		return;
+	}
+	
+	// 인벤토리 매니저의 DropItemFromInventoryByTag 함수 호출
+	InventoryManagerComponent->DropItemFromInventoryByTag(DropCount, ItemTag);
+	
+	UE_LOG(LogTemp, Log, TEXT("HandleInventoryItemDrop: Dropped %d items with tag %s"), 
+		DropCount, *ItemTag.ToString());
+}
+
+void APEHero::HandleInventoryItemUse(FGameplayTag ItemTag)
+{
+	UseItemByInventory(ItemTag);
+	
+	UE_LOG(LogTemp, Log, TEXT("HandleInventoryItemUse: Used item with tag %s"), *ItemTag.ToString());
+}
+
+void APEHero::UseItemByInventory(FGameplayTag ItemTag)
+{
+	// NOTE: 인벤토리에서 아이템에 마우스 오른쪽 버튼을 눌렀을 때의 액션이 이곳에 호출됩니다.
+	//			ItemBase는 해당 함수를 비워둡니다.
+}

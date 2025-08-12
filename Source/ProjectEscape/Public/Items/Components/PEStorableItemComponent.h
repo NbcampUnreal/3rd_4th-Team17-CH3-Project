@@ -37,7 +37,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TScriptInterface<IPEStorable> ComponentOwnerInterface;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (Categories = "Item"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	FGameplayTag ItemTag;
 
 public:
@@ -53,4 +53,5 @@ public:
 	void SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface);
 	int32 GetItemCount() const;
 	int32 GetStackCount() const;
+	int32 GetStackCapacity() const;
 };
