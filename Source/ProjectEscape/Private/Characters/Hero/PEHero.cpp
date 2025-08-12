@@ -37,6 +37,10 @@ APEHero::APEHero()
 	// Create Inventory Manager Component
 	InventoryManagerComponent = CreateDefaultSubobject<UPEInventoryManagerComponent>(TEXT("InventoryManagerComponent"));
 
+	// Create FirstPerson SkeletalMesh
+	FirstPersonSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FirstPersonSkeletalMesh"));
+	FirstPersonSkeletalMesh->SetupAttachment(FirstPersonCameraComponent);
+
 	// Receive Attack Component
 	ReceiveAttackComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveAttackComponent"));
 	ReceiveAttackComponent->SetHiddenInGame(false);
@@ -257,4 +261,30 @@ void APEHero::UseItemByInventory(FGameplayTag ItemTag)
 {
 	// NOTE: 인벤토리에서 아이템에 마우스 오른쪽 버튼을 눌렀을 때의 액션이 이곳에 호출됩니다.
 	//			ItemBase는 해당 함수를 비워둡니다.
+}
+
+bool APEHero::HasWeapon() const
+{
+	if (UseableItemManagerComponent)
+	{
+		if (UseableItemManagerComponent->GetCurrentItem())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void APEHero::AttachWeapon(AActor* WeaponActor, FTransform Transform)
+{
+	if (WeaponActor)
+	{
+		if (FirstPersonSkeletalMesh)
+		{
+			FAttachmentTransformRules Rule = FAttachmentTransformRules::KeepRelativeTransform;
+			FName SocketName = FName(TEXT("weapon_r"));
+			WeaponActor->SetActorRelativeTransform(Transform);
+			WeaponActor->AttachToComponent(FirstPersonSkeletalMesh, Rule, SocketName);
+		}
+	}
 }

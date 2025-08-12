@@ -65,4 +65,10 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AActor> ActorToAttach;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform AttachTransform;
 };

@@ -2,6 +2,7 @@
 #include "Player\PEPlayerState.h"
 #include "Components\ProgressBar.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/Inventory/PEInventoryHUD.h"
 
 
 void APEPlayerController::BeginPlay()
@@ -15,6 +16,15 @@ void APEPlayerController::BeginPlay()
 		ChangeStaminaBar(PS->GetStamina(), PS->GetMaxStamina());
 	}
 
+	if (InventoryWidgetClass)
+	{
+		InventoryWidget = CreateWidget<UUserWidget>(this, InventoryWidgetClass);
+		if (UPEInventoryHUD* InventoryHUD = Cast<UPEInventoryHUD>(InventoryWidget))
+		{
+			// TODO: Connecting the components required for this Widget
+			InventoryHUD->SetupComponentReference(nullptr, nullptr);
+		}
+	}
 }
 
 void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
@@ -29,6 +39,17 @@ void APEPlayerController::OnChangeStamina(float Stamina, float MaxStamina)
 
 }
 
+void APEPlayerController::OnInventoryAndQuickSlotUpdate(FInventoryInfo& InInventoryInfo)
+{
+	if (InventoryWidget)
+	{
+		if (UPEInventoryHUD* InventoryHUD = Cast<UPEInventoryHUD>(InventoryWidget))
+		{
+			InventoryHUD->UpdateInventoryUI(InInventoryInfo);
+		}
+	}
+}
+
 void APEPlayerController::PlayDamageAnimOfHUDWidget()
 {
 
@@ -38,6 +59,42 @@ void APEPlayerController::PlayDamageAnimOfHUDWidget()
 		if (DamageFunc)
 		{
 			HUDWidget->ProcessEvent(DamageFunc, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::PlayHitMarkerAnimOfHUDWIdget()
+{
+	if (HUDWidget)
+	{
+		UFunction* HitMarkerFunc = HUDWidget->FindFunction(FName("PlayHitMarkerAnim"));
+		if (HitMarkerFunc)
+		{
+			HUDWidget->ProcessEvent(HitMarkerFunc, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::PlayKillMarkerAnimOfHUDWidget()
+{
+	if (HUDWidget)
+	{
+		UFunction* KillMarkerFunc = HUDWidget->FindFunction(FName("PlayKillMarkerAnim"));
+		if (KillMarkerFunc)
+		{
+			HUDWidget->ProcessEvent(KillMarkerFunc, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::PlayAimAnimOfHUDWidget()
+{
+	if (HUDWidget)
+	{
+		UFunction* AimFunc = HUDWidget->FindFunction(FName("PlayAimAnim"));
+		if (AimFunc)
+		{
+			HUDWidget->ProcessEvent(AimFunc, nullptr);
 		}
 	}
 }
@@ -74,6 +131,54 @@ void APEPlayerController::ChangeStaminaBar(float Stamina, float MaxStamina)
 		{
 			StaminaBar->SetPercent(Stamina / MaxStamina);
 		}
+	}
+}
+
+void APEPlayerController::ToggleInventoryWidget()
+{
+	if (InventoryWidget && InventoryWidget->IsInViewport())
+	{
+		CloseInventoryWidget();
+	}
+	else
+	{
+		OpenInventoryWidget();
+	}
+}
+
+void APEPlayerController::OpenInventoryWidget()
+{
+	if (!InventoryWidget && InventoryWidgetClass)
+	{
+		
+	}
+
+	if (InventoryWidget && !InventoryWidget->IsInViewport())
+	{
+		InventoryWidget->AddToViewport();
+		bShowMouseCursor = true;
+	}
+}
+
+void APEPlayerController::CloseInventoryWidget()
+{
+	if (InventoryWidget && InventoryWidget->IsInViewport())
+	{
+		InventoryWidget->RemoveFromParent();
+		bShowMouseCursor = false;
+		SetInputMode(FInputModeGameOnly());
+	}
+}
+
+bool APEPlayerController::IsOpenInventory() const
+{
+	if (InventoryWidget && InventoryWidget->IsInViewport())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
 	}
 }
 
@@ -135,6 +240,11 @@ void APEPlayerController::ClearAllWidget()
 	{
 		PauseMenuWidget->RemoveFromParent();
 		PauseMenuWidget = nullptr;
+	}
+
+	if (InventoryWidget)
+	{
+		InventoryWidget->RemoveFromParent();
 	}
 }
 

@@ -109,7 +109,7 @@ public:
 	virtual void DoSecondaryAction(AActor* Holder) override;
 	virtual void DoTertiaryAction(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
-	virtual void OnRelease(AActor* NewOwner) override;
+	virtual void OnRelease() override;
 	virtual UPEUseableComponent* GetUseableComponent() const override;
 
 	/* Combat(Attack) 관련 섹션 */
@@ -122,10 +122,17 @@ protected:
 
 	virtual UPEAttackBaseComponent* CreateAttackComponent();
 
+	/* UI 반영 델리게이트 헬퍼 함수 관련 섹션*/
 protected:
-	// 현재 무기 상태 정보를 생성하는 헬퍼 함수
 	FPEEquipmentInfo CreateCurrentEquipmentInfo() const;
 	
-	// 델리게이트 브로드캐스트 헬퍼 함수
 	void BroadcastWeaponStateChanged();
+	void BroadcastEmptyWeaponState();
+
+	/* 아이템 장착 시각 효과 관련 섹션 */
+protected:
+	TObjectPtr<AActor> AttachedActor = nullptr;
+
+	void AttachToOwner();
+	void DetachFromOwner();
 };

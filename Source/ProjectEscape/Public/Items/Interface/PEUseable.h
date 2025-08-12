@@ -27,6 +27,6 @@ public:
 	virtual void DoSecondaryAction(AActor* Holder) = 0;
 	virtual void DoTertiaryAction(AActor* Holder) = 0;
 	virtual void OnHand(AActor* NewOwner) = 0;
-	virtual void OnRelease(AActor* NewOwner) = 0;
+	virtual void OnRelease() = 0;
 	virtual UPEUseableComponent* GetUseableComponent() const = 0; 
 };

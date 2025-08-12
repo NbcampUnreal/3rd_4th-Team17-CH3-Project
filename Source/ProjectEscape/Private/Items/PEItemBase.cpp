@@ -157,7 +157,7 @@ void APEItemBase::SplitAndDropItem(int32 Count, const FVector& Location, const F
 			// 복제된 아이템의 속성을 설정
 			DuplicatedItem->ItemCount = Count;
 			DuplicatedItem->StackCount = CalculateStackCount(Count);
-			DuplicatedItem->ItemStats.StackCapacity = ItemStats.StackCapacity;;
+			DuplicatedItem->ItemRowName = ItemRowName;
 			DuplicatedItem->ItemOwnerActor = nullptr;
 			
 			DuplicatedItem->OnDropToWorld(Location, Rotation);

@@ -87,6 +87,10 @@ AActor* UPEQuickSlotManagerComponent::SelectEquipment(EPEEquipmentType Equipment
 
 void UPEQuickSlotManagerComponent::RemoveQuickSlotItem(EPEEquipmentType EquipmentType)
 {
+	if (QuickSlotItems.Contains(EquipmentType))
+	{
+		QuickSlotItems[EquipmentType] = nullptr;
+	}
 }
 
 void UPEQuickSlotManagerComponent::ClearQuickSlots()
@@ -109,8 +113,10 @@ void UPEQuickSlotManagerComponent::DropHandEquipmentToWorld(EPEEquipmentType Equ
 		if (IPEQuickSlotItem* QuickSlotItem = Cast<IPEQuickSlotItem>(QuickSlotItems[EquipmentType]))
 		{
 			QuickSlotItem->OnDropped(Location, Rotation);
-			UE_LOG(LogPE, Log, TEXT("DropHandEquipmentToWorld: Dropped %s at Location: %s, Rotation: %s"),
-				*QuickSlotItems[EquipmentType]->GetName(), *Location.ToString(), *Rotation.ToString());
+			RemoveQuickSlotItem(EquipmentType);
+			
+			UE_LOG(LogPE, Log, TEXT("DropHandEquipmentToWorld: Dropped %d at Location: %s, Rotation: %s"),
+				static_cast<int8>(EquipmentType), *Location.ToString(), *Rotation.ToString());
 		}
 		else
 		{
