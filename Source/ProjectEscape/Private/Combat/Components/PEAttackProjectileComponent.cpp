@@ -15,21 +15,18 @@ UPEAttackProjectileComponent::UPEAttackProjectileComponent()
 void UPEAttackProjectileComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 }
 
 void UPEAttackProjectileComponent::PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation,
                                                  const FVector& Direction)
 {
-	// ProjectileClass가 설정되어 있는지 확인
 	if (!AttackStats.ProjectileClass)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("ProjectileClass is not set in AttackStats"));
 		return;
 	}
 
-	// 월드 참조 가져오기
 	UWorld* World = GetWorld();
 	if (!World)
 	{
@@ -37,7 +34,6 @@ void UPEAttackProjectileComponent::PerformAttack(const FPEAttackStats& AttackSta
 		return;
 	}
 
-	// 디버그 로그 추가
 	UE_LOG(LogTemp, Log, TEXT("Attempting to spawn projectile: %s at location: %s"), 
 		*AttackStats.ProjectileClass->GetName(), *StartLocation.ToString());
 
@@ -58,11 +54,7 @@ void UPEAttackProjectileComponent::PerformAttack(const FPEAttackStats& AttackSta
 	// 투사체가 성공적으로 생성되었다면 Launch 실행
 	if (Projectile)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Projectile successfully spawned: %s"), *Projectile->GetName());
-		
-		// Launch 함수 호출 - 물리 기반 이동 시작
 		Projectile->Launch(AttackStats, StartLocation, Direction);
-		
 		UE_LOG(LogTemp, Log, TEXT("Projectile launched with physics-based movement"));
 	}
 	else

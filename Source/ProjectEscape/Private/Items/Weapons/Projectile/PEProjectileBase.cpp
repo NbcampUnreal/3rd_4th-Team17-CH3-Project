@@ -38,10 +38,8 @@ APEProjectileBase::APEProjectileBase()
 	ProjectileMovement->bShouldBounce = false;
 	ProjectileMovement->ProjectileGravityScale = 1.0f; // 중력 활성화 (실제 총알처럼)
 
-	// 변수 초기화
-	ElapsedTime = 0.0f;
+	ElapsedTime = 0.0f; // 만약 탄환이 n초 후 사라지는 로직이 필요하다면 사용
 
-	// 충돌 이벤트 바인딩
 	CollisionComponent->OnComponentHit.AddDynamic(this, &APEProjectileBase::OnHit);
 }
 
@@ -54,18 +52,14 @@ void APEProjectileBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	
-	ElapsedTime += DeltaTime;
 }
 
 void APEProjectileBase::Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
-	// AttackStats 저장
 	ProjectileStats = AttackStats;
 	
-	// 투사체 위치 설정
 	SetActorLocation(StartLocation);
 	
-	// 투사체 속도 설정
 	if (ProjectileMovement)
 	{
 		float Speed = AttackStats.ProjectileSpeed > 0 ? AttackStats.ProjectileSpeed : 1000.0f;
