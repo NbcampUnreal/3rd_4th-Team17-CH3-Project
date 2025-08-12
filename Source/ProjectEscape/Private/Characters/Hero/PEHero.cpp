@@ -228,3 +228,16 @@ UPEStorableItemComponent* APEHero::GetStorableItemComponent(FGameplayTag Tag) co
 	return InventoryManagerComponent->GetItemByTag(Tag);
 }
 
+bool APEHero::HasWeapon() const
+{
+	// NOTE: 아래 함수의 동작이 맞는지 확인해주세요.
+	if (UseableItemManagerComponent)
+	{
+		if (UseableItemManagerComponent->GetCurrentItem())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+

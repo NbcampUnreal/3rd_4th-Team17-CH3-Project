@@ -83,4 +83,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
 
+	/* Animation 관련 섹션 */
+public:
+	UFUNCTION(BlueprintCallable)
+	bool HasWeapon() const;
 };
