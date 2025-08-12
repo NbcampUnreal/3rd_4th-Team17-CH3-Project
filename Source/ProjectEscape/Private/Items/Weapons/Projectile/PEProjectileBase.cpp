@@ -38,19 +38,29 @@ APEProjectileBase::APEProjectileBase()
 	ProjectileMovement->bShouldBounce = false;
 	ProjectileMovement->ProjectileGravityScale = 1.0f; // 중력 활성화 (실제 총알처럼)
 
-	ElapsedTime = 0.0f; // 만약 탄환이 n초 후 사라지는 로직이 필요하다면 사용
-
-	CollisionComponent->OnComponentHit.AddDynamic(this, &APEProjectileBase::OnHit);
+	ProjectileLifetime = 10.0f;
 }
 
 void APEProjectileBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CollisionComponent->OnComponentHit.AddDynamic(this, &APEProjectileBase::OnHit);
+	
+	// 프로젝타일 수명 타이머 설정
+	GetWorldTimerManager().SetTimer(
+		ProjectileLifetimeTimer,
+		this,
+		&APEProjectileBase::OnProjectileExpired,
+		ProjectileLifetime,
+		false
+	);
 }
 
 void APEProjectileBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
 	
 }
 
@@ -96,7 +106,17 @@ void APEProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 			UE_LOG(LogTemp, Log, TEXT("Damage applied: %f to %s"), 
 				ProjectileStats.DamageAmount, *OtherActor->GetName());
 		
-			Destroy();
+			OnProjectileExpired();
 		}
 	}
+}
+
+void APEProjectileBase::OnProjectileExpired()
+{
+	if (GetWorldTimerManager().IsTimerActive(ProjectileLifetimeTimer))
+	{
+		GetWorldTimerManager().ClearTimer(ProjectileLifetimeTimer);
+	}
+	
+	Destroy();
 }

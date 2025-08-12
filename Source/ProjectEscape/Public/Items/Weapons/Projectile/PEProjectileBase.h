@@ -46,10 +46,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Projectile")
 	FPEAttackStats ProjectileStats;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile")
-	float ElapsedTime;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
+	float ProjectileLifetime;
+
+	UPROPERTY()
+	FTimerHandle ProjectileLifetimeTimer;
 
 private:
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION()
+	void OnProjectileExpired();
+	
 };
