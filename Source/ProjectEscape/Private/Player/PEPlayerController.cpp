@@ -16,6 +16,15 @@ void APEPlayerController::BeginPlay()
 		ChangeStaminaBar(PS->GetStamina(), PS->GetMaxStamina());
 	}
 
+	if (InventoryWidgetClass)
+	{
+		InventoryWidget = CreateWidget<UUserWidget>(this, InventoryWidgetClass);
+		if (UPEInventoryHUD* InventoryHUD = Cast<UPEInventoryHUD>(InventoryWidget))
+		{
+			// TODO: Connecting the components required for this Widget
+			InventoryHUD->SetupComponentReference(nullptr, nullptr);
+		}
+	}
 }
 
 void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
@@ -105,7 +114,7 @@ void APEPlayerController::OpenInventoryWidget()
 {
 	if (!InventoryWidget && InventoryWidgetClass)
 	{
-		InventoryWidget = CreateWidget<UUserWidget>(this, InventoryWidgetClass);
+		
 	}
 
 	if (InventoryWidget && !InventoryWidget->IsInViewport())
@@ -120,7 +129,6 @@ void APEPlayerController::CloseInventoryWidget()
 	if (InventoryWidget && InventoryWidget->IsInViewport())
 	{
 		InventoryWidget->RemoveFromParent();
-		InventoryWidget = nullptr;
 		bShowMouseCursor = false;
 		SetInputMode(FInputModeGameOnly());
 	}
@@ -201,7 +209,6 @@ void APEPlayerController::ClearAllWidget()
 	if (InventoryWidget)
 	{
 		InventoryWidget->RemoveFromParent();
-		InventoryWidget = nullptr;
 	}
 }
 

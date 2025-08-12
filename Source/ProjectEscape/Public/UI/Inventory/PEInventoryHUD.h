@@ -18,14 +18,14 @@ class PROJECTESCAPE_API UPEInventoryHUD : public UUserWidget
 public:
 	virtual void NativeOnInitialized() override;
 
+	// Interface, To be confirmed.
+	void SetupComponentReference(UActorComponent* InIntenvoryBagComponent, UActorComponent* InEquipmentQuickSlotComponent);
+
 	UFUNCTION(BlueprintCallable)
 	void UpdateInventoryUI(UPARAM(ref) FInventoryInfo& InInventoryInfo);
 
 	UFUNCTION(BlueprintCallable)
 	void DropItemFromBagToLand(int32 Index);
-
-	UFUNCTION(BlueprintCallable)
-	void SwapItemInBag(int32 Index, int32 OhterIndex);
 
 	UFUNCTION(BlueprintCallable)
 	void UnequipWeaponAndDropToLand(FGameplayTag WeaponTag);
