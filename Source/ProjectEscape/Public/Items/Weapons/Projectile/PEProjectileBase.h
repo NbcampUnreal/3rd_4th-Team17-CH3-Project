@@ -29,15 +29,12 @@ public:
 
 	/* Components 섹션 */
 protected:
-	// 충돌 컴포넌트
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
 	TObjectPtr<UBoxComponent> CollisionComponent;
 
-	// 메시 컴포넌트
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Projectile")
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
-	// 투사체 이동 컴포넌트 (물리 연산 담당)
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Projectile")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 
@@ -53,7 +50,6 @@ protected:
 	float ElapsedTime;
 
 private:
-	// 충돌 처리 함수
 	UFUNCTION()
 	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 };
