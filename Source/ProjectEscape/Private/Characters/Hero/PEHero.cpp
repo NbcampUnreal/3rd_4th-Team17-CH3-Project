@@ -41,6 +41,8 @@ APEHero::APEHero()
 	ReceiveAttackComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveAttackComponent"));
 	ReceiveAttackComponent->SetHiddenInGame(false);
 	ReceiveAttackComponent->SetupAttachment(RootComponent);
+
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSource"));
 }
 
 void APEHero::BeginPlay()
@@ -51,6 +53,19 @@ void APEHero::BeginPlay()
 	{
 		HeroInputComponent->InputConfiguration();
 	}
+
+	if (AIPerceptionStimuliSourceComponent)
+	{
+		AIPerceptionStimuliSourceComponent->RegisterForSense(UAISense_Sight::StaticClass());
+
+		// Ãß°¡ÀûÀ¸·Î ´Ù¸¥ °¨°¢µµ µî·Ï °¡´É
+		// AIPerceptionStimuliSourceComponent->RegisterForSense(TSubclassOf<UAISense_Hearing>());
+
+		AIPerceptionStimuliSourceComponent->RegisterWithPerceptionSystem();
+
+		UE_LOG(LogTemp, Log, TEXT("Player registered for AI Sight perception"));
+	}
+
 }
 
 void APEHero::Tick(float DeltaTime)
@@ -72,15 +87,15 @@ void APEHero::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void APEHero::TryInteract(AActor* TargetActor)
 {
 	/*
-	 * ìš°ì„ ìˆœìœ„
-	 * 1. StorableItemComponentê°€ ìžˆëŠ” ê²½ìš° - ì¸ë²¤í† ë¦¬ ì•„ì´í…œ ìƒí˜¸ìž‘ìš©
-	 * 2. QuickSlotItemComponentê°€ ìžˆëŠ” ê²½ìš° - í€µìŠ¬ë¡¯ ì•„ì´í…œ ìƒí˜¸ìž‘ìš©
+	 * ¿ì¼±¼øÀ§
+	 * 1. StorableItemComponent°¡ ÀÖ´Â °æ¿ì - ÀÎº¥Åä¸® ¾ÆÀÌÅÛ »óÈ£ÀÛ¿ë
+	 * 2. QuickSlotItemComponent°¡ ÀÖ´Â °æ¿ì - Äü½½·Ô ¾ÆÀÌÅÛ »óÈ£ÀÛ¿ë
 	 */
 	if (UPEStorableItemComponent* StorableItemComponent = TargetActor->FindComponentByClass<UPEStorableItemComponent>())
 	{
 		if (InteractManagerComponent && InteractManagerComponent->HasInteractable())
 		{
-			// ì¸ë²¤í† ë¦¬ ì•„ì´í…œ ìƒí˜¸ìž‘ìš©
+			// ÀÎº¥Åä¸® ¾ÆÀÌÅÛ »óÈ£ÀÛ¿ë
 			InventoryManagerComponent->AddItemToInventory(StorableItemComponent);
 			UE_LOG(LogTemp, Warning, TEXT("StorableItemComponent found and interacted with %s"), *GetNameSafe(TargetActor));
 		}
@@ -95,7 +110,7 @@ void APEHero::TryInteract(AActor* TargetActor)
 		QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), TargetActor);
 		UE_LOG(LogTemp, Warning, TEXT("QuickSlotItemComponent found and set for %s"), *GetNameSafe(TargetActor));
 
-		// ìƒí˜¸ìž‘ìš© í•œ ìž¥ë¹„ ìžë™ ìž¥ì°©
+		// »óÈ£ÀÛ¿ë ÇÑ Àåºñ ÀÚµ¿ ÀåÂø
 		EPEEquipmentType EquipmentType = QuickSlotItemComponent->GetEquipmentType();
 		if (QuickSlotManagerComponent->ContainWeaponType(EquipmentType))
 		{
@@ -165,7 +180,7 @@ void APEHero::DoTertiaryAction()
 
 void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 {
-	// Todo: í€µìŠ¬ë¡¯ìœ¼ë¡œ ë¶€í„° ì•„ì´í…œì„ ë°›ì€ ë‹¤ìŒ ì†ì— ìž¥ì°©
+	// Todo: Äü½½·ÔÀ¸·Î ºÎÅÍ ¾ÆÀÌÅÛÀ» ¹ÞÀº ´ÙÀ½ ¼Õ¿¡ ÀåÂø
 	if (!QuickSlotManagerComponent || !UseableItemManagerComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Required components are not initialized!"));
@@ -174,10 +189,10 @@ void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 	
 	if (AActor* HandItem = QuickSlotManagerComponent->SelectEquipment(EquipmentType))
 	{
-		// ì•„ì´í…œì—ì„œ ì§ì ‘ UPEUseableComponentë¥¼ ì°¾ê¸°
+		// ¾ÆÀÌÅÛ¿¡¼­ Á÷Á¢ UPEUseableComponent¸¦ Ã£±â
 		if (UPEUseableComponent* UseableComponent = HandItem->FindComponentByClass<UPEUseableComponent>())
 		{
-			// ì•„ì´í…œì„ ì†ì— ë“¤ê³  ìžˆëŠ” ìƒíƒœë¡œ ì„¤ì •
+			// ¾ÆÀÌÅÛÀ» ¼Õ¿¡ µé°í ÀÖ´Â »óÅÂ·Î ¼³Á¤
 			UseableItemManagerComponent->SetHandItem(UseableComponent);
 			
 			UE_LOG(LogTemp, Warning, TEXT("HandEquipment: %s is now in hand"), *HandItem->GetName());

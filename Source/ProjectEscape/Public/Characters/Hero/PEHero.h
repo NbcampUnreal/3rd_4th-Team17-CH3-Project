@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "Interface/PEInteractManagerHandler.h"
 #include "Interface/PEQuickSlotHandler.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 #include "PEHero.generated.h"
 
 class UCameraComponent;
@@ -36,7 +38,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	/* Interact ê´€ë ¨ ì„¹ì…˜ */
+	/* Interact °ü·Ã ¼½¼Ç */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEInteractManagerComponent> InteractManagerComponent;
@@ -45,7 +47,7 @@ public:
 	UPEInteractManagerComponent* GetInteractManagerComponent() const;
 	virtual void TryInteract(AActor* TargetActor) override;
 
-	/* ì¥ë¹„ ì‚¬ìš© ê´€ë ¨ ì„¹ì…˜ */
+	/* Àåºñ »ç¿ë °ü·Ã ¼½¼Ç */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UseItem", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEUseableItemManagerComponent> UseableItemManagerComponent;
@@ -56,7 +58,7 @@ public:
 	virtual void DoSecondaryAction();
 	virtual void DoTertiaryAction();
 	
-	/* Quick Slot ê´€ë ¨ ì„¹ì…˜ */
+	/* Quick Slot °ü·Ã ¼½¼Ç */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEQuickSlotManagerComponent> QuickSlotManagerComponent;
@@ -64,14 +66,14 @@ protected:
 public:
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 	
-	/* Inventroy ê´€ë ¨ ì„¹ì…˜ */
+	/* Inventroy °ü·Ã ¼½¼Ç */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickSlot, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEInventoryManagerComponent> InventoryManagerComponent;
 
-	void InventroyDropTest(); // ì¸ë²¤í† ë¦¬ ë“œë í…ŒìŠ¤íŠ¸ìš© í•¨ìˆ˜
+	void InventroyDropTest(); // ÀÎº¥Åä¸® µå¶ø Å×½ºÆ®¿ë ÇÔ¼ö
 
-	/* Combat ê´€ë ¨ ì„¹ì…˜ */
+	/* Combat °ü·Ã ¼½¼Ç */
 public:
 	virtual USceneComponent* GetAttackStartPoint() const override;
 	virtual UPEStorableItemComponent* GetStorableItemComponent(FGameplayTag Tag) const override;
@@ -79,5 +81,9 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
+
+	// AI Perception Stimulus Source ÄÄÆ÷³ÍÆ®
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI Perception")
+	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionStimuliSourceComponent;
 
 };

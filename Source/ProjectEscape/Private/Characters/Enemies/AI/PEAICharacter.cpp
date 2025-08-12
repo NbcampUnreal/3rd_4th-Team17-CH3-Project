@@ -3,13 +3,16 @@
 
 #include "Characters/Enemies/AI/PEAICharacter.h"
 #include "Characters/Enemies/AI/PEAIController.h"
-
 #include "GameFramework/CharacterMovementComponent.h"
+#include <Combat/Components/PEAttackHitscanComponent.h>
+#include <Combat/Components/PEReceiveAttackComponent.h>
 
 APEAICharacter::APEAICharacter()
 {
 	// AIController class setup
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned; 
+
+	EnemyHealth = EnemyMaxHealth;
 
 	// variable initialization
 	UCharacterMovementComponent* Movement = GetCharacterMovement();
@@ -24,6 +27,9 @@ APEAICharacter::APEAICharacter()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AICharacterMovementComponent is nullptr!"));
 	}
+
+	AttackComponent = CreateDefaultSubobject<UPEAttackHitscanComponent>(TEXT("AttackComponent"));
+	ReceiveComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveComponent"));
 }
 
 void APEAICharacter::PreInitializeComponents()
@@ -69,3 +75,28 @@ void APEAICharacter::BeginDestroy()
 
 	Super::BeginDestroy();
 }
+
+float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	UE_LOG(LogTemp, Warning, TEXT("Take Damage"));
+
+	if (ReceiveComponent)
+	{
+		if (Damage > 0.0f)
+		{
+			EnemyHealth -= Damage;
+			if(EnemyHealth <= 0.0f)
+			{
+				EnemyHealth = 0.0f;
+				UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
+				OnPawnDeath.Broadcast(); // AI 사망 시 델리게이트 브로드캐스트
+				this->Destroy(); // AI 캐릭터 제거
+			}
+		}
+	}
+	
+
+	return Damage;
+}
+

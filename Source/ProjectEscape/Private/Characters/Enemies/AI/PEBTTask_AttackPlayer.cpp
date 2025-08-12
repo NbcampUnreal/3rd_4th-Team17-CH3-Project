@@ -106,6 +106,13 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
 
     // 공격 실행 (로그)
     UE_LOG(LogTemp, Warning, TEXT("AI ATTACKING PLAYER! Distance: %.1f"), DistanceToPlayer);
+    if (APEAICharacter* AICharacter = Cast<APEAICharacter>(MyPawn))
+    {
+        FPEAttackStats AttackStats;
+        AttackStats.AttackRange = AttackRange; // 공격 범위 설정
+        AttackStats.DamageAmount = AICharacter->AttackAmount; // 임시 데미지 값 설정
+        AICharacter->AttackComponent->ExcuteAttack(AttackStats, MyPawn->GetActorLocation(), Direction); // 공격 실행
+	}
 
     // 화면에도 표시
     if (GEngine)

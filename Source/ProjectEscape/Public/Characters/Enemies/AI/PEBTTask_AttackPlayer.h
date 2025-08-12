@@ -21,7 +21,7 @@ protected:
     virtual EBTNodeResult::Type AbortTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Attack")
-    float AttackRange = 150.0f; // 공격 가능한 최대 거리
+    float AttackRange = 1500.0f; // 공격 가능한 최대 거리
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Attack")
     float AttackCoolTime = 2.0f; // 공격 쿨타임
