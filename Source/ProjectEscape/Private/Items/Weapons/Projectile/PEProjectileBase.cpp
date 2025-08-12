@@ -57,6 +57,16 @@ void APEProjectileBase::BeginPlay()
 	);
 }
 
+void APEProjectileBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	
+	if (GetWorldTimerManager().IsTimerActive(ProjectileLifetimeTimer))
+	{
+		GetWorldTimerManager().ClearTimer(ProjectileLifetimeTimer);
+	}
+}
+
 void APEProjectileBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
