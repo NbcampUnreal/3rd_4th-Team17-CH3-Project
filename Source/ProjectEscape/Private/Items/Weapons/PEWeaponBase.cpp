@@ -354,8 +354,12 @@ void APEWeaponBase::AttachToOwner()
 	{
 		if (IPEWeaponAttachable* AttachParent = Cast<IPEWeaponAttachable>(WeaponOwnerActor))
 		{
-			AttachedActor = nullptr;
-			AttachParent->AttachWeapon(AttachedActor);
+			if (UWorld* World = GetWorld())
+			{
+				FActorSpawnParameters Params;
+				AttachedActor = World->SpawnActor<AActor>(WeaponStats.ActorToAttach, Params);
+				AttachParent->AttachWeapon(AttachedActor);
+			}
 		}
 	}
 }
@@ -366,7 +370,8 @@ void APEWeaponBase::RemoveFromOwner()
 	{
 		if (IPEWeaponAttachable* AttachParent = Cast<IPEWeaponAttachable>(WeaponOwnerActor))
 		{
-			AttachParent->RemoveWeapon(AttachedActor);
+			AttachParent->DetachWeapon(AttachedActor);
+			AttachedActor->Destroy();
 			AttachedActor = nullptr;
 		}
 	}

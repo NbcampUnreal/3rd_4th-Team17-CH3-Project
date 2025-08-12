@@ -243,9 +243,23 @@ bool APEHero::HasWeapon() const
 
 void APEHero::AttachWeapon(AActor* WeaponActor)
 {
+	if (WeaponActor)
+	{
+		if (USkeletalMeshComponent* SKeletonMeshComp = GetMesh())
+		{
+			FAttachmentTransformRules Rule = FAttachmentTransformRules::KeepRelativeTransform;
+			FName SocketName = FName(TEXT("weapon_r"));
+			WeaponActor->AttachToComponent(SKeletonMeshComp, Rule, SocketName);
+		}
+	}
 }
 
-void APEHero::RemoveWeapon(AActor* WeaponActor)
+void APEHero::DetachWeapon(AActor* WeaponActor)
 {
+	if (WeaponActor)
+	{
+		FDetachmentTransformRules Rule = FDetachmentTransformRules::KeepRelativeTransform;
+		WeaponActor->DetachFromActor(Rule);
+	}
 }
 

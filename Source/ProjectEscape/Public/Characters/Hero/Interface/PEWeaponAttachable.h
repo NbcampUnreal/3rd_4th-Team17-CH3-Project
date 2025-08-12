@@ -16,5 +16,5 @@ class PROJECTESCAPE_API IPEWeaponAttachable
 
 public:
 	virtual void AttachWeapon(AActor* WeaponActor) = 0;
-	virtual void RemoveWeapon(AActor* WeaponActor) = 0;
+	virtual void DetachWeapon(AActor* WeaponActor) = 0;
 };

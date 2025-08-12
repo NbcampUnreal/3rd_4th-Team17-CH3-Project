@@ -90,5 +90,5 @@ public:
 	bool HasWeapon() const;
 
 	virtual void AttachWeapon(AActor* WeaponActor) override;
-	virtual void RemoveWeapon(AActor* WeaponActor) override;
+	virtual void DetachWeapon(AActor* WeaponActor) override;
 };
