@@ -7,14 +7,18 @@
 #include "Components/ActorComponent.h"
 #include "PEAttackBaseComponent.generated.h"
 
+class APEProjectileBase;
+
 USTRUCT()
 struct PROJECTESCAPE_API FPEAttackStats
 {
 	GENERATED_BODY()
 
+	TSubclassOf<APEProjectileBase> ProjectileClass; 
 	float DamageAmount = 10.0f; 
 	float AttackRange = 1000.0f;
 	float SpreadAngle = 0.0f;
+	float ProjectileSpeed = 1000.0f;
 	ECollisionChannel CollisionChannel = ECC_Pawn;
 };
 

@@ -128,4 +128,11 @@ protected:
 	
 	void BroadcastWeaponStateChanged();
 	void BroadcastEmptyWeaponState();
+
+	/* 아이템 장착 시각 효과 관련 섹션 */
+protected:
+	TObjectPtr<AActor> AttachedActor = nullptr;
+
+	void AttachToOwner();
+	void DetachFromOwner();
 };

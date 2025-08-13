@@ -1,4 +1,4 @@
-#include "Characters/Hero/PEHero.h"
+﻿#include "Characters/Hero/PEHero.h"
 
 #include "Camera/CameraComponent.h"
 #include "Characters/Hero/Components/PEHeroInputComponent.h"
@@ -12,6 +12,8 @@
 #include "Items/Components/PEStorableItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 #include "Items/Interface/PEUseable.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
 APEHero::APEHero()
 {
@@ -37,10 +39,17 @@ APEHero::APEHero()
 	// Create Inventory Manager Component
 	InventoryManagerComponent = CreateDefaultSubobject<UPEInventoryManagerComponent>(TEXT("InventoryManagerComponent"));
 
+	// Create FirstPerson SkeletalMesh
+	FirstPersonSkeletalMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("FirstPersonSkeletalMesh"));
+	FirstPersonSkeletalMesh->SetupAttachment(FirstPersonCameraComponent);
+
 	// Receive Attack Component
 	ReceiveAttackComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveAttackComponent"));
 	ReceiveAttackComponent->SetHiddenInGame(false);
 	ReceiveAttackComponent->SetupAttachment(RootComponent);
+
+	// AI Component
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSource"));
 }
 
 void APEHero::BeginPlay()
@@ -51,7 +60,14 @@ void APEHero::BeginPlay()
 	{
 		HeroInputComponent->InputConfiguration();
 	}
-	
+
+	if (AIPerceptionStimuliSourceComponent)
+	{
+		AIPerceptionStimuliSourceComponent->RegisterForSense(UAISense_Sight::StaticClass());
+		AIPerceptionStimuliSourceComponent->RegisterWithPerceptionSystem();
+		UE_LOG(LogTemp, Log, TEXT("Player registered for AI Sight perception"));
+	}
+
 	// 인벤토리 아이템 드롭 델리게이트 바인딩
 	OnInventoryItemDrop.AddDynamic(this, &APEHero::HandleInventoryItemDrop);
 }
@@ -257,4 +273,63 @@ void APEHero::UseItemByInventory(FGameplayTag ItemTag)
 {
 	// NOTE: 인벤토리에서 아이템에 마우스 오른쪽 버튼을 눌렀을 때의 액션이 이곳에 호출됩니다.
 	//			ItemBase는 해당 함수를 비워둡니다.
+}
+
+bool APEHero::HasWeapon() const
+{
+	if (UseableItemManagerComponent)
+	{
+		if (UseableItemManagerComponent->GetCurrentItem())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void APEHero::AttachWeapon(AActor* WeaponActor, FTransform Transform)
+{
+	if (WeaponActor)
+	{
+		if (FirstPersonSkeletalMesh)
+		{
+			FAttachmentTransformRules Rule = FAttachmentTransformRules::KeepRelativeTransform;
+			FName SocketName = FName(TEXT("weapon_r"));
+			WeaponActor->SetActorRelativeTransform(Transform);
+			WeaponActor->AttachToComponent(FirstPersonSkeletalMesh, Rule, SocketName);
+
+			PlayEquipAnimation();
+		}
+	}
+}
+
+void APEHero::PlayEquipAnimation()
+{
+	float PlayRate = 1.0f;
+	PlayMontageAnimation(EquipAnimMontage, PlayRate);
+}
+
+void APEHero::PlayReloadAnimation(float ReloadDelay)
+{
+	float AnimationLength = ReloadAnimMontage->GetPlayLength();
+	float PlayRate = ReloadDelay == 0 ? 1.0f : AnimationLength / ReloadDelay;
+	PlayMontageAnimation(ReloadAnimMontage, PlayRate);
+}
+
+void APEHero::PlayFireWeaponAnimation(float ShotInterval)
+{
+	float AnimationLength = ReloadAnimMontage->GetPlayLength();
+	float PlayRate = ShotInterval == 0 ? 1.0f : AnimationLength / ShotInterval;
+	PlayMontageAnimation(FireWeaponAnimMontage, PlayRate);
+}
+
+void APEHero::PlayMontageAnimation(UAnimMontage* Animation, float PlayRate)
+{
+	if (Animation && EquipAnimMontage)
+	{
+		if (UAnimInstance* AnimInstance = FirstPersonSkeletalMesh->GetAnimInstance())
+		{
+			AnimInstance->Montage_Play(Animation, PlayRate);
+		}
+	}
 }
