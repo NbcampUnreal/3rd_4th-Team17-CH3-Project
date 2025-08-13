@@ -38,9 +38,6 @@ public:
 	void OnInventoryAndQuickSlotUpdate(FInventoryInfo& InInventoryInfo);
 
 	UFUNCTION()
-	void OnChangeAmmo(int32 CurrentAmmo, int32 MaxAmmo);
-
-	UFUNCTION()
 	void OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo);
 
 	void PlayDamageAnimOfHUDWidget();
