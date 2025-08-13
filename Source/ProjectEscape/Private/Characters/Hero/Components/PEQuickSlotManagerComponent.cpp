@@ -69,7 +69,6 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 		}
 	}
 
-	// Update QuickSlot info and broadcast changes
 	UpdateQuickSlotInfoAndBroadcast();
 }
 
@@ -96,7 +95,6 @@ void UPEQuickSlotManagerComponent::RemoveQuickSlotItem(EPEEquipmentType Equipmen
 	{
 		QuickSlotItems[EquipmentType] = nullptr;
 		
-		// Update QuickSlot info and broadcast changes
 		UpdateQuickSlotInfoAndBroadcast();
 	}
 }
@@ -105,7 +103,6 @@ void UPEQuickSlotManagerComponent::ClearQuickSlots()
 {
 	QuickSlotItems.Empty();
 	
-	// Update QuickSlot info and broadcast changes
 	UpdateQuickSlotInfoAndBroadcast();
 }
 
@@ -155,35 +152,32 @@ TMap<EPEEquipmentType, TObjectPtr<AActor>> UPEQuickSlotManagerComponent::GetQuic
 FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
 {
 	FInventoryInfo QuickSlotInfo;
-
-	// Primary Weapon -> MainWeapon
+	const FPEGameplayTags& GameplayTags = FPEGameplayTags::Get();
+	
 	if (QuickSlotItems.Contains(EPEEquipmentType::Primary) && QuickSlotItems[EPEEquipmentType::Primary])
 	{
 		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Primary]))
 		{
 			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
 			
-			// Set data from WeaponStats directly
-			QuickSlotInfo.MainWeapon.ItemTexture = WeaponStats.IconTexture2D; // Assuming IconTexture is available in WeaponStats
+			QuickSlotInfo.MainWeapon.ItemTexture = WeaponStats.IconTexture2D; 
 			QuickSlotInfo.MainWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
-			QuickSlotInfo.MainWeapon.ItemTag = FGameplayTag::RequestGameplayTag(FName("Item.Weapon.RangeWeapon.MainWeapon")); // Direct tag specification
+			QuickSlotInfo.MainWeapon.ItemTag = GameplayTags.Item_Weapon_RangeWeapon_MainWeapon;
 			QuickSlotInfo.MainWeapon.CurrentAmmo = WeaponBase->GetCurrentAmmoCount();
 			QuickSlotInfo.MainWeapon.TotalAmmo = WeaponStats.MaxAmmo;
 			UE_LOG(LogPE, Log, TEXT("Converted Weapon to MainWeapon in QuickSlotInfo"));
 		}
 	}
 
-	// Secondary Weapon -> SubWeapon
 	if (QuickSlotItems.Contains(EPEEquipmentType::Secondary) && QuickSlotItems[EPEEquipmentType::Secondary])
 	{
 		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Secondary]))
 		{
 			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
 			
-			// Set data from WeaponStats directly
-			QuickSlotInfo.SubWeapon.ItemTexture = WeaponStats.IconTexture2D; // Assuming IconTexture is available in WeaponStats
+			QuickSlotInfo.SubWeapon.ItemTexture = WeaponStats.IconTexture2D;
 			QuickSlotInfo.SubWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
-			QuickSlotInfo.SubWeapon.ItemTag = FGameplayTag::RequestGameplayTag(FName("Item.Weapon.RangeWeapon.SubWeapon")); // Direct tag specification
+			QuickSlotInfo.MainWeapon.ItemTag = GameplayTags.Item_Weapon_RangeWeapon_SubWeapon;
 			QuickSlotInfo.SubWeapon.CurrentAmmo = WeaponBase->GetCurrentAmmoCount();
 			QuickSlotInfo.SubWeapon.TotalAmmo = WeaponStats.MaxAmmo;
 			UE_LOG(LogPE, Log, TEXT("Converted Weapon to SubWeapon in QuickSlotInfo"));
@@ -191,18 +185,42 @@ FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
 		
 	}
 
-	// Melee Weapon -> MeleeWeapon
 	if (QuickSlotItems.Contains(EPEEquipmentType::Melee) && QuickSlotItems[EPEEquipmentType::Melee])
 	{
 		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Melee]))
 		{
 			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
 			
-			// Set data from WeaponStats directly
 			QuickSlotInfo.MeleeWeapon.ItemTexture = WeaponStats.IconTexture2D; 
 			QuickSlotInfo.MeleeWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
-			QuickSlotInfo.MeleeWeapon.ItemTag = FGameplayTag::RequestGameplayTag(FName("Item.Weapon.MeleeWeapon")); // Direct tag specification
+			QuickSlotInfo.MainWeapon.ItemTag = GameplayTags.Item_Weapon_MeleeWeapon;
 			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Melee in QuickSlotInfo"));
+		}
+	}
+	
+	if (QuickSlotItems.Contains(EPEEquipmentType::Healing) && QuickSlotItems[EPEEquipmentType::Healing])
+	{
+		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Healing]))
+		{
+			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
+			
+			QuickSlotInfo.MeleeWeapon.ItemTexture = WeaponStats.IconTexture2D; 
+			QuickSlotInfo.MeleeWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
+			QuickSlotInfo.MainWeapon.ItemTag = GameplayTags.Item_Things_Heal;
+			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Healing in QuickSlotInfo"));
+		}
+	}
+	
+	if (QuickSlotItems.Contains(EPEEquipmentType::Throwable) && QuickSlotItems[EPEEquipmentType::Throwable])
+	{
+		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Throwable]))
+		{
+			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
+			
+			QuickSlotInfo.MeleeWeapon.ItemTexture = WeaponStats.IconTexture2D; 
+			QuickSlotInfo.MeleeWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
+			QuickSlotInfo.MainWeapon.ItemTag = GameplayTags.Item_Things_Grenade;
+			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Throwable in QuickSlotInfo"));
 		}
 	}
 

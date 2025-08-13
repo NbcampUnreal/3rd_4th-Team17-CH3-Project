@@ -246,8 +246,6 @@ void UPEInventoryManagerComponent::BroadcastInventoryChanged()
 	{
 		Hero->SetInventoryBagInfo(ConvertToInventoryList());
 		Hero->BroadcastInventoryChanged();
-		//Hero->OnInventoryChanged.Broadcast(CurrentInventoryList);
-		//FInventoryInfo CurrentInventoryList = ConvertToInventoryList();
 		UE_LOG(LogPE, Log, TEXT("BroadcastInventoryChanged: Inventory change broadcasted to UI"));
 	}
 	else
