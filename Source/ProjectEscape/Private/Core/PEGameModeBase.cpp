@@ -57,12 +57,11 @@ void APEGameModeBase::OnDamageDealt(float damage)
 	}
 }
 
-void APEGameModeBase::OnKillEnemy(int32 KillCount)
+void APEGameModeBase::OnKillEnemy(int32 KillScore)
 {
-	static const int KillScore = 500;
 	if (FGameResult* GameResult = GetGameResultFromGameState())
 	{
-		GameResult->KillCount += KillCount;
+		GameResult->KillCount += 1;
 		GameResult->TotalScore += KillScore;
 	}
 }

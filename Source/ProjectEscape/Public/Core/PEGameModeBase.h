@@ -23,7 +23,7 @@ public:
 	void GameClear(APlayerController* PlayerController);
 
 	void OnDamageDealt(float damage);
-	void OnKillEnemy(int32 KillCount = 1);
+	void OnKillEnemy(int32 KillScore);
 	void OnGameStart(float TimeSeconds);
 	void OnGameEnd(float TimeSeconds, bool IsClear);
 
