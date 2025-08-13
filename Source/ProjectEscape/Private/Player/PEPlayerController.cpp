@@ -1,8 +1,9 @@
-﻿#include "Player/PEPlayerController.h"
+#include "Player/PEPlayerController.h"
 #include "Player\PEPlayerState.h"
 #include "Components\ProgressBar.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/Inventory/PEInventoryHUD.h"
+#include "Core/PEGameStateBase.h"
 #include "Characters/Hero/PEHero.h"
 
 
@@ -187,6 +188,40 @@ bool APEPlayerController::IsOpenInventory() const
 	{
 		return false;
 	}
+}
+
+void APEPlayerController::ShowGameOverWidget(FGameResult GameResult)
+{
+	if (GameOverWidget == nullptr && GameOverWidgetClass)
+	{
+		GameOverWidget = CreateWidget<UUserWidget>(this, GameOverWidgetClass);
+	}
+
+	if (GameOverWidget && !GameOverWidget->IsInViewport())
+	{
+		GameOverWidget->AddToViewport();
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+	}
+
+	// TODO: UI Update
+}
+
+void APEPlayerController::ShowGameClearWidget(FGameResult GameResult)
+{
+	if (GameClearWidget == nullptr && GameClearWidgetClass)
+	{
+		GameClearWidget = CreateWidget<UUserWidget>(this, GameClearWidgetClass);
+	}
+
+	if (GameClearWidget && !GameClearWidget->IsInViewport())
+	{
+		GameClearWidget->AddToViewport();
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+	}
+
+	// TODO: UI Update
 }
 
 void APEPlayerController::ShowHUD()

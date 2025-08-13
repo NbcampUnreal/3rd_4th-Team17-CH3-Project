@@ -14,6 +14,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Player/PEPlayerState.h"
 
 APEHero::APEHero()
 {
@@ -245,6 +246,15 @@ USceneComponent* APEHero::GetAttackStartPoint() const
 UPEStorableItemComponent* APEHero::GetStorableItemComponent(FGameplayTag Tag) const
 {
 	return InventoryManagerComponent->GetItemByTag(Tag);
+}
+
+float APEHero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (APEPlayerState* PEPlayerState = GetPlayerState<APEPlayerState>())
+	{
+		PEPlayerState->ReduceHealthPoint(DamageAmount);
+	}
+	return DamageAmount;
 }
 
 void APEHero::HandleInventoryItemDrop(FGameplayTag ItemTag, int32 DropCount)

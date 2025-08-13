@@ -1,5 +1,6 @@
 ﻿#include "Player/PEPlayerState.h"
 #include "Player/PEPlayerController.h"
+#include "Core/PEGameModeBase.h"
 
 APEPlayerState::APEPlayerState()
 {
@@ -29,7 +30,17 @@ void APEPlayerState::SetHealthPoint(float NewValue)
 
 	if (HealthPoint <= 0)
 	{
-		// TODO: Implement Hero character death logic
+		
+		if (APlayerController* Controller = GetPlayerController())
+		{
+			if (UWorld* World = Controller->GetWorld())
+			{
+				if (APEGameModeBase* PEGameModeBase = Cast<APEGameModeBase>(World->GetAuthGameMode()))
+				{
+					PEGameModeBase->GameOver(Controller);
+				}
+			}
+		}
 	}
 }
 
