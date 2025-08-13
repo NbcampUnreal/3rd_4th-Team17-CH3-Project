@@ -116,6 +116,8 @@ public:
 	virtual USceneComponent* GetAttackStartPoint() const override;
 	virtual UPEStorableItemComponent* GetStorableItemComponent(FGameplayTag Tag) const override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;

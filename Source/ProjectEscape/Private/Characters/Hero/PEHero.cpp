@@ -14,6 +14,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Player/PEPlayerState.h"
 
 APEHero::APEHero()
 {
@@ -267,6 +268,14 @@ void APEHero::BroadcastInventoryChanged()
 	{
 		OnInventoryChanged.Broadcast(CurrentInventoryList);
 	}
+  
+float APEHero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (APEPlayerState* PEPlayerState = GetPlayerState<APEPlayerState>())
+	{
+		PEPlayerState->ReduceHealthPoint(DamageAmount);
+	}
+	return DamageAmount;
 }
 
 void APEHero::HandleInventoryItemDrop(FGameplayTag ItemTag, int32 DropCount)
