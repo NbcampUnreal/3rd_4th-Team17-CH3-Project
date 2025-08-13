@@ -32,5 +32,5 @@ struct FPEItemData: public FTableRowBase
 	FGameplayTag ItemTag = FGameplayTag::EmptyTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-	FString Description = TEXT("No Description");
+	FText Description = FText::GetEmpty();
 };

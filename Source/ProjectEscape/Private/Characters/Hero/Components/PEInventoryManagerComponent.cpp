@@ -189,6 +189,7 @@ FInventoryInfo UPEInventoryManagerComponent::ConvertToInventoryList() const
 		if (Item.Value)
 		{
 			/*
+			 * FInventoryBagSlotInfo:
 				TObjectPtr<UTexture2D> ItemTexture;
 				TObjectPtr<UPaperSprite> ItemSprite;
 				FText ItemDescription;
@@ -206,7 +207,7 @@ FInventoryInfo UPEInventoryManagerComponent::ConvertToInventoryList() const
 				BagSlotInfo.ItemTag = Item.Key;
 				BagSlotInfo.ItemSprite = ItemData.IconSprite;
 				BagSlotInfo.ItemTexture = ItemData.IconTexture;
-				//BagSlotInfo.ItemDescription = ItemData.Description; // FText로 변경 필요
+				BagSlotInfo.ItemDescription = ItemData.Description; // FText로 변경 필요
 				if (ItemCount > ItemCapacity)
 				{
 					BagSlotInfo.StackCount = ItemCapacity;
