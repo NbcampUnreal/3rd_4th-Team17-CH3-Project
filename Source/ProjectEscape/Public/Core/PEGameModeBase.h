@@ -25,7 +25,7 @@ public:
 	void OnDamageDealt(float damage);
 	void OnKillEnemy(int32 KillCount = 1);
 	void OnGameStart(float TimeSeconds);
-	void OnGameEnd(float TimeSeconds);
+	void OnGameEnd(float TimeSeconds, bool IsClear);
 
 protected:
 	FGameResult* GetGameResultFromGameState();

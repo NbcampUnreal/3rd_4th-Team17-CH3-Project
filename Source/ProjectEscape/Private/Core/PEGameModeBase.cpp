@@ -21,7 +21,7 @@ void APEGameModeBase::GameOver(APlayerController* PlayerController)
 {
 	if (PlayerController && GetWorld())
 	{
-		OnGameEnd(GetWorld()->TimeSeconds);
+		OnGameEnd(GetWorld()->TimeSeconds, false);
 		if (APawn* Pawn = PlayerController->GetPawn())
 		{
 			Pawn->Destroy();
@@ -36,7 +36,7 @@ void APEGameModeBase::GameClear(APlayerController* PlayerController)
 {
 	if (PlayerController && GetWorld())
 	{
-		OnGameEnd(GetWorld()->TimeSeconds);
+		OnGameEnd(GetWorld()->TimeSeconds, true);
 		if (APawn* Pawn = PlayerController->GetPawn())
 		{
 			Pawn->Destroy();
@@ -78,7 +78,7 @@ void APEGameModeBase::OnGameStart(float TimeSeconds)
 	}
 }
 
-void APEGameModeBase::OnGameEnd(float TimeSeconds)
+void APEGameModeBase::OnGameEnd(float TimeSeconds, bool IsClear)
 {
 	static const float TimeBonusBasis = 60.0f * 20; // 20 min
 	static const float TimeBonusScoreMultiplier = 50.0f; // 600 sec left -> 30000 score bonus
@@ -89,7 +89,10 @@ void APEGameModeBase::OnGameEnd(float TimeSeconds)
 		GameResult->GameRunTime = GameResult->GameEndTime - GameResult->GameStartTime;
 
 		float RemainTime = TimeBonusBasis - TimeSeconds;
-		GameResult->TotalScore += (RemainTime > 0) ? (RemainTime * TimeBonusScoreMultiplier) : 0;
+		if (IsClear)
+		{
+			GameResult->TotalScore += (RemainTime > 0) ? (RemainTime * TimeBonusScoreMultiplier) : 0;
+		}
 	}
 }
 
