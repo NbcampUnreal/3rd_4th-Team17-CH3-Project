@@ -74,7 +74,7 @@ void APEHero::BeginPlay()
 	OnInventoryItemDrop.AddDynamic(this, &APEHero::HandleInventoryItemDrop);
 
 	// 퀵슬롯 장비 드롭 델리게이트 바인딩
-	OnQuickSlotEquipmentDrop.AddDynamic(this, &APEHero::DropEquipmentToWorld);
+	OnQuickSlotEquipmentDrop.AddDynamic(this, &APEHero::HandleDropEquipmentToWorld);
 }
 
 void APEHero::Tick(float DeltaTime)
@@ -229,9 +229,30 @@ void APEHero::DropHandEquipmentToWorld()
 	}
 }
 
-void APEHero::DropEquipmentToWorld(FGameplayTag EquipmentType)
+void APEHero::HandleDropEquipmentToWorld(FGameplayTag EquipmentTag)
 {
-	UE_LOG(LogPE, Warning, TEXT("DropEquipmentToWorld called with EquipmentType: %s"), *EquipmentType.ToString());
+	UE_LOG(LogPE, Warning, TEXT("DropEquipmentToWorld called with EquipmentType: %s"), *EquipmentTag.ToString());
+	const FPEGameplayTags& GameplayTags = FPEGameplayTags::Get();
+	if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_MainWeapon)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Primary, GetActorLocation(), GetActorRotation());
+	}
+	if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_SubWeapon)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Secondary, GetActorLocation(), GetActorRotation());
+	}
+	if (EquipmentTag == GameplayTags.Item_Weapon_MeleeWeapon)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Melee, GetActorLocation(), GetActorRotation());
+	}
+	if (EquipmentTag == GameplayTags.Item_Things_Heal)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
+	}
+	if ( EquipmentTag == GameplayTags.Item_Things_Grenade)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Throwable, GetActorLocation(), GetActorRotation());
+	}
 }
 
 UPEQuickSlotManagerComponent* APEHero::GetQuickSlotManagerComponent() const

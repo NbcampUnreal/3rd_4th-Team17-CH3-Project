@@ -86,7 +86,7 @@ public:
 	virtual void DropHandEquipmentToWorld() override;
 
 	UFUNCTION()
-	virtual void DropEquipmentToWorld(FGameplayTag EquipmentType);
+	virtual void HandleDropEquipmentToWorld(FGameplayTag EquipmentTag);
 	
 	UPEQuickSlotManagerComponent* GetQuickSlotManagerComponent() const;
 	
