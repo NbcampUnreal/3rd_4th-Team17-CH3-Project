@@ -236,8 +236,6 @@ FInventoryInfo UPEInventoryManagerComponent::ConvertToInventoryList() const
 			UE_LOG(LogPE, Warning, TEXT("ConvertToInventoryList: Item is null for tag %s"), *Item.Key.ToString());
 		}
 	}
-
-	//TODO: 퀵슬롯 무기에 대한 연결 필요
 	
 	return InventoryInfo;
 }
@@ -246,8 +244,8 @@ void UPEInventoryManagerComponent::BroadcastInventoryChanged()
 {
 	if (APEHero* Hero = Cast<APEHero>(GetOwner()))
 	{
-		FInventoryInfo CurrentInventoryList = ConvertToInventoryList();
-		Hero->OnInventoryChanged.Broadcast(CurrentInventoryList);
+		Hero->SetInventoryBagInfo(ConvertToInventoryList());
+		Hero->BroadcastInventoryChanged();
 		UE_LOG(LogPE, Log, TEXT("BroadcastInventoryChanged: Inventory change broadcasted to UI"));
 	}
 	else
