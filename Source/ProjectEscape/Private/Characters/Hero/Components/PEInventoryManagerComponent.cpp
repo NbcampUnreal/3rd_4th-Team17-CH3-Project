@@ -188,17 +188,6 @@ FInventoryInfo UPEInventoryManagerComponent::ConvertToInventoryList() const
 	{
 		if (Item.Value)
 		{
-			/*
-			 * FInventoryBagSlotInfo:
-				TObjectPtr<UTexture2D> ItemTexture;
-				TObjectPtr<UPaperSprite> ItemSprite;
-				FText ItemDescription;
-				FGameplayTag ItemTag;
-
-				int32 StackCount;
-				int32 MaxStackCount;
-				bool IsStackable;
-			 */
 			int32 ItemCount = Item.Value->GetItemCount();
 			int32 ItemCapacity = Item.Value->GetStackCapacity();
 			while (ItemCount > 0)
@@ -207,7 +196,12 @@ FInventoryInfo UPEInventoryManagerComponent::ConvertToInventoryList() const
 				BagSlotInfo.ItemTag = Item.Key;
 				BagSlotInfo.ItemSprite = ItemData.IconSprite;
 				BagSlotInfo.ItemTexture = ItemData.IconTexture;
-				BagSlotInfo.ItemDescription = ItemData.Description; // FText로 변경 필요
+				BagSlotInfo.ItemDescription = ItemData.Description; 
+
+				// MaxStackCount와 IsStackable이 필요한 변수인지 확인해야 함
+				BagSlotInfo.MaxStackCount = ItemData.StackCapacity;
+				BagSlotInfo.IsStackable = false;
+				
 				if (ItemCount > ItemCapacity)
 				{
 					BagSlotInfo.StackCount = ItemCapacity;
@@ -227,6 +221,8 @@ FInventoryInfo UPEInventoryManagerComponent::ConvertToInventoryList() const
 			UE_LOG(LogPE, Warning, TEXT("ConvertToInventoryList: Item is null for tag %s"), *Item.Key.ToString());
 		}
 	}
+
+	//TODO: 퀵슬롯 무기에 대한 연결 필요
 	
 	return InventoryInfo;
 }
