@@ -39,12 +39,6 @@ void APESpawnArea::Spawn()
 	}
 }
 
-void APESpawnArea::BeginPlay()
-{
-	Super::BeginPlay();
-	Spawn();
-}
-
 TSubclassOf<AActor> APESpawnArea::SelectRandomActorFromData() const
 {
 	TSubclassOf<AActor> ActorClassToSpawn = nullptr;
@@ -134,3 +128,8 @@ FVector APESpawnArea::GetGroundPointUsingSweep(AActor* SpawnedActor, FCollisionS
 	return Result;
 }
 
+void APESpawnArea_OnBeginPlay::BeginPlay()
+{
+	Super::BeginPlay();
+	Spawn();
+}
