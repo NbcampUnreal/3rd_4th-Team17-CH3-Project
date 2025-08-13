@@ -2,6 +2,8 @@
 #include "Player\PEPlayerState.h"
 #include "Components\ProgressBar.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
 #include "UI/Inventory/PEInventoryHUD.h"
 
 
@@ -9,6 +11,8 @@ void APEPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	ShowHUD();
+
+	OnWeaponInfoBroadcast.AddDynamic(this, &APEPlayerController::OnChangeWeaponInfo);
 
 	if (APEPlayerState* PS = GetPlayerState<APEPlayerState>())
 	{
@@ -29,6 +33,7 @@ void APEPlayerController::BeginPlay()
 
 void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
 {
+	// 체력이 올라갈때도 변화가 일어남. 델리케이트로 빼고난뒤에 제거해야함.
 	PlayDamageAnimOfHUDWidget();
 	ChangeHealthBar(HealthPoint, MaxHealthPoint);
 }
@@ -49,7 +54,7 @@ void APEPlayerController::OnInventoryAndQuickSlotUpdate(FInventoryInfo& InInvent
 		}
 	}
 }
-
+// 데미지를 받았을때 실행
 void APEPlayerController::PlayDamageAnimOfHUDWidget()
 {
 
@@ -63,6 +68,7 @@ void APEPlayerController::PlayDamageAnimOfHUDWidget()
 	}
 }
 
+// 상대방에게 데미지를 주었을때 실행
 void APEPlayerController::PlayHitMarkerAnimOfHUDWIdget()
 {
 	if (HUDWidget)
@@ -75,6 +81,7 @@ void APEPlayerController::PlayHitMarkerAnimOfHUDWIdget()
 	}
 }
 
+// 상대방을 죽였을때 실행
 void APEPlayerController::PlayKillMarkerAnimOfHUDWidget()
 {
 	if (HUDWidget)
@@ -87,6 +94,7 @@ void APEPlayerController::PlayKillMarkerAnimOfHUDWidget()
 	}
 }
 
+// 총을 쐈을때 실행
 void APEPlayerController::PlayAimAnimOfHUDWidget()
 {
 	if (HUDWidget)
@@ -98,6 +106,47 @@ void APEPlayerController::PlayAimAnimOfHUDWidget()
 		}
 	}
 }
+
+// 총을 쐈을때 실행
+void APEPlayerController::OnChangeAmmo(int32 CurrentAmmo, int32 MaxAmmo)
+{
+	if (HUDWidget)
+	{
+		if (UTextBlock* AmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName("AmmoText")))
+		{
+			AmmoText->SetText(FText::FromString(FString::Printf(TEXT("Ammo : %d / %d"), CurrentAmmo, MaxAmmo)));
+		}
+	}
+}
+
+void APEPlayerController::OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo)
+{
+	if (HUDWidget)
+	{
+		if (UTextBlock* WeaponText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName("WeaponText")))
+		{
+			WeaponText->SetText(FText::FromName(EquipmentInfo.EquipmentName));
+		}
+		
+		if (UImage* WeaponImage = Cast<UImage>(HUDWidget->GetWidgetFromName("WeaponImage")))
+		{
+			if (EquipmentInfo.EquipmentIcon)
+			{
+				WeaponImage->SetBrushFromTexture(EquipmentInfo.EquipmentIcon);
+			}
+			else
+			{
+				WeaponImage->SetBrush(FSlateBrush());
+			}
+		}
+
+		if (UTextBlock* AmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName("AmmoText")))
+		{
+			AmmoText->SetText(FText::FromString(EquipmentInfo.AmmoCount));
+		}
+	}
+}
+
 
 void APEPlayerController::ChangeHealthBar(float HealthPoint, float MaxHealthPoint)
 {
