@@ -19,7 +19,7 @@ UPEInventoryManagerComponent::UPEInventoryManagerComponent()
 void UPEInventoryManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	BroadcastInventoryChanged();
 }
 
 void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* Item)
@@ -194,13 +194,28 @@ FInventoryInfo UPEInventoryManagerComponent::ConvertToInventoryList() const
 			{
 				FPEItemData ItemData = Item.Value->GetItemStats();
 				BagSlotInfo.ItemTag = Item.Key;
-				BagSlotInfo.ItemSprite = ItemData.IconSprite;
-				BagSlotInfo.ItemTexture = ItemData.IconTexture;
+				
+				if (ItemData.IconTexture)
+				{
+					BagSlotInfo.ItemTexture = ItemData.IconTexture;
+					BagSlotInfo.ItemSprite = nullptr;
+				}
+				else if (ItemData.IconSprite)
+				{
+					BagSlotInfo.ItemTexture = nullptr;
+					BagSlotInfo.ItemSprite = ItemData.IconSprite;
+				}
+				else
+				{
+					BagSlotInfo.ItemTexture = nullptr;
+					BagSlotInfo.ItemSprite = nullptr;
+				}
+				
 				BagSlotInfo.ItemDescription = ItemData.Description; 
 
 				// MaxStackCount와 IsStackable이 필요한 변수인지 확인해야 함
 				BagSlotInfo.MaxStackCount = ItemData.StackCapacity;
-				BagSlotInfo.IsStackable = false;
+				BagSlotInfo.IsStackable = true;
 				
 				if (ItemCount > ItemCapacity)
 				{
