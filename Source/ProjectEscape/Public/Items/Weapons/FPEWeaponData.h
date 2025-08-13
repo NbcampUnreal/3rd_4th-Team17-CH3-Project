@@ -7,6 +7,7 @@
 #include "UObject/Object.h"
 #include "FPEWeaponData.generated.h"
 
+class UPaperSprite;
 class APEProjectileBase;
 enum class EPEEquipmentType : uint8;
 /**
@@ -71,4 +72,11 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FTransform AttachTransform;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UTexture2D> IconTexture2D;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UPaperSprite> IconSprite;
+	
 };

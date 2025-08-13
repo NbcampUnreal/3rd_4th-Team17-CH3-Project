@@ -6,6 +6,8 @@
 #include "Characters/Hero/Interface/PEQuickSlotHandler.h"
 #include "Core/PELogChannels.h"
 #include "Items/Interface/PEQuickSlotItem.h"
+#include "Items/Weapons/PEWeaponBase.h"
+#include "Characters/Hero/PEHero.h"
 
 /*
  * 퀵슬롯에서 필요한 기능
@@ -66,6 +68,9 @@ void UPEQuickSlotManagerComponent::SetQuickSlotItem(EPEEquipmentType EquipmentTy
 			QuickSlotItemComponent->OnItemPickedUp();
 		}
 	}
+
+	// Update QuickSlot info and broadcast changes
+	UpdateQuickSlotInfoAndBroadcast();
 }
 
 AActor* UPEQuickSlotManagerComponent::SelectEquipment(EPEEquipmentType EquipmentType)
@@ -90,11 +95,18 @@ void UPEQuickSlotManagerComponent::RemoveQuickSlotItem(EPEEquipmentType Equipmen
 	if (QuickSlotItems.Contains(EquipmentType))
 	{
 		QuickSlotItems[EquipmentType] = nullptr;
+		
+		// Update QuickSlot info and broadcast changes
+		UpdateQuickSlotInfoAndBroadcast();
 	}
 }
 
 void UPEQuickSlotManagerComponent::ClearQuickSlots()
 {
+	QuickSlotItems.Empty();
+	
+	// Update QuickSlot info and broadcast changes
+	UpdateQuickSlotInfoAndBroadcast();
 }
 
 bool UPEQuickSlotManagerComponent::ContainWeaponType(EPEEquipmentType EquipmentType)
@@ -138,4 +150,70 @@ TMap<EPEEquipmentType, TObjectPtr<AActor>> UPEQuickSlotManagerComponent::GetQuic
 	EPEEquipmentType EquipmentType) const
 {
 	return QuickSlotItems;
+}
+
+FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
+{
+	FInventoryInfo QuickSlotInfo;
+
+	// Primary Weapon -> MainWeapon
+	if (QuickSlotItems.Contains(EPEEquipmentType::Primary) && QuickSlotItems[EPEEquipmentType::Primary])
+	{
+		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Primary]))
+		{
+			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
+			
+			// Set data from WeaponStats directly
+			QuickSlotInfo.MainWeapon.ItemTexture = WeaponStats.IconTexture2D; // Assuming IconTexture is available in WeaponStats
+			QuickSlotInfo.MainWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
+			QuickSlotInfo.MainWeapon.ItemTag = FGameplayTag::RequestGameplayTag(FName("Item.Weapon.RangeWeapon.MainWeapon")); // Direct tag specification
+			QuickSlotInfo.MainWeapon.CurrentAmmo = WeaponBase->GetCurrentAmmoCount();
+			QuickSlotInfo.MainWeapon.TotalAmmo = WeaponStats.MaxAmmo;
+			UE_LOG(LogPE, Log, TEXT("Converted Weapon to MainWeapon in QuickSlotInfo"));
+		}
+	}
+
+	// Secondary Weapon -> SubWeapon
+	if (QuickSlotItems.Contains(EPEEquipmentType::Secondary) && QuickSlotItems[EPEEquipmentType::Secondary])
+	{
+		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Secondary]))
+		{
+			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
+			
+			// Set data from WeaponStats directly
+			QuickSlotInfo.SubWeapon.ItemTexture = WeaponStats.IconTexture2D; // Assuming IconTexture is available in WeaponStats
+			QuickSlotInfo.SubWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
+			QuickSlotInfo.SubWeapon.ItemTag = FGameplayTag::RequestGameplayTag(FName("Item.Weapon.RangeWeapon.SubWeapon")); // Direct tag specification
+			QuickSlotInfo.SubWeapon.CurrentAmmo = WeaponBase->GetCurrentAmmoCount();
+			QuickSlotInfo.SubWeapon.TotalAmmo = WeaponStats.MaxAmmo;
+			UE_LOG(LogPE, Log, TEXT("Converted Weapon to SubWeapon in QuickSlotInfo"));
+		}
+		
+	}
+
+	// Melee Weapon -> MeleeWeapon
+	if (QuickSlotItems.Contains(EPEEquipmentType::Melee) && QuickSlotItems[EPEEquipmentType::Melee])
+	{
+		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Melee]))
+		{
+			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
+			
+			// Set data from WeaponStats directly
+			QuickSlotInfo.MeleeWeapon.ItemTexture = WeaponStats.IconTexture2D; 
+			QuickSlotInfo.MeleeWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
+			QuickSlotInfo.MeleeWeapon.ItemTag = FGameplayTag::RequestGameplayTag(FName("Item.Weapon.MeleeWeapon")); // Direct tag specification
+			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Melee in QuickSlotInfo"));
+		}
+	}
+
+	return QuickSlotInfo;
+}
+
+void UPEQuickSlotManagerComponent::UpdateQuickSlotInfoAndBroadcast()
+{
+	if (APEHero* Hero = Cast<APEHero>(EquipOwner))
+	{
+		Hero->SetQuickSlotInfo(ConvertToQuickSlotInfo());
+		Hero->BroadcastInventoryChanged();
+	}
 }
