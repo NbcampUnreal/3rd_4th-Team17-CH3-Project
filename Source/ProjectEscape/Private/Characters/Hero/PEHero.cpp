@@ -268,7 +268,8 @@ void APEHero::BroadcastInventoryChanged()
 	{
 		OnInventoryChanged.Broadcast(CurrentInventoryList);
 	}
-  
+}
+
 float APEHero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	if (APEPlayerState* PEPlayerState = GetPlayerState<APEPlayerState>())

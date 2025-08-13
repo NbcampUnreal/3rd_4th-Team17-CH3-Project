@@ -2,6 +2,8 @@
 #include "Player\PEPlayerState.h"
 #include "Components\ProgressBar.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
+#include "Components/Image.h"
 #include "UI/Inventory/PEInventoryHUD.h"
 #include "Core/PEGameStateBase.h"
 #include "Components/TextBlock.h"
@@ -12,6 +14,8 @@ void APEPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 	ShowHUD();
+
+	OnWeaponInfoBroadcast.AddDynamic(this, &APEPlayerController::OnChangeWeaponInfo);
 
 	if (APEPlayerState* PS = GetPlayerState<APEPlayerState>())
 	{
@@ -72,6 +76,7 @@ void APEPlayerController::PlayDamageAnimOfHUDWidget()
 	}
 }
 
+
 void APEPlayerController::PlayHitMarkerAnimOfHUDWIdget()
 {
 	if (HUDWidget)
@@ -83,6 +88,7 @@ void APEPlayerController::PlayHitMarkerAnimOfHUDWIdget()
 		}
 	}
 }
+
 
 void APEPlayerController::PlayKillMarkerAnimOfHUDWidget()
 {
@@ -96,6 +102,7 @@ void APEPlayerController::PlayKillMarkerAnimOfHUDWidget()
 	}
 }
 
+
 void APEPlayerController::PlayAimAnimOfHUDWidget()
 {
 	if (HUDWidget)
@@ -107,6 +114,35 @@ void APEPlayerController::PlayAimAnimOfHUDWidget()
 		}
 	}
 }
+
+void APEPlayerController::OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo)
+{
+	if (HUDWidget)
+	{
+		if (UTextBlock* WeaponText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName("WeaponText")))
+		{
+			WeaponText->SetText(FText::FromName(EquipmentInfo.EquipmentName));
+		}
+		
+		if (UImage* WeaponImage = Cast<UImage>(HUDWidget->GetWidgetFromName("WeaponImage")))
+		{
+			if (EquipmentInfo.EquipmentIcon)
+			{
+				WeaponImage->SetBrushFromTexture(EquipmentInfo.EquipmentIcon);
+			}
+			else
+			{
+				WeaponImage->SetBrush(FSlateBrush());
+			}
+		}
+
+		if (UTextBlock* AmmoText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName("AmmoText")))
+		{
+			AmmoText->SetText(FText::FromString(EquipmentInfo.AmmoCount));
+		}
+	}
+}
+
 
 void APEPlayerController::ChangeHealthBar(float HealthPoint, float MaxHealthPoint)
 {

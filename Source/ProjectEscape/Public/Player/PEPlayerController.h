@@ -2,7 +2,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Items/Weapons/FPEEquipmentInfo.h"
+#include "Items/PEEquipmentType.h"
 #include "PEPlayerController.generated.h"
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponInfoBroadcast,FPEEquipmentInfo&, EquipmentInfo);
 
 struct FInventoryInfo;
 struct FGameResult;
@@ -13,6 +17,9 @@ class PROJECTESCAPE_API APEPlayerController : public APlayerController
 	GENERATED_BODY()
 
 public:
+	UPROPERTY()
+	FOnWeaponInfoBroadcast OnWeaponInfoBroadcast;
+
 	UFUNCTION(BlueprintCallable)
 	void PauseGameAndShowPauseMenu();
 
@@ -30,6 +37,9 @@ public:
 
 	UFUNCTION()
 	void OnInventoryAndQuickSlotUpdate(FInventoryInfo& InInventoryInfo);
+
+	UFUNCTION()
+	void OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo);
 
 	void PlayDamageAnimOfHUDWidget();
 	void PlayHitMarkerAnimOfHUDWIdget();
