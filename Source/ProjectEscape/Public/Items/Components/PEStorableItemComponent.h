@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "GameplayTagContainer.h"
+#include "Items/FPEItemData.h"
 #include "PEStorableItemComponent.generated.h"
 
 /*
@@ -39,7 +40,10 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	FGameplayTag ItemTag;
-
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item Data")
+	FPEItemData ItemStats;
+	
 public:
 	FGameplayTag GetItemTag() const { return ItemTag; }
 	void SetItemTag(const FGameplayTag& NewTag) { ItemTag = NewTag; }
@@ -54,4 +58,5 @@ public:
 	int32 GetItemCount() const;
 	int32 GetStackCount() const;
 	int32 GetStackCapacity() const;
+	FPEItemData GetItemStats() const;
 };

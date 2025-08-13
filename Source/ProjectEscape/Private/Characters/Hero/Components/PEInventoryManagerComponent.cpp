@@ -6,6 +6,7 @@
 #include "Core/PELogChannels.h"
 #include "Items/Components/PEStorableItemComponent.h"
 #include "Characters/Hero/PEHero.h"
+#include "UI/Inventory/PEInventoryType.h"
 
 UPEInventoryManagerComponent::UPEInventoryManagerComponent()
 {
@@ -18,7 +19,7 @@ UPEInventoryManagerComponent::UPEInventoryManagerComponent()
 void UPEInventoryManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	BroadcastInventoryChanged();
 }
 
 void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* Item)
@@ -178,19 +179,74 @@ void UPEInventoryManagerComponent::ItemDropTest()
 	DropItemFromInventoryByTag(1, Tag);
 }
 
-FInventoryList UPEInventoryManagerComponent::ConvertToInventoryList() const
+FInventoryInfo UPEInventoryManagerComponent::ConvertToInventoryList() const
 {
-	FInventoryList InventoryList;
-	// TODO: 내부 구현에 대한 협의 필요
-	// 예시: InventoryItems Map을 FInventoryList 구조체로 변환
-	return InventoryList;
+	FInventoryInfo InventoryInfo;
+	FInventoryBagSlotInfo BagSlotInfo;
+
+	for (const auto &Item: InventoryItems)
+	{
+		if (Item.Value)
+		{
+			int32 ItemCount = Item.Value->GetItemCount();
+			int32 ItemCapacity = Item.Value->GetStackCapacity();
+			while (ItemCount > 0)
+			{
+				FPEItemData ItemData = Item.Value->GetItemStats();
+				BagSlotInfo.ItemTag = Item.Key;
+				
+				if (ItemData.IconTexture)
+				{
+					BagSlotInfo.ItemTexture = ItemData.IconTexture;
+					BagSlotInfo.ItemSprite = nullptr;
+				}
+				else if (ItemData.IconSprite)
+				{
+					BagSlotInfo.ItemTexture = nullptr;
+					BagSlotInfo.ItemSprite = ItemData.IconSprite;
+				}
+				else
+				{
+					BagSlotInfo.ItemTexture = nullptr;
+					BagSlotInfo.ItemSprite = nullptr;
+				}
+				
+				BagSlotInfo.ItemDescription = ItemData.Description; 
+
+				// MaxStackCount와 IsStackable이 필요한 변수인지 확인해야 함
+				BagSlotInfo.MaxStackCount = ItemData.StackCapacity;
+				BagSlotInfo.IsStackable = true;
+				
+				if (ItemCount > ItemCapacity)
+				{
+					BagSlotInfo.StackCount = ItemCapacity;
+					ItemCount -= ItemCapacity;
+				}
+				else
+				{
+					BagSlotInfo.StackCount = ItemCount;
+					ItemCount = 0;
+				}
+				
+				InventoryInfo.Bags.Add(BagSlotInfo);
+			}
+		}
+		else
+		{
+			UE_LOG(LogPE, Warning, TEXT("ConvertToInventoryList: Item is null for tag %s"), *Item.Key.ToString());
+		}
+	}
+
+	//TODO: 퀵슬롯 무기에 대한 연결 필요
+	
+	return InventoryInfo;
 }
 
 void UPEInventoryManagerComponent::BroadcastInventoryChanged()
 {
 	if (APEHero* Hero = Cast<APEHero>(GetOwner()))
 	{
-		FInventoryList CurrentInventoryList = ConvertToInventoryList();
+		FInventoryInfo CurrentInventoryList = ConvertToInventoryList();
 		Hero->OnInventoryChanged.Broadcast(CurrentInventoryList);
 		UE_LOG(LogPE, Log, TEXT("BroadcastInventoryChanged: Inventory change broadcasted to UI"));
 	}

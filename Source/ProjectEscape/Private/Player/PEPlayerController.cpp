@@ -5,6 +5,9 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "UI/Inventory/PEInventoryHUD.h"
+#include "Core/PEGameStateBase.h"
+#include "Components/TextBlock.h"
+#include "Characters/Hero/PEHero.h"
 
 
 void APEPlayerController::BeginPlay()
@@ -26,8 +29,14 @@ void APEPlayerController::BeginPlay()
 		if (UPEInventoryHUD* InventoryHUD = Cast<UPEInventoryHUD>(InventoryWidget))
 		{
 			// TODO: Connecting the components required for this Widget
-			InventoryHUD->SetupComponentReference(nullptr, nullptr);
+			InventoryHUD->SetupComponentReference(nullptr, nullptr, GetPawn());
 		}
+	}
+
+	// PEHero에 접근하여 인벤토리 변경 델리게이트 구독
+	if (APEHero* Hero = Cast<APEHero>(GetPawn()))
+	{
+		Hero->OnInventoryChanged.AddDynamic(this, &APEPlayerController::OnInventoryAndQuickSlotUpdate);
 	}
 }
 
@@ -218,6 +227,140 @@ bool APEPlayerController::IsOpenInventory() const
 	}
 }
 
+void APEPlayerController::ShowGameOverWidget(FGameResult GameResult)
+{
+	if (GameOverWidget == nullptr && GameOverWidgetClass)
+	{
+		GameOverWidget = CreateWidget<UUserWidget>(this, GameOverWidgetClass);
+	}
+
+	if (GameOverWidget && !GameOverWidget->IsInViewport())
+	{
+		GameOverWidget->AddToViewport();
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+	}
+
+	if (GameOverWidget)
+	{
+		if (UTextBlock* TotalScoreText = Cast<UTextBlock>(GameOverWidget->GetWidgetFromName(TEXT("TotalScore"))))
+		{
+			int32 TotalScore = GameResult.TotalScore;
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("Score"), FText::AsNumber(TotalScore));
+
+			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "TotalScoreFormat", "Total Score : {Score}"), Args);
+
+			TotalScoreText->SetText(FormatText);
+		}
+
+		if (UTextBlock* KillCountText = Cast<UTextBlock>(GameOverWidget->GetWidgetFromName(TEXT("KillCount"))))
+		{
+			int32 KillCount = GameResult.KillCount;
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("KillCount"), FText::AsNumber(KillCount));
+
+			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "KillCountFormat", "Enemies Killed : {KillCount}"), Args);
+
+			KillCountText->SetText(FormatText);
+		}
+
+		if (UTextBlock* RunTimeText = Cast<UTextBlock>(GameOverWidget->GetWidgetFromName(TEXT("RunTime"))))
+		{
+			int32 RunTime = GameResult.GameRunTime;
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("RunTime"), FText::AsNumber(RunTime));
+
+			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "RunTimeFormat", "Run Time : {RunTime}"), Args);
+
+			RunTimeText->SetText(FormatText);
+		}
+
+		if (UTextBlock* DamageDealtText = Cast<UTextBlock>(GameOverWidget->GetWidgetFromName(TEXT("DamageDealt"))))
+		{
+			int32 DamageDealt = GameResult.DamageDealt;
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("DamageDealt"), FText::AsNumber(DamageDealt));
+
+			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "DamageDealtFormat", "Damage Dealt : {DamageDealt}"), Args);
+
+			DamageDealtText->SetText(FormatText);
+		}
+
+	}
+}
+
+void APEPlayerController::ShowGameClearWidget(FGameResult GameResult)
+{
+	if (GameClearWidget == nullptr && GameClearWidgetClass)
+	{
+		GameClearWidget = CreateWidget<UUserWidget>(this, GameClearWidgetClass);
+	}
+
+	if (GameClearWidget && !GameClearWidget->IsInViewport())
+	{
+		GameClearWidget->AddToViewport();
+		bShowMouseCursor = true;
+		SetInputMode(FInputModeUIOnly());
+	}
+
+	if (GameClearWidget)
+	{
+		if (UTextBlock* TotalScoreText = Cast<UTextBlock>(GameClearWidget->GetWidgetFromName(TEXT("TotalScore"))))
+		{
+			int32 TotalScore = GameResult.TotalScore;
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("Score"), FText::AsNumber(TotalScore));
+
+			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "TotalScoreFormat", "Total Score : {Score}"), Args);
+
+			TotalScoreText->SetText(FormatText);
+		}
+
+		if (UTextBlock* KillCountText = Cast<UTextBlock>(GameClearWidget->GetWidgetFromName(TEXT("KillCount"))))
+		{
+			int32 KillCount = GameResult.KillCount;
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("KillCount"), FText::AsNumber(KillCount));
+
+			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "KillCountFormat", "Enemies Killed : {KillCount}"), Args);
+
+			KillCountText->SetText(FormatText);
+		}
+
+		if (UTextBlock* RunTimeText = Cast<UTextBlock>(GameClearWidget->GetWidgetFromName(TEXT("RunTime"))))
+		{
+			int32 RunTime = GameResult.GameRunTime;
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("RunTime"), FText::AsNumber(RunTime));
+
+			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "RunTimeFormat", "Run Time : {RunTime}"), Args);
+
+			RunTimeText->SetText(FormatText);
+		}
+
+		if (UTextBlock* DamageDealtText = Cast<UTextBlock>(GameClearWidget->GetWidgetFromName(TEXT("DamageDealt"))))
+		{
+			int32 DamageDealt = GameResult.DamageDealt;
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("DamageDealt"), FText::AsNumber(DamageDealt));
+
+			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "DamageDealtFormat", "Damage Dealt : {DamageDealt}"), Args);
+
+			DamageDealtText->SetText(FormatText);
+		}
+
+	}
+}
+
 void APEPlayerController::ShowHUD()
 {
 	if (!HUDWidget && HUDWidgetClass)
@@ -283,4 +426,3 @@ void APEPlayerController::ClearAllWidget()
 		InventoryWidget->RemoveFromParent();
 	}
 }
-

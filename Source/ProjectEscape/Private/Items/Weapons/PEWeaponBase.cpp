@@ -10,6 +10,7 @@
 #include "Items/Components/PEUseableComponent.h"
 #include "Items/Components/PEInteractableComponent.h"
 #include "Characters/Hero/Interface/PEWeaponAttachable.h"
+#include "Characters/Hero/PEHero.h"
 
 APEWeaponBase::APEWeaponBase()
 {
@@ -122,6 +123,11 @@ bool APEWeaponBase::TryReload()
 			WeaponStats.ReloadTime,
 			false);
 		UE_LOG(LogPE, Log, TEXT("Reloading..."));
+
+		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+		{
+			PEHero->PlayReloadAnimation(WeaponStats.ReloadTime);
+		}
 	}
 	else
 	{
@@ -224,6 +230,19 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	for (int32 i = 0; i < WeaponStats.BulletsPerShot; ++i)
 	{
 		AttackComponent->ExcuteAttack(AttackStats);
+	}
+
+	if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+	{
+		if (WeaponStats.IsAutomatic)
+		{
+			float ShotIntervalSeconds = 60.0f / WeaponStats.FireRate;
+			PEHero->PlayFireWeaponAnimation(ShotIntervalSeconds);
+		}
+		else
+		{
+			PEHero->PlayFireWeaponAnimation(0);
+		}
 	}
 
 	CurrentAmmoCount--;

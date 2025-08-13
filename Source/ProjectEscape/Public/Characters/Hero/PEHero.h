@@ -6,9 +6,13 @@
 #include "GameFramework/Character.h"
 #include "Interface/PEInteractManagerHandler.h"
 #include "Interface/PEQuickSlotHandler.h"
+#include "UI/Inventory/PEInventoryType.h"
 #include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
+class UAnimMontage;
+
+// 인벤토리 리스트 구조체
 USTRUCT(BlueprintType)
 struct PROJECTESCAPE_API FInventoryList
 {
@@ -18,7 +22,7 @@ public:
 
 // Delegates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemDrop, FGameplayTag, ItemTag, int32, DropCount);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryList, InventoryList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryInfo&, InventoryInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemUse, FGameplayTag, ItemTag);
 
 class UCameraComponent;
@@ -112,6 +116,8 @@ public:
 	virtual USceneComponent* GetAttackStartPoint() const override;
 	virtual UPEStorableItemComponent* GetStorableItemComponent(FGameplayTag Tag) const override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
@@ -124,9 +130,24 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	bool HasWeapon() const;
+	void PlayEquipAnimation();
+	void PlayReloadAnimation(float ReloadDelay);
+	void PlayFireWeaponAnimation(float ShotInterval);
 
 	virtual void AttachWeapon(AActor* WeaponActor, FTransform Transform) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USkeletalMeshComponent> FirstPersonSkeletalMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> EquipAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> ReloadAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> FireWeaponAnimMontage;
+
+protected:
+	void PlayMontageAnimation(UAnimMontage* Animation, float PlayRate);
 };

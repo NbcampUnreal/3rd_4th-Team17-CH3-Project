@@ -14,6 +14,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Player/PEPlayerState.h"
 
 APEHero::APEHero()
 {
@@ -247,6 +248,15 @@ UPEStorableItemComponent* APEHero::GetStorableItemComponent(FGameplayTag Tag) co
 	return InventoryManagerComponent->GetItemByTag(Tag);
 }
 
+float APEHero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (APEPlayerState* PEPlayerState = GetPlayerState<APEPlayerState>())
+	{
+		PEPlayerState->ReduceHealthPoint(DamageAmount);
+	}
+	return DamageAmount;
+}
+
 void APEHero::HandleInventoryItemDrop(FGameplayTag ItemTag, int32 DropCount)
 {
 	if (!InventoryManagerComponent)
@@ -297,6 +307,39 @@ void APEHero::AttachWeapon(AActor* WeaponActor, FTransform Transform)
 			FName SocketName = FName(TEXT("weapon_r"));
 			WeaponActor->SetActorRelativeTransform(Transform);
 			WeaponActor->AttachToComponent(FirstPersonSkeletalMesh, Rule, SocketName);
+
+			PlayEquipAnimation();
+		}
+	}
+}
+
+void APEHero::PlayEquipAnimation()
+{
+	float PlayRate = 1.0f;
+	PlayMontageAnimation(EquipAnimMontage, PlayRate);
+}
+
+void APEHero::PlayReloadAnimation(float ReloadDelay)
+{
+	float AnimationLength = ReloadAnimMontage->GetPlayLength();
+	float PlayRate = ReloadDelay == 0 ? 1.0f : AnimationLength / ReloadDelay;
+	PlayMontageAnimation(ReloadAnimMontage, PlayRate);
+}
+
+void APEHero::PlayFireWeaponAnimation(float ShotInterval)
+{
+	float AnimationLength = ReloadAnimMontage->GetPlayLength();
+	float PlayRate = ShotInterval == 0 ? 1.0f : AnimationLength / ShotInterval;
+	PlayMontageAnimation(FireWeaponAnimMontage, PlayRate);
+}
+
+void APEHero::PlayMontageAnimation(UAnimMontage* Animation, float PlayRate)
+{
+	if (Animation && EquipAnimMontage)
+	{
+		if (UAnimInstance* AnimInstance = FirstPersonSkeletalMesh->GetAnimInstance())
+		{
+			AnimInstance->Montage_Play(Animation, PlayRate);
 		}
 	}
 }
