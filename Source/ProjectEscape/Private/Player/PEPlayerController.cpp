@@ -2,6 +2,7 @@
 #include "Player\PEPlayerState.h"
 #include "Components\ProgressBar.h"
 #include "Blueprint/UserWidget.h"
+#include "UI/Inventory/PEInventoryHUD.h"
 
 
 void APEPlayerController::BeginPlay()
@@ -15,6 +16,15 @@ void APEPlayerController::BeginPlay()
 		ChangeStaminaBar(PS->GetStamina(), PS->GetMaxStamina());
 	}
 
+	if (InventoryWidgetClass)
+	{
+		InventoryWidget = CreateWidget<UUserWidget>(this, InventoryWidgetClass);
+		if (UPEInventoryHUD* InventoryHUD = Cast<UPEInventoryHUD>(InventoryWidget))
+		{
+			// TODO: Connecting the components required for this Widget
+			InventoryHUD->SetupComponentReference(nullptr, nullptr);
+		}
+	}
 }
 
 void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
@@ -27,6 +37,17 @@ void APEPlayerController::OnChangeStamina(float Stamina, float MaxStamina)
 {
 	ChangeStaminaBar(Stamina,MaxStamina);
 
+}
+
+void APEPlayerController::OnInventoryAndQuickSlotUpdate(FInventoryInfo& InInventoryInfo)
+{
+	if (InventoryWidget)
+	{
+		if (UPEInventoryHUD* InventoryHUD = Cast<UPEInventoryHUD>(InventoryWidget))
+		{
+			InventoryHUD->UpdateInventoryUI(InInventoryInfo);
+		}
+	}
 }
 
 void APEPlayerController::PlayDamageAnimOfHUDWidget()
@@ -113,6 +134,54 @@ void APEPlayerController::ChangeStaminaBar(float Stamina, float MaxStamina)
 	}
 }
 
+void APEPlayerController::ToggleInventoryWidget()
+{
+	if (InventoryWidget && InventoryWidget->IsInViewport())
+	{
+		CloseInventoryWidget();
+	}
+	else
+	{
+		OpenInventoryWidget();
+	}
+}
+
+void APEPlayerController::OpenInventoryWidget()
+{
+	if (!InventoryWidget && InventoryWidgetClass)
+	{
+		
+	}
+
+	if (InventoryWidget && !InventoryWidget->IsInViewport())
+	{
+		InventoryWidget->AddToViewport();
+		bShowMouseCursor = true;
+	}
+}
+
+void APEPlayerController::CloseInventoryWidget()
+{
+	if (InventoryWidget && InventoryWidget->IsInViewport())
+	{
+		InventoryWidget->RemoveFromParent();
+		bShowMouseCursor = false;
+		SetInputMode(FInputModeGameOnly());
+	}
+}
+
+bool APEPlayerController::IsOpenInventory() const
+{
+	if (InventoryWidget && InventoryWidget->IsInViewport())
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
 void APEPlayerController::ShowHUD()
 {
 	if (!HUDWidget && HUDWidgetClass)
@@ -171,6 +240,11 @@ void APEPlayerController::ClearAllWidget()
 	{
 		PauseMenuWidget->RemoveFromParent();
 		PauseMenuWidget = nullptr;
+	}
+
+	if (InventoryWidget)
+	{
+		InventoryWidget->RemoveFromParent();
 	}
 }
 

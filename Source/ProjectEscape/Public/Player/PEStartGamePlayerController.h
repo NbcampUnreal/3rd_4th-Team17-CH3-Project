@@ -34,7 +34,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
 	TSubclassOf<UUserWidget> HelperWidgetClass;
 
+	UPROPERTY()
 	UUserWidget* MainMenuWidget;
+
+	UPROPERTY()
 	UUserWidget* CreditWidget;
+
+	UPROPERTY()
 	UUserWidget* HelperWidget;
 };

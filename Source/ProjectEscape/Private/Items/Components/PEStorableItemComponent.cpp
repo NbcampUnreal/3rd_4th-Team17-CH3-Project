@@ -102,4 +102,14 @@ int32 UPEStorableItemComponent::GetStackCount() const
 	return 0; // 기본값 반환
 }
 
+int32 UPEStorableItemComponent::GetStackCapacity() const
+{
+	if (ComponentOwnerInterface)
+	{
+		return ComponentOwnerInterface->GetStackCapacity();
+	}
+	return 0; // 기본값 반환
+}
+
+
 
