@@ -24,6 +24,7 @@ public:
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemDrop, FGameplayTag, ItemTag, int32, DropCount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryInfo&, InventoryInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemUse, FGameplayTag, ItemTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickSlotEquipmentDrop, FGameplayTag, EquipmentTag);
 
 class UCameraComponent;
 class UPEInteractManagerComponent;
@@ -83,7 +84,14 @@ protected:
 public:
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 	virtual void DropHandEquipmentToWorld() override;
+
+	UFUNCTION()
+	virtual void DropEquipmentToWorld(FGameplayTag EquipmentType);
+	
 	UPEQuickSlotManagerComponent* GetQuickSlotManagerComponent() const;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnQuickSlotEquipmentDrop OnQuickSlotEquipmentDrop;
 	
 	/* Inventroy 관련 섹션 */
 protected:

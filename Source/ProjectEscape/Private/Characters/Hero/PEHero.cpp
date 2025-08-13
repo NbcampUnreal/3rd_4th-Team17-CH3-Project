@@ -7,6 +7,7 @@
 #include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
 #include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
 #include "Combat/Components/PEReceiveAttackComponent.h"
+#include "Core/PELogChannels.h"
 #include "Items/PEEquipmentType.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Items/Components/PEStorableItemComponent.h"
@@ -71,6 +72,9 @@ void APEHero::BeginPlay()
 
 	// 인벤토리 아이템 드롭 델리게이트 바인딩
 	OnInventoryItemDrop.AddDynamic(this, &APEHero::HandleInventoryItemDrop);
+
+	// 퀵슬롯 장비 드롭 델리게이트 바인딩
+	OnQuickSlotEquipmentDrop.AddDynamic(this, &APEHero::DropEquipmentToWorld);
 }
 
 void APEHero::Tick(float DeltaTime)
@@ -223,6 +227,11 @@ void APEHero::DropHandEquipmentToWorld()
 	{
 		UseableItemManagerComponent->DropHandEquipmentToWorld();
 	}
+}
+
+void APEHero::DropEquipmentToWorld(FGameplayTag EquipmentType)
+{
+	UE_LOG(LogPE, Warning, TEXT("DropEquipmentToWorld called with EquipmentType: %s"), *EquipmentType.ToString());
 }
 
 UPEQuickSlotManagerComponent* APEHero::GetQuickSlotManagerComponent() const
