@@ -30,6 +30,8 @@ APEAICharacter::APEAICharacter()
 
 	AttackComponent = CreateDefaultSubobject<UPEAttackHitscanComponent>(TEXT("AttackComponent"));
 	ReceiveComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveComponent"));
+	ReceiveComponent->SetHiddenInGame(false);
+	ReceiveComponent->SetupAttachment(RootComponent);
 }
 
 void APEAICharacter::PreInitializeComponents()
@@ -81,22 +83,19 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	UE_LOG(LogTemp, Warning, TEXT("Take Damage"));
 
-	if (ReceiveComponent)
+
+	if (Damage > 0.0f)
 	{
-		if (Damage > 0.0f)
+		EnemyHealth -= Damage;
+		if(EnemyHealth <= 0.0f)
 		{
-			EnemyHealth -= Damage;
-			if(EnemyHealth <= 0.0f)
-			{
-				EnemyHealth = 0.0f;
-				UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
-				OnPawnDeath.Broadcast(); // AI 사망 시 델리게이트 브로드캐스트
-				this->Destroy(); // AI 캐릭터 제거
-			}
+			EnemyHealth = 0.0f;
+			UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
+			OnPawnDeath.Broadcast(); // AI 사망 시 델리게이트 브로드캐스트
+			this->Destroy(); // AI 캐릭터 제거
 		}
 	}
 	
-
 	return Damage;
 }
 

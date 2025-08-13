@@ -61,6 +61,11 @@ void APEAIController::BeginPlay()
 
 void APEAIController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
+	if(InvestigateTimerHandle.IsValid())
+	{
+		GetWorld()->GetTimerManager().ClearTimer(InvestigateTimerHandle);
+	}
+
 	Super::EndPlay(EndPlayReason);
 
 }
