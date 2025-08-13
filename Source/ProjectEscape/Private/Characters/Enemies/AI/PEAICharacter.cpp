@@ -8,6 +8,7 @@
 #include <Combat/Components/PEReceiveAttackComponent.h>
 #include "Player/PEPlayerController.h"
 #include "Items/Weapons/PEWeaponBase.h"
+#include "Core/PEGameModeBase.h"
 
 APEAICharacter::APEAICharacter()
 {
@@ -106,13 +107,21 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 		{
 			if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(WeaponOwner->GetController()))
 			{
-				if (bIsDead)
+				if (APEGameModeBase* PEGameModeBase = Cast<APEGameModeBase>(PEPlayerController->GetWorld()->GetAuthGameMode()))
 				{
-					PEPlayerController->PlayKillMarkerAnimOfHUDWidget();
-				}
-				else
-				{
-					PEPlayerController->PlayHitMarkerAnimOfHUDWIdget();
+					if (bIsDead)
+					{
+						int32 KillScore = 500;
+						int32 KillCount = 1;
+						PEGameModeBase->OnKillEnemy(KillCount);
+						PEGameModeBase->OnDamageDealt(Damage);
+						PEPlayerController->PlayKillMarkerAnimOfHUDWidget();
+					}
+					else
+					{
+						PEGameModeBase->OnDamageDealt(Damage);
+						PEPlayerController->PlayHitMarkerAnimOfHUDWIdget();
+					}
 				}
 			}
 		}
