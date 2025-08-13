@@ -6,6 +6,9 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Combat/Components/PEAttackHitscanComponent.h>
 #include <Combat/Components/PEReceiveAttackComponent.h>
+#include "Player/PEPlayerController.h"
+#include "Items/Weapons/PEWeaponBase.h"
+#include "Core/PEGameModeBase.h"
 
 APEAICharacter::APEAICharacter()
 {
@@ -81,6 +84,7 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	UE_LOG(LogTemp, Warning, TEXT("Take Damage"));
 
+	bool bIsDead = false;
 	if (ReceiveComponent)
 	{
 		if (Damage > 0.0f)
@@ -92,11 +96,35 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 				UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
 				OnPawnDeath.Broadcast(); // AI 사망 시 델리게이트 브로드캐스트
 				this->Destroy(); // AI 캐릭터 제거
+				bIsDead = true;
 			}
 		}
 	}
 	
-
+	if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(DamageCauser))
+	{
+		if (APawn* WeaponOwner = Cast<APawn>(WeaponBase->GetItemOwner()))
+		{
+			if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(WeaponOwner->GetController()))
+			{
+				if (APEGameModeBase* PEGameModeBase = Cast<APEGameModeBase>(PEPlayerController->GetWorld()->GetAuthGameMode()))
+				{
+					if (bIsDead)
+					{
+						int32 KillScore = 500; // TODO: 
+						PEGameModeBase->OnKillEnemy(KillScore);
+						PEGameModeBase->OnDamageDealt(Damage);
+						PEPlayerController->PlayKillMarkerAnimOfHUDWidget();
+					}
+					else
+					{
+						PEGameModeBase->OnDamageDealt(Damage);
+						PEPlayerController->PlayHitMarkerAnimOfHUDWIdget();
+					}
+				}
+			}
+		}
+	}
 	return Damage;
 }
 
