@@ -39,14 +39,7 @@ void UPEInventoryQuickSlotWidget_RangeWeapon::SetAmmoCount(int32 Current, int32 
 {
 	if (AmmoCountText)
 	{
-		if (Current > 0 && Total > 0)
-		{
-			FString FormatString = FString::Printf(TEXT("%d/%d"), Current, Total);
-			AmmoCountText->SetText(FText::FromString(FormatString));
-		}
-		else
-		{
-			AmmoCountText->SetText(FText::FromString(FString("")));
-		}
+		FString FormatString = FString::Printf(TEXT("%d/%d"), Current, Total);
+		AmmoCountText->SetText(FText::FromString(FormatString));
 	}
 }
