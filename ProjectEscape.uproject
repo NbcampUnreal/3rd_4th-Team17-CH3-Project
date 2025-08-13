@@ -9,8 +9,10 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
+				"UMG",
 				"AIModule",
-				"Engine"
+				"Engine",
+				"EnhancedInput"
 			]
 		}
 	],

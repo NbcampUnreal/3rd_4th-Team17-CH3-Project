@@ -2,6 +2,10 @@
 
 
 #include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
+
+#include "Characters/Hero/PEHero.h"
+#include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
+#include "Core/PELogChannels.h"
 #include "Items/Components/PEUseableComponent.h"
 
 
@@ -14,7 +18,7 @@ UPEUseableItemManagerComponent::UPEUseableItemManagerComponent()
 void UPEUseableItemManagerComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	OwnerActor = GetOwner();
+	ComponentOwnerActor = GetOwner();
 }
 
 void UPEUseableItemManagerComponent::SetHandItem(UPEUseableComponent* NewItemComponent)
@@ -59,10 +63,55 @@ void UPEUseableItemManagerComponent::ReleaseHandItem()
 	}
 }
 
-void UPEUseableItemManagerComponent::UseCurrentItem(AActor* Holder)
+void UPEUseableItemManagerComponent::DropHandEquipmentToWorld()
+{
+	if (CurrentItemComponent && ComponentOwnerActor)
+	{
+		if (APEHero* Hero = Cast<APEHero>(ComponentOwnerActor))
+		{
+			FVector Location = ComponentOwnerActor->GetActorLocation();
+			FRotator Rotation = ComponentOwnerActor->GetActorRotation();
+
+			Hero->GetQuickSlotManagerComponent()->DropHandEquipmentToWorld(CurrentItemComponent->GetEquipmentType(), Location, Rotation);
+			
+			UE_LOG(LogPE, Log, TEXT("UPEUseableItemManagerComponent::DropHandEquipmentToWorld"));
+		}
+		ReleaseHandItem();
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("UPEUseableItemManagerComponent::DropHandEquipmentToWorld: CurrentItemComponent or ComponentOwnerActor is null!"));
+	}
+}
+
+void UPEUseableItemManagerComponent::DoPrimaryActionCurrentItem(AActor* Holder)
 {
 	if (CurrentItemComponent)
 	{
-		CurrentItemComponent->Use(Holder);
+		CurrentItemComponent->DoPrimaryAction(Holder);
+	}
+}
+
+void UPEUseableItemManagerComponent::CompletePrimaryActionCurrentItem(AActor* Holder)
+{
+	if (CurrentItemComponent)
+	{
+		CurrentItemComponent->CompletePrimaryAction(Holder);
+	}
+}
+
+void UPEUseableItemManagerComponent::DoSecondaryActionCurrentItem(AActor* Holder)
+{
+	if (CurrentItemComponent)
+	{
+		CurrentItemComponent->DoSecondaryAction(Holder);
+	}
+}
+
+void UPEUseableItemManagerComponent::DoTertiaryActionCurrentItem(AActor* Holder)
+{
+	if (CurrentItemComponent)
+	{
+		CurrentItemComponent->DoTertiaryAction(Holder);
 	}
 }

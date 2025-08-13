@@ -3,6 +3,8 @@
 
 #include "Items/Components/PEUseableComponent.h"
 
+#include "Core/PELogChannels.h"
+#include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Interface/PEUseable.h"
 
 
@@ -11,7 +13,6 @@ UPEUseableComponent::UPEUseableComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 
-	CurrentHolder = nullptr;
 	bIsHold = false;
 }
 
@@ -23,26 +24,108 @@ void UPEUseableComponent::BeginPlay()
 
 void UPEUseableComponent::Hold()
 {
-	bIsHold = true;
+	if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+	{
+		UseableInterface->OnHand(GetOwner());
+		bIsHold = true;
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+	}
+	UE_LOG(LogPE, Log, TEXT("UPEUseableComponent::Hold called on %s"), *GetOwner()->GetName());
 }
 
 void UPEUseableComponent::Release()
 {
-	bIsHold = false;
+	if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+	{
+		UseableInterface->OnRelease();
+		bIsHold = false;
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+	}
+	UE_LOG(LogPE, Log, TEXT("UPEUseableComponent::Hold called on %s"), *GetOwner()->GetName());
+
 }
 
-void UPEUseableComponent::Use(AActor* User)
+void UPEUseableComponent::DoPrimaryAction(AActor* User)
 {
-	UE_LOG(LogTemp, Warning, TEXT("UPEUseableComponent::Use"));
+	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::DoPrimaryAction"));
 	if (bIsHold)
 	{
 		if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
 		{
-			UseableInterface->Use(User);
+			UseableInterface->DoPrimaryAction(User);
 		}
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
 		}
 	}
+}
+
+void UPEUseableComponent::CompletePrimaryAction(AActor* User)
+{
+	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::CompletePrimaryAction"));
+	if (bIsHold)
+	{
+		if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+		{
+			UseableInterface->CompletePrimaryAction(User);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+		}
+	}
+}
+
+void UPEUseableComponent::DoSecondaryAction(AActor* User)
+{
+	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::DoSecondaryAction"));
+	if (bIsHold)
+	{
+		if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+		{
+			UseableInterface->DoSecondaryAction(User);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+		}
+	}
+}
+
+void UPEUseableComponent::DoTertiaryAction(AActor* User)
+{
+	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::DoTertiaryAction"));
+	if (bIsHold)
+	{
+		if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+		{
+			UseableInterface->DoTertiaryAction(User);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
+		}
+	}
+}
+
+bool UPEUseableComponent::IsHolding() const
+{
+	return bIsHold;
+}
+
+EPEEquipmentType UPEUseableComponent::GetEquipmentType() const
+{
+	if (IPEQuickSlotItem* QuickSlotItemInterface = Cast<IPEQuickSlotItem>(GetOwner()))
+	{
+		return QuickSlotItemInterface->GetEquipmentType();
+	}
+	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::GetEquipmentType: Owner %s does not implement IPEQuickSlotItem interface!"), *GetOwner()->GetName());
+	return EPEEquipmentType::None; // 기본값 반환
 }

@@ -15,10 +15,15 @@ struct FPEGameplayTags
 	void AddAllTags();
 
 	/* Item Category */
-	FGameplayTag Item_Weapon_MainWeapon;
-	FGameplayTag Item_Weapon_SubWeapon;
+	FGameplayTag Item_Weapon;
+	FGameplayTag Item_Weapon_RangeWeapon;
 	FGameplayTag Item_Weapon_MeleeWeapon;
+	FGameplayTag Item_Weapon_RangeWeapon_MainWeapon;
+	FGameplayTag Item_Weapon_RangeWeapon_SubWeapon;
+	FGameplayTag Item_Things;
 	FGameplayTag Item_Things_Ammo;
+	FGameplayTag Item_Things_Ammo_Rifle;
+	FGameplayTag Item_Things_Ammo_Shotgun;
 	FGameplayTag Item_Things_Heal;
 	FGameplayTag Item_Things_Grenade;
 	FGameplayTag Item_Things_Key;

@@ -37,11 +37,15 @@ protected:
 	TObjectPtr<UPEUseableComponent> CurrentItemComponent; // 현재 손에 들고 있는 아이템
 	
 	UPROPERTY(VisibleAnywhere, Category = "Useable")
-	TObjectPtr<AActor> OwnerActor; // 컴포넌트 소유 액터
+	TObjectPtr<AActor> ComponentOwnerActor; // 컴포넌트 소유 액터
 
 public:
 	void SetHandItem(UPEUseableComponent* NewItemComponent);
 	UPEUseableComponent* GetCurrentItem() const;
 	void ReleaseHandItem();
-	void UseCurrentItem(AActor* Holder);
+	void DropHandEquipmentToWorld();
+	void DoPrimaryActionCurrentItem(AActor* Holder);
+	void CompletePrimaryActionCurrentItem(AActor* Holder);
+	void DoSecondaryActionCurrentItem(AActor* Holder);
+	void DoTertiaryActionCurrentItem(AActor* Holder);
 };

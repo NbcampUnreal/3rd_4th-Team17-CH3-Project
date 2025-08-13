@@ -22,7 +22,11 @@ class PROJECTESCAPE_API IPEUseable
 	GENERATED_BODY()
 
 public:
-	virtual void Use(AActor* Holder) = 0;
+	virtual void DoPrimaryAction(AActor* Holder) = 0;
+	virtual void CompletePrimaryAction(AActor* Holder) = 0;
+	virtual void DoSecondaryAction(AActor* Holder) = 0;
+	virtual void DoTertiaryAction(AActor* Holder) = 0;
 	virtual void OnHand(AActor* NewOwner) = 0;
-	virtual UPEUseableComponent* GetUseableComponent() const = 0; // 사용 가능한 컴포넌트를 반환합니다
+	virtual void OnRelease() = 0;
+	virtual UPEUseableComponent* GetUseableComponent() const = 0; 
 };

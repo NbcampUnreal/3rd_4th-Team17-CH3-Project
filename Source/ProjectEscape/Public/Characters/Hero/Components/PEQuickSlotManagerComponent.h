@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "PEQuickSlotManagerComponent.generated.h"
 
@@ -55,6 +56,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Quick Slot")
 	bool ContainWeaponType(EPEEquipmentType EquipmentType);
+
+	UFUNCTION(BlueprintCallable, Category = "Quick Slot")
+	void DropHandEquipmentToWorld(EPEEquipmentType EquipmentType, const FVector& Location, const FRotator& Rotation);
 
 	AActor* GetActorFromQuickSlot(EPEEquipmentType EquipmentType) const;
 	TMap<EPEEquipmentType, TObjectPtr<AActor>> GetQuickSlotItem(EPEEquipmentType EquipmentType) const;

@@ -8,6 +8,9 @@
 #include "PEInventoryManagerComponent.generated.h"
 
 class UPEStorableItemComponent;
+class APEHero;
+struct FInventoryList;
+
 /*
  *	인벤토리의 아이템을 관리하는 컴포넌트 클래스입니다.
  *	구현되어야 하는 기능:
@@ -44,12 +47,17 @@ protected:
 public:
 	void AddItemToInventory(UPEStorableItemComponent* Item);
 	void DropItemFromInventoryByTag(const int32 &Count, const FGameplayTag &Tag);
+	void RemoveItemFromInventoryByTag(const FGameplayTag &Tag);
 	void ClearInventory();
 	UPEStorableItemComponent* GetItemByTag(const FGameplayTag &Tag) const;
 	
 protected:
 	void SortInventory();
 	void UpdateCurrentItemCount();
+	
+
+	FInventoryList ConvertToInventoryList() const;
+	void BroadcastInventoryChanged();
 
 public:
 	void ItemDropTest();

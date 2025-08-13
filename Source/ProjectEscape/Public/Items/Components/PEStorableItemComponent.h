@@ -16,6 +16,7 @@
  *	
  */
 
+class UPEInventoryManagerComponent;
 class IPEStorable;
 class UPEStorable;
 
@@ -36,7 +37,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	TScriptInterface<IPEStorable> ComponentOwnerInterface;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item", meta = (Categories = "Item"))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Item")
 	FGameplayTag ItemTag;
 
 public:
@@ -47,7 +48,10 @@ public:
 	void OnItemDropped(const FVector& Location, const FRotator& Rotation) const;
 	void AddItemCount(int32 Count) const;
 	void OnItemDropped(int32 Count, const FVector& Location, const FRotator& Rotation) const;
+	void ReduceItemCount(int32 Count);
 	void DestroyItem() const;
+	void SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface);
 	int32 GetItemCount() const;
 	int32 GetStackCount() const;
+	int32 GetStackCapacity() const;
 };

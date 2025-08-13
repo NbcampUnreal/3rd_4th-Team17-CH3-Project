@@ -3,7 +3,7 @@
 
 #include "Items/Components/PEQuickSlotItemComponent.h"
 
-#include "PEEquipmentType.h"
+#include "Items/PEEquipmentType.h"
 #include "Core/PELogChannels.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 
@@ -30,7 +30,7 @@ void UPEQuickSlotItemComponent::OnItemPickedUp()
 	}
 }
 
-void UPEQuickSlotItemComponent::OnItemDropped()
+void UPEQuickSlotItemComponent::OnItemDropped(const FVector& Location, const FRotator& Rotation)
 {
 	if (ComponentOwnerActor)
 	{
@@ -44,7 +44,7 @@ void UPEQuickSlotItemComponent::OnItemDropped()
 	
 	if (ComponentOwnerActorInterface)
 	{
-		ComponentOwnerActorInterface->OnDropped();
+		ComponentOwnerActorInterface->OnDropped(Location, Rotation);
 	}
 	else
 	{

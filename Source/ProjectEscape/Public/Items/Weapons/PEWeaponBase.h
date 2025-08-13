@@ -3,16 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FPEWeaponData.h"
+#include "FPEEquipmentInfo.h"
 #include "GameFramework/Actor.h"
+#include "Items/Components/PEStorableItemComponent.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Interface/PEInteractable.h"
 #include "Items/Interface/PEUseable.h"
 #include "PEWeaponBase.generated.h"
 
+struct FPEWeaponData;
+class UPEAttackBaseComponent;
 class UPEQuickSlotItemComponent;
 enum class EPEEquipmentType : uint8;
 class UPEUseableComponent;
 class UPEInteractableComponent;
+
+// 무기 상태 변화 델리게이트 선언
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponStateChanged, const FPEEquipmentInfo&, EquipmentInfo);
 
 UCLASS()
 class PROJECTESCAPE_API APEWeaponBase : public AActor, public IPEInteractable, public IPEUseable, public IPEQuickSlotItem
@@ -22,9 +30,50 @@ class PROJECTESCAPE_API APEWeaponBase : public AActor, public IPEInteractable, p
 public:	
 	APEWeaponBase();
 
+	// 무기 상태 변화 델리게이트
+	UPROPERTY(BlueprintAssignable, Category = "Weapon Events")
+	FOnWeaponStateChanged OnWeaponStateChanged;
+
 protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	/* Mesh 관련 섹션 */
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
+	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
+	
+	/* Weapon Stat 관련 섹션 */
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+	TObjectPtr<UDataTable> WeaponDataTable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+	FName WeaponRowName;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
+	FPEWeaponData WeaponStats;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
+	TObjectPtr<AActor> WeaponOwnerActor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
+	TWeakObjectPtr<UPEStorableItemComponent> AmmoComponent; // 소모되는 탄약으로 선택된 액터의 컴포넌트
+	
+	UPROPERTY()
+	FTimerHandle ReloadTimerHandle;
+	
+	bool bIsFiring;
+	bool bIsReloading;
+	int32 CurrentAmmoCount;
+	
+public:
+	bool TryReload();
+	void CancleReload();
+
+protected:
+	void PerformReload();
 
 	/* Interact 관련 섹션 */
 protected:
@@ -35,18 +84,7 @@ protected:
 public:
 	virtual void Interact(AActor* Interactor) override;
 	virtual bool IsInteractable() const override;
-
-	/* Weapon Stat 관련 섹션 */
-	//Todo: 무기 타입을 Tag로 관리하도록 변경
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
-	EPEEquipmentType EquipmentType;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction")
-	TObjectPtr<AActor> OwnerActor; // 아이템을 소유한 액터
-	
-	bool bIsInHand;
-
 	/* 퀵슬롯 관련 섹션 */
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Interaction")
@@ -55,7 +93,7 @@ protected:
 	/* IPEQuickSlotItem 인터페이스 선언 */
 public:
 	virtual AActor* GetItemOwner() const override;
-	virtual void OnDropped() override;
+	virtual void OnDropped(const FVector& Location, const FRotator& Rotation) override;
 	virtual UPEQuickSlotItemComponent* GetQuickSlotItemComponent() const override;
 	virtual EPEEquipmentType GetEquipmentType() const override;
 
@@ -66,8 +104,35 @@ protected:
 
 	/* IPEUseable 인터페이스 선언 */
 public:
-	virtual void Use(AActor* Holder) override;
+	virtual void DoPrimaryAction(AActor* Holder) override;
+	virtual void CompletePrimaryAction(AActor* Holder) override;
+	virtual void DoSecondaryAction(AActor* Holder) override;
+	virtual void DoTertiaryAction(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
-	virtual UPEUseableComponent* GetUseableComponent() const override; // 사용 가능한 컴포넌트를 반환합니다
-};
+	virtual void OnRelease() override;
+	virtual UPEUseableComponent* GetUseableComponent() const override;
 
+	/* Combat(Attack) 관련 섹션 */
+protected:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon|Hitscan")
+	TObjectPtr<UPEAttackBaseComponent> AttackComponent;
+
+	UPROPERTY()
+	float LastAttackTime;
+
+	virtual UPEAttackBaseComponent* CreateAttackComponent();
+
+	/* UI 반영 델리게이트 헬퍼 함수 관련 섹션*/
+protected:
+	FPEEquipmentInfo CreateCurrentEquipmentInfo() const;
+	
+	void BroadcastWeaponStateChanged();
+	void BroadcastEmptyWeaponState();
+
+	/* 아이템 장착 시각 효과 관련 섹션 */
+protected:
+	TObjectPtr<AActor> AttachedActor = nullptr;
+
+	void AttachToOwner();
+	void DetachFromOwner();
+};

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "PEEquipmentType.h"
+#include "Items/PEEquipmentType.h"
 #include "UObject/Interface.h"
 #include "PEQuickSlotItem.generated.h"
 
@@ -24,7 +24,7 @@ class PROJECTESCAPE_API IPEQuickSlotItem
 
 public:
 	virtual AActor* GetItemOwner() const = 0;
-	virtual void OnDropped() = 0;
+	virtual void OnDropped(const FVector& Location, const FRotator& Rotation) = 0;
 	virtual UPEQuickSlotItemComponent* GetQuickSlotItemComponent() const = 0;
 	virtual EPEEquipmentType GetEquipmentType() const = 0;
 };

@@ -5,6 +5,7 @@
 #include "NativeGameplayTags.h"
 #include "Core/PELogChannels.h"
 #include "Items/Components/PEStorableItemComponent.h"
+#include "Characters/Hero/PEHero.h"
 
 UPEInventoryManagerComponent::UPEInventoryManagerComponent()
 {
@@ -36,35 +37,56 @@ void UPEInventoryManagerComponent::AddItemToInventory(UPEStorableItemComponent* 
 	 *	4. 이미 인벤토리에 있는 아이템이며, 기존 아이템에 스택은 가능하지만, 스택을 더 늘릴 수 없는 경우
 	 *		(e.g. 이미 인벤토리에 10칸 차지,
 	 *		아이템 최대 스택이 10인 아이템 A를 9개 갖고 있고, 재차 습득한 아이템 A의 개수가 2개 이상인 경우)
-	 *	5. 
+	 *	5.
 	 */
-	if (InventoryItems.Num() > MaxInventorySize) 
+	if (CurrentItemInInventroyCount > MaxInventorySize)
 	{
 		UE_LOG(LogPE, Warning, TEXT("Inventory is full!"));
 		return;
 	}
 
 	FGameplayTag ItemTag = Item->GetItemTag();
+
+	if (CurrentItemInInventroyCount == MaxInventorySize)
+	{
+		if (UPEStorableItemComponent* ContainItem = GetItemByTag(ItemTag))
+		{
+			int32 CurrentNeedItemCount = (ContainItem->GetStackCount() * ContainItem->GetStackCapacity()) - ContainItem->GetItemCount();
+
+			if (CurrentNeedItemCount > 0)
+			{
+				int32 NeedItemCount = FMath::Min(Item->GetItemCount(), CurrentNeedItemCount);
+
+				ContainItem->AddItemCount(NeedItemCount);
+				Item->ReduceItemCount(NeedItemCount);
+				BroadcastInventoryChanged();
+			}
+		}
+		return;
+	}
 	
 	// 동일한 아이템이 있는 경우 스택 추가
 	if (UPEStorableItemComponent* ContainItem = GetItemByTag(ItemTag))
 	{
-		Item-> OnItemPickedUp(); 
+		Item-> OnItemPickedUp();
 		Item->DestroyItem(); //아이템이 주워졌을 때 이미 있는 아이템이면 제거
 		ContainItem->AddItemCount(Item->GetItemCount());
 		UpdateCurrentItemCount();
+		BroadcastInventoryChanged(); 
 		UE_LOG(LogPE, Log, TEXT("Contained Item! Item count increased: %d"), ContainItem->GetItemCount());
 	}
 	else
 	{
 		InventoryItems.Add(ItemTag, Item);
 		Item->OnItemPickedUp();
+		Item->SetInventroyManagerComponent(this);
 		UpdateCurrentItemCount();
+		BroadcastInventoryChanged(); 
 		UE_LOG(LogPE, Log, TEXT("New item added to Inventory"));
 	}
 
 	// 인벤토리에 있는 모든 아이템을 로그에 출력 (테스트용 코드, UI 연결 시 삭제)
-	UE_LOG(LogPE, Log, TEXT("Current Inventory Items (%d/%d):"), InventoryItems.Num(), MaxInventorySize);
+	UE_LOG(LogPE, Log, TEXT("Current Inventory Items (%d/%d):"), CurrentItemInInventroyCount, MaxInventorySize);
 	for (const auto &ItemPair : InventoryItems)
 	{
 		if (ItemPair.Value)
@@ -89,6 +111,7 @@ void UPEInventoryManagerComponent::DropItemFromInventoryByTag(const int32& Count
 		}
 		int32 DropCount = FMath::Clamp(Count, 0, DropItem->GetItemCount());
 		DropItem->OnItemDropped(DropCount, GetOwner()->GetActorLocation(), GetOwner()->GetActorRotation());
+		BroadcastInventoryChanged(); 
 	}
 	else
 	{
@@ -96,9 +119,19 @@ void UPEInventoryManagerComponent::DropItemFromInventoryByTag(const int32& Count
 	}
 }
 
+void UPEInventoryManagerComponent::RemoveItemFromInventoryByTag(const FGameplayTag& Tag)
+{
+	if (InventoryItems.Contains(Tag))
+	{
+		InventoryItems[Tag] = nullptr; // 아이템 제거
+		BroadcastInventoryChanged(); 
+	}
+}
+
 void UPEInventoryManagerComponent::ClearInventory()
 {
 	InventoryItems.Empty();
+	BroadcastInventoryChanged(); 
 	UE_LOG(LogPE, Log, TEXT("Inventory cleared"));
 }
 
@@ -135,13 +168,34 @@ void UPEInventoryManagerComponent::UpdateCurrentItemCount()
 
 void UPEInventoryManagerComponent::ItemDropTest()
 {
-	//Todo: 마지막 아이템이 버려질 때, 아이템이 주울 수 있는 상태로 바뀌어야 함
-	//		RemoveItemFromInventory과 병합 필요 (해당 함수가 미완성)
+	//NOTE: Test용 코드
 	if (InventoryItems.Num() == 0)
 	{
 		UE_LOG(LogPE, Warning, TEXT("No items in inventory to drop!"));
 		return;
 	}
 	FGameplayTag Tag = InventoryItems.begin()->Key;
-	DropItemFromInventoryByTag(60, Tag);
+	DropItemFromInventoryByTag(1, Tag);
+}
+
+FInventoryList UPEInventoryManagerComponent::ConvertToInventoryList() const
+{
+	FInventoryList InventoryList;
+	// TODO: 내부 구현에 대한 협의 필요
+	// 예시: InventoryItems Map을 FInventoryList 구조체로 변환
+	return InventoryList;
+}
+
+void UPEInventoryManagerComponent::BroadcastInventoryChanged()
+{
+	if (APEHero* Hero = Cast<APEHero>(GetOwner()))
+	{
+		FInventoryList CurrentInventoryList = ConvertToInventoryList();
+		Hero->OnInventoryChanged.Broadcast(CurrentInventoryList);
+		UE_LOG(LogPE, Log, TEXT("BroadcastInventoryChanged: Inventory change broadcasted to UI"));
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("BroadcastInventoryChanged: Owner is not APEHero"));
+	}
 }
