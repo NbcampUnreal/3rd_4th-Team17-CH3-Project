@@ -297,6 +297,39 @@ void APEHero::AttachWeapon(AActor* WeaponActor, FTransform Transform)
 			FName SocketName = FName(TEXT("weapon_r"));
 			WeaponActor->SetActorRelativeTransform(Transform);
 			WeaponActor->AttachToComponent(FirstPersonSkeletalMesh, Rule, SocketName);
+
+			PlayEquipAnimation();
+		}
+	}
+}
+
+void APEHero::PlayEquipAnimation()
+{
+	float PlayRate = 1.0f;
+	PlayMontageAnimation(EquipAnimMontage, PlayRate);
+}
+
+void APEHero::PlayReloadAnimation(float ReloadDelay)
+{
+	float AnimationLength = ReloadAnimMontage->GetPlayLength();
+	float PlayRate = ReloadDelay == 0 ? 1.0f : AnimationLength / ReloadDelay;
+	PlayMontageAnimation(ReloadAnimMontage, PlayRate);
+}
+
+void APEHero::PlayFireWeaponAnimation(float ShotInterval)
+{
+	float AnimationLength = ReloadAnimMontage->GetPlayLength();
+	float PlayRate = ShotInterval == 0 ? 1.0f : AnimationLength / ShotInterval;
+	PlayMontageAnimation(FireWeaponAnimMontage, PlayRate);
+}
+
+void APEHero::PlayMontageAnimation(UAnimMontage* Animation, float PlayRate)
+{
+	if (Animation && EquipAnimMontage)
+	{
+		if (UAnimInstance* AnimInstance = FirstPersonSkeletalMesh->GetAnimInstance())
+		{
+			AnimInstance->Montage_Play(Animation, PlayRate);
 		}
 	}
 }

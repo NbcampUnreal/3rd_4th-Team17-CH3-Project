@@ -9,6 +9,9 @@
 #include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
+class UAnimMontage;
+
+// 인벤토리 리스트 구조체
 USTRUCT(BlueprintType)
 struct PROJECTESCAPE_API FInventoryList
 {
@@ -124,9 +127,24 @@ protected:
 public:
 	UFUNCTION(BlueprintCallable)
 	bool HasWeapon() const;
+	void PlayEquipAnimation();
+	void PlayReloadAnimation(float ReloadDelay);
+	void PlayFireWeaponAnimation(float ShotInterval);
 
 	virtual void AttachWeapon(AActor* WeaponActor, FTransform Transform) override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	TObjectPtr<USkeletalMeshComponent> FirstPersonSkeletalMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> EquipAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> ReloadAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> FireWeaponAnimMontage;
+
+protected:
+	void PlayMontageAnimation(UAnimMontage* Animation, float PlayRate);
 };
