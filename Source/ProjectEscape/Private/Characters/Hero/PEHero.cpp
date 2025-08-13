@@ -272,11 +272,12 @@ void APEHero::BroadcastInventoryChanged()
 
 float APEHero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (APEPlayerState* PEPlayerState = GetPlayerState<APEPlayerState>())
 	{
-		PEPlayerState->ReduceHealthPoint(DamageAmount);
+		PEPlayerState->ReduceHealthPoint(Damage);
 	}
-	return DamageAmount;
+	return Damage;
 }
 
 void APEHero::HandleInventoryItemDrop(FGameplayTag ItemTag, int32 DropCount)
