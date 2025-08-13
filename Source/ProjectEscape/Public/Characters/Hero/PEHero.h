@@ -1,4 +1,4 @@
-#pragma once
+Ôªø#pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
@@ -6,9 +6,20 @@
 #include "GameFramework/Character.h"
 #include "Interface/PEInteractManagerHandler.h"
 #include "Interface/PEQuickSlotHandler.h"
-#include "Perception/AIPerceptionStimuliSourceComponent.h"
-#include "Perception/AISense_Sight.h"
+#include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
+
+USTRUCT(BlueprintType)
+struct PROJECTESCAPE_API FInventoryList
+{
+	GENERATED_BODY()
+public:
+};
+
+// Delegates
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemDrop, FGameplayTag, ItemTag, int32, DropCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryList, InventoryList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemUse, FGameplayTag, ItemTag);
 
 class UCameraComponent;
 class UPEInteractManagerComponent;
@@ -17,9 +28,10 @@ class UPEInventoryManagerComponent;
 class UPEUseableItemManagerComponent;
 class UPEQuickSlotManagerComponent;
 class UPEHeroInputComponent;
+class UAIPerceptionStimuliSourceComponent;
 
 UCLASS()
-class PROJECTESCAPE_API APEHero : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler, public IPEAttackable
+class PROJECTESCAPE_API APEHero : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler, public IPEAttackable, public IPEWeaponAttachable
 {
 	GENERATED_BODY()
 
@@ -38,7 +50,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	/* Interact ∞¸∑√ ºΩº« */
+	/* Interact Í¥ÄÎ†® ÏÑπÏÖò */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Interaction", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEInteractManagerComponent> InteractManagerComponent;
@@ -47,7 +59,7 @@ public:
 	UPEInteractManagerComponent* GetInteractManagerComponent() const;
 	virtual void TryInteract(AActor* TargetActor) override;
 
-	/* ¿Â∫Ò ªÁøÎ ∞¸∑√ ºΩº« */
+	/* Ïû•ÎπÑ ÏÇ¨Ïö© Í¥ÄÎ†® ÏÑπÏÖò */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UseItem", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEUseableItemManagerComponent> UseableItemManagerComponent;
@@ -57,23 +69,45 @@ public:
 	virtual void CompletePrimaryAction();
 	virtual void DoSecondaryAction();
 	virtual void DoTertiaryAction();
+	virtual UPEUseableItemManagerComponent* GetUseableItemManagerComponent() const;
 	
-	/* Quick Slot ∞¸∑√ ºΩº« */
+	/* Quick Slot Í¥ÄÎ†® ÏÑπÏÖò */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "QuickSlot", meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEQuickSlotManagerComponent> QuickSlotManagerComponent;
 
 public:
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
+	virtual void DropHandEquipmentToWorld() override;
+	UPEQuickSlotManagerComponent* GetQuickSlotManagerComponent() const;
 	
-	/* Inventroy ∞¸∑√ ºΩº« */
+	/* Inventroy Í¥ÄÎ†® ÏÑπÏÖò */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = QuickSlot, meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<UPEInventoryManagerComponent> InventoryManagerComponent;
 
-	void InventroyDropTest(); // ¿Œ∫•≈‰∏Æ µÂ∂¯ ≈◊Ω∫∆ÆøÎ «‘ºˆ
+	void InventroyDropTest(); // Ïù∏Î≤§ÌÜ†Î¶¨ ÎìúÎûç ÌÖåÏä§Ìä∏Ïö© Ìï®Ïàò
+	
+	UFUNCTION()
+	void HandleInventoryItemDrop(FGameplayTag ItemTag, int32 DropCount);
 
-	/* Combat ∞¸∑√ ºΩº« */
+	UFUNCTION()
+	void HandleInventoryItemUse(FGameplayTag ItemTag);
+
+public:
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnInventoryItemDrop OnInventoryItemDrop;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnInventoryChanged OnInventoryChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnInventoryItemUse OnInventoryItemUse;
+
+	UFUNCTION(BlueprintCallable, Category = "Inventory")
+	void UseItemByInventory(FGameplayTag ItemTag);
+
+	/* Combat Í¥ÄÎ†® ÏÑπÏÖò */
 public:
 	virtual USceneComponent* GetAttackStartPoint() const override;
 	virtual UPEStorableItemComponent* GetStorableItemComponent(FGameplayTag Tag) const override;
@@ -82,8 +116,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
 
-	// AI Perception Stimulus Source ƒƒ∆˜≥Õ∆Æ
+	// AI Perception Stimulus Source Ïª¥Ìè¨ÎÑåÌä∏
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI Perception")
 	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionStimuliSourceComponent;
 
+	/* Visual and Animation Sections*/
+public:
+	UFUNCTION(BlueprintCallable)
+	bool HasWeapon() const;
+
+	virtual void AttachWeapon(AActor* WeaponActor, FTransform Transform) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	TObjectPtr<USkeletalMeshComponent> FirstPersonSkeletalMesh;
 };

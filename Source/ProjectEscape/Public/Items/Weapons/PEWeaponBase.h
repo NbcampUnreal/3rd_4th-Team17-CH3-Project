@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "FPEWeaponData.h"
+#include "FPEEquipmentInfo.h"
 #include "GameFramework/Actor.h"
 #include "Items/Components/PEStorableItemComponent.h"
 #include "Items/Interface/PEQuickSlotItem.h"
@@ -18,6 +19,9 @@ enum class EPEEquipmentType : uint8;
 class UPEUseableComponent;
 class UPEInteractableComponent;
 
+// 무기 상태 변화 델리게이트 선언
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponStateChanged, const FPEEquipmentInfo&, EquipmentInfo);
+
 UCLASS()
 class PROJECTESCAPE_API APEWeaponBase : public AActor, public IPEInteractable, public IPEUseable, public IPEQuickSlotItem
 {
@@ -25,6 +29,10 @@ class PROJECTESCAPE_API APEWeaponBase : public AActor, public IPEInteractable, p
 	
 public:	
 	APEWeaponBase();
+
+	// 무기 상태 변화 델리게이트
+	UPROPERTY(BlueprintAssignable, Category = "Weapon Events")
+	FOnWeaponStateChanged OnWeaponStateChanged;
 
 protected:
 	virtual void BeginPlay() override;
@@ -85,7 +93,7 @@ protected:
 	/* IPEQuickSlotItem 인터페이스 선언 */
 public:
 	virtual AActor* GetItemOwner() const override;
-	virtual void OnDropped() override;
+	virtual void OnDropped(const FVector& Location, const FRotator& Rotation) override;
 	virtual UPEQuickSlotItemComponent* GetQuickSlotItemComponent() const override;
 	virtual EPEEquipmentType GetEquipmentType() const override;
 
@@ -101,7 +109,7 @@ public:
 	virtual void DoSecondaryAction(AActor* Holder) override;
 	virtual void DoTertiaryAction(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
-	virtual void OnRelease(AActor* NewOwner) override;
+	virtual void OnRelease() override;
 	virtual UPEUseableComponent* GetUseableComponent() const override;
 
 	/* Combat(Attack) 관련 섹션 */
@@ -113,4 +121,18 @@ protected:
 	float LastAttackTime;
 
 	virtual UPEAttackBaseComponent* CreateAttackComponent();
+
+	/* UI 반영 델리게이트 헬퍼 함수 관련 섹션*/
+protected:
+	FPEEquipmentInfo CreateCurrentEquipmentInfo() const;
+	
+	void BroadcastWeaponStateChanged();
+	void BroadcastEmptyWeaponState();
+
+	/* 아이템 장착 시각 효과 관련 섹션 */
+protected:
+	TObjectPtr<AActor> AttachedActor = nullptr;
+
+	void AttachToOwner();
+	void DetachFromOwner();
 };

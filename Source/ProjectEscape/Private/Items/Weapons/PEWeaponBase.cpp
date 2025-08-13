@@ -9,6 +9,7 @@
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 #include "Items/Components/PEInteractableComponent.h"
+#include "Characters/Hero/Interface/PEWeaponAttachable.h"
 
 APEWeaponBase::APEWeaponBase()
 {
@@ -148,6 +149,8 @@ void APEWeaponBase::PerformReload()
 	
 	bIsReloading = false;
 	UE_LOG(LogPE, Log, TEXT("Reload complete. Current ammo: %d"), CurrentAmmoCount);
+	
+	BroadcastWeaponStateChanged();
 }
 
 void APEWeaponBase::CancleReload()
@@ -213,6 +216,8 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	AttackStats.AttackRange = WeaponStats.Range;
 	AttackStats.DamageAmount = WeaponStats.Damage;
 	AttackStats.SpreadAngle = WeaponStats.Spread;
+	AttackStats.ProjectileClass = WeaponStats.ProjectileClass;
+	AttackStats.ProjectileSpeed = WeaponStats.ProjectileSpeed;
 	AttackStats.CollisionChannel = ECC_Visibility;
 
 	// 1회 발사 시 몇 개의 탄환을 발사할지 설정 (e.g. 산탄총은 12개의 펠릿이 발사됌)
@@ -223,6 +228,8 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 
 	CurrentAmmoCount--;
 	bIsFiring = true;
+	
+	BroadcastWeaponStateChanged();
 }
 
 void APEWeaponBase::CompletePrimaryAction(AActor* Holder)
@@ -242,12 +249,21 @@ void APEWeaponBase::DoTertiaryAction(AActor* Holder)
 
 void APEWeaponBase::OnHand(AActor* NewOwner)
 {
-	//bIsInHand = true;
+	AttachToOwner();
+
+	// 2. 무기를 들었을 때 델리게이트 브로드캐스트
+	BroadcastWeaponStateChanged();
 }
 
-void APEWeaponBase::OnRelease(AActor* NewOwner)
+void APEWeaponBase::OnRelease()
 {
-	//bIsInHand = false;
+	bIsFiring = false;
+	bIsReloading = false;
+
+	DetachFromOwner();
+	
+	// 무기를 놓으면 맨손 상태가 되므로 빈 FPEEquipmentInfo를 브로드캐스트
+	BroadcastEmptyWeaponState();
 }
 
 bool APEWeaponBase::IsInteractable() const
@@ -269,9 +285,17 @@ AActor* APEWeaponBase::GetItemOwner() const
 	return WeaponOwnerActor;
 }
 
-void APEWeaponBase::OnDropped()
+void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 {
 	WeaponOwnerActor = nullptr;
+	OnRelease();
+	
+	SetActorLocation(Location);
+	SetActorRotation(Rotation);
+	SetActorHiddenInGame(false);
+	SetActorEnableCollision(true);
+	
+	UE_LOG(LogTemp, Warning, TEXT("APEWeaponBase::OnDropped called on %s"), *GetName());
 }
 
 UPEQuickSlotItemComponent* APEWeaponBase::GetQuickSlotItemComponent() const
@@ -288,4 +312,73 @@ UPEAttackBaseComponent* APEWeaponBase::CreateAttackComponent()
 {
 	UE_LOG(LogPE, Warning, TEXT("APEWeaponBase::CreateAttackComponent() called"));
     return NewObject<UPEAttackBaseComponent>(this);
+}
+
+FPEEquipmentInfo APEWeaponBase::CreateCurrentEquipmentInfo() const
+{
+	FPEEquipmentInfo EquipmentInfo;
+	EquipmentInfo.EquipmentName = WeaponRowName;
+	EquipmentInfo.AmmoCount = FString::Printf(TEXT("%d/%d"), CurrentAmmoCount, WeaponStats.MaxAmmo);
+	EquipmentInfo.EquipmentDescription = FString::Printf(TEXT("Damage: %d, Range: %.1f"), 
+		WeaponStats.Damage, WeaponStats.Range);
+	// EquipmentInfo.EquipmentIcon = WeaponStats.WeaponIcon; // 필요시 추가
+	return EquipmentInfo;
+}
+
+void APEWeaponBase::BroadcastWeaponStateChanged()
+{
+	FPEEquipmentInfo EquipmentInfo = CreateCurrentEquipmentInfo();
+	
+	OnWeaponStateChanged.Broadcast(EquipmentInfo);
+	
+	// 델리게이트 브로드캐스트 정보 로그 출력 (테스트 용 코드)
+	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
+		*EquipmentInfo.EquipmentName.ToString(),
+		*EquipmentInfo.AmmoCount,
+		*EquipmentInfo.EquipmentDescription);
+	
+}
+
+void APEWeaponBase::BroadcastEmptyWeaponState()
+{
+	FPEEquipmentInfo EmptyEquipmentInfo;
+	EmptyEquipmentInfo.EquipmentName = FName();
+	EmptyEquipmentInfo.AmmoCount = TEXT("");
+	EmptyEquipmentInfo.EquipmentDescription = TEXT("");
+	
+	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Empty Weapon State"));
+	OnWeaponStateChanged.Broadcast(EmptyEquipmentInfo);
+}
+
+void APEWeaponBase::AttachToOwner()
+{
+	// Remove existing weapon Actor
+	if (AttachedActor)
+	{
+		DetachFromOwner();
+	}
+
+	if (WeaponStats.ActorToAttach)
+	{
+		if (IPEWeaponAttachable* AttachParent = Cast<IPEWeaponAttachable>(WeaponOwnerActor))
+		{
+			if (UWorld* World = GetWorld())
+			{
+				FActorSpawnParameters Params;
+				AttachedActor = World->SpawnActor<AActor>(WeaponStats.ActorToAttach, Params);
+				AttachParent->AttachWeapon(AttachedActor, WeaponStats.AttachTransform);
+			}
+		}
+	}
+}
+
+void APEWeaponBase::DetachFromOwner()
+{
+	if (AttachedActor)
+	{
+		FDetachmentTransformRules Rule = FDetachmentTransformRules::KeepWorldTransform;
+		AttachedActor->DetachFromActor(Rule);
+		AttachedActor->Destroy();
+		AttachedActor = nullptr;
+	}
 }

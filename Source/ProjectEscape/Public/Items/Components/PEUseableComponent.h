@@ -14,6 +14,8 @@
  *	3. Use: 액터를 사용할 때 호출되는 함수(인터페이스를 통해 Owner에게 전달됨)
  */
 
+enum class EPEEquipmentType : uint8;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTESCAPE_API UPEUseableComponent : public UActorComponent
 {
@@ -51,4 +53,6 @@ public:
 	void DoTertiaryAction(AActor* User);
 
 	bool IsHolding() const;
+
+	EPEEquipmentType GetEquipmentType() const;
 };

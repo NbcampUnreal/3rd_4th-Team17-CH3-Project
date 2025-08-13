@@ -35,11 +35,13 @@ public:
 	void OnInputQuickSlotNumber(const FInputActionValue& Value, int32 SlotNumber);
 	void OnInputReload(const FInputActionValue& Value);
 	void OnInputInteract(const FInputActionValue& Value);
+	void OnDropHandEquipmentToWorld(const FInputActionValue& Value);
 	void OnInputPrimaryActionTriggered(const FInputActionValue& Value);
 	void OnInputPrimaryActionCompleted(const FInputActionValue& Value);
 	void OnInputSecondaryActionTriggered(const FInputActionValue& Value);
 	void OnInputSecondaryActionCompleted(const FInputActionValue& Value);
 	void OnInputOpenPauseMenu(const FInputActionValue& Value);
+	void OnToggleInventoryUI(const FInputActionValue& Value);
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> MoveInputAction;
@@ -66,6 +68,9 @@ public:
 	TObjectPtr<UInputAction> InteractInputAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> DropEquipmentInputAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> PrimayActionInputAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
@@ -73,6 +78,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
 	TObjectPtr<UInputAction> OpenPauseMenuAction;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Action")
+	TObjectPtr<UInputAction> ToggleInventoryUIAction;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input|Mapping")
 	TObjectPtr<UInputMappingContext> DefaultMappingContext;
@@ -108,6 +116,8 @@ protected:
 	void RecoverCostWhileNotSprinting(float DeltaTime);
 	void StartSprint();
 	void StopSprint();
+
+	bool CanControlCharacter();
 };
 
 template<class T>

@@ -7,6 +7,7 @@
 #include "UObject/Object.h"
 #include "FPEWeaponData.generated.h"
 
+class APEProjectileBase;
 enum class EPEEquipmentType : uint8;
 /**
  * 
@@ -26,6 +27,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGameplayTag AmmoType;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<APEProjectileBase> ProjectileClass; // 투사체 방식일 때만 사용
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsAutomatic;
 	
@@ -54,11 +58,17 @@ public:
 	float Range;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float BulletSpeed;
+	float ProjectileSpeed;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float Spread;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Description;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<AActor> ActorToAttach;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform AttachTransform;
 };
