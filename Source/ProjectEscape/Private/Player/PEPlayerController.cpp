@@ -1,9 +1,11 @@
-﻿#include "Player/PEPlayerController.h"
+#include "Player/PEPlayerController.h"
 #include "Player\PEPlayerState.h"
 #include "Components\ProgressBar.h"
 #include "Blueprint/UserWidget.h"
 #include "UI/Inventory/PEInventoryHUD.h"
 #include "Core/PEGameStateBase.h"
+#include "Characters/Hero/PEHero.h"
+
 
 void APEPlayerController::BeginPlay()
 {
@@ -22,8 +24,14 @@ void APEPlayerController::BeginPlay()
 		if (UPEInventoryHUD* InventoryHUD = Cast<UPEInventoryHUD>(InventoryWidget))
 		{
 			// TODO: Connecting the components required for this Widget
-			InventoryHUD->SetupComponentReference(nullptr, nullptr);
+			InventoryHUD->SetupComponentReference(nullptr, nullptr, GetPawn());
 		}
+	}
+
+	// PEHero에 접근하여 인벤토리 변경 델리게이트 구독
+	if (APEHero* Hero = Cast<APEHero>(GetPawn()))
+	{
+		Hero->OnInventoryChanged.AddDynamic(this, &APEPlayerController::OnInventoryAndQuickSlotUpdate);
 	}
 }
 
@@ -281,4 +289,3 @@ void APEPlayerController::ClearAllWidget()
 		InventoryWidget->RemoveFromParent();
 	}
 }
-

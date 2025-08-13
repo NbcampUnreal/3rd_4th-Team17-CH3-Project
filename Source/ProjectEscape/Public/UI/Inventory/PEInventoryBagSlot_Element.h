@@ -39,6 +39,12 @@ public:
 	int32 GetSlotIndex() const { return SlotIndex; }
 
 	UFUNCTION(BlueprintCallable)
+	void SetItemCount(int32 InItemCount) { ItemCount = InItemCount; }
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetItemCount() const { return ItemCount; }
+	
+	UFUNCTION(BlueprintCallable)
 	void SetSlotIndex(int32 InSlotIndex) { SlotIndex = InSlotIndex; }
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
@@ -53,6 +59,7 @@ protected:
 
 	FGameplayTag SlotTag;
 	int32 SlotIndex;
+	int32 ItemCount;
 	bool IsVaildSlot;
 
 private:

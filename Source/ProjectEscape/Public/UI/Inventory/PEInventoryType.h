@@ -85,7 +85,7 @@ struct FInventoryInfo
 
 public:
 	UPROPERTY(BlueprintReadWrite)
-	TMap<int32, FInventoryBagSlotInfo> Bags;
+	TArray<FInventoryBagSlotInfo> Bags;
 
 	UPROPERTY(BlueprintReadWrite)
 	FInventoryRangeWeaponInfo MainWeapon;

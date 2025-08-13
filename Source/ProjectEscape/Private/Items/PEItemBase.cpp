@@ -98,6 +98,11 @@ int32 APEItemBase::GetStackCapacity() const
 	return ItemStats.StackCapacity;
 }
 
+FPEItemData APEItemBase::GetItemStats() const
+{
+	return ItemStats;
+}
+
 void APEItemBase::SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface)
 {
 	OwningInventoryManagerComponent = NewComponentOwnerInterface;

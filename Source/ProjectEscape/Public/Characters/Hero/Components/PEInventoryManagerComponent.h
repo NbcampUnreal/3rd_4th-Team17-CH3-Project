@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
+#include "UI/Inventory/PEInventoryType.h"
 #include "PEInventoryManagerComponent.generated.h"
 
 class UPEStorableItemComponent;
@@ -50,13 +51,11 @@ public:
 	void RemoveItemFromInventoryByTag(const FGameplayTag &Tag);
 	void ClearInventory();
 	UPEStorableItemComponent* GetItemByTag(const FGameplayTag &Tag) const;
+	FInventoryInfo ConvertToInventoryList() const;
 	
 protected:
 	void SortInventory();
 	void UpdateCurrentItemCount();
-	
-
-	FInventoryList ConvertToInventoryList() const;
 	void BroadcastInventoryChanged();
 
 public:
