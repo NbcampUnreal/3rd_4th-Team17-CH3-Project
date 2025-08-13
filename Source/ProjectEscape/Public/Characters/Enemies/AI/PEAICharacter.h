@@ -49,6 +49,15 @@ public:
 	float AirControl = 0.2f;
 
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> AttackAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> HitAnimMontage;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	TObjectPtr<UAnimMontage> DeadAnimMontage;
+
 
 	void SetMovementSpeed(float NewSpeed);
 
