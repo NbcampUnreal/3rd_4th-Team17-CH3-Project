@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
@@ -9,17 +9,14 @@
 #include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
-// 인벤토리 리스트 구조체
 USTRUCT(BlueprintType)
 struct PROJECTESCAPE_API FInventoryList
 {
 	GENERATED_BODY()
-
 public:
-	// 내부 선언은 비워둠 (추후 확장 가능)
 };
 
-// 델리게이트 선언
+// Delegates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemDrop, FGameplayTag, ItemTag, int32, DropCount);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryList, InventoryList);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemUse, FGameplayTag, ItemTag);
@@ -31,6 +28,7 @@ class UPEInventoryManagerComponent;
 class UPEUseableItemManagerComponent;
 class UPEQuickSlotManagerComponent;
 class UPEHeroInputComponent;
+class UAIPerceptionStimuliSourceComponent;
 
 UCLASS()
 class PROJECTESCAPE_API APEHero : public ACharacter, public IPEInteractManagerHandler, public IPEQuickSlotHandler, public IPEAttackable, public IPEWeaponAttachable
@@ -118,7 +116,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
 
-	/* Visual and Animation 관련 섹션 */
+	// AI Perception Stimulus Source 컴포넌트
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI Perception")
+	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionStimuliSourceComponent;
+
+	/* Visual and Animation Sections*/
 public:
 	UFUNCTION(BlueprintCallable)
 	bool HasWeapon() const;

@@ -1,4 +1,4 @@
-#include "Characters/Hero/PEHero.h"
+﻿#include "Characters/Hero/PEHero.h"
 
 #include "Camera/CameraComponent.h"
 #include "Characters/Hero/Components/PEHeroInputComponent.h"
@@ -12,6 +12,8 @@
 #include "Items/Components/PEStorableItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
 #include "Items/Interface/PEUseable.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+#include "Perception/AISense_Sight.h"
 
 APEHero::APEHero()
 {
@@ -45,6 +47,9 @@ APEHero::APEHero()
 	ReceiveAttackComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveAttackComponent"));
 	ReceiveAttackComponent->SetHiddenInGame(false);
 	ReceiveAttackComponent->SetupAttachment(RootComponent);
+
+	// AI Component
+	AIPerceptionStimuliSourceComponent = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("AIPerceptionStimuliSource"));
 }
 
 void APEHero::BeginPlay()
@@ -55,7 +60,14 @@ void APEHero::BeginPlay()
 	{
 		HeroInputComponent->InputConfiguration();
 	}
-	
+
+	if (AIPerceptionStimuliSourceComponent)
+	{
+		AIPerceptionStimuliSourceComponent->RegisterForSense(UAISense_Sight::StaticClass());
+		AIPerceptionStimuliSourceComponent->RegisterWithPerceptionSystem();
+		UE_LOG(LogTemp, Log, TEXT("Player registered for AI Sight perception"));
+	}
+
 	// 인벤토리 아이템 드롭 델리게이트 바인딩
 	OnInventoryItemDrop.AddDynamic(this, &APEHero::HandleInventoryItemDrop);
 }

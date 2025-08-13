@@ -42,6 +42,7 @@ void APEAIController::BeginPlay()
 	{
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), false); // 블랙보드 값 초기화
 		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), false);
+		BlackboardComp->SetValueAsFloat(TEXT("LastAttackTime"), 0.0f);
 
 		StartBehaviorTree();
 	}
