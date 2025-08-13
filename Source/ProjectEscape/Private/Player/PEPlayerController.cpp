@@ -226,7 +226,7 @@ void APEPlayerController::ShowGameOverWidget(FGameResult GameResult)
 			FFormatNamedArguments Args;
 			Args.Add(TEXT("KillCount"), FText::AsNumber(KillCount));
 
-			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "TotalScoreFormat", "Enemies Killed : {KillCount}"), Args);
+			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "KillCountFormat", "Enemies Killed : {KillCount}"), Args);
 
 			KillCountText->SetText(FormatText);
 		}
@@ -238,7 +238,7 @@ void APEPlayerController::ShowGameOverWidget(FGameResult GameResult)
 			FFormatNamedArguments Args;
 			Args.Add(TEXT("RunTime"), FText::AsNumber(RunTime));
 
-			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "TotalScoreFormat", "Run Time : {RunTime}"), Args);
+			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "RunTimeFormat", "Run Time : {RunTime}"), Args);
 
 			RunTimeText->SetText(FormatText);
 		}
@@ -250,7 +250,7 @@ void APEPlayerController::ShowGameOverWidget(FGameResult GameResult)
 			FFormatNamedArguments Args;
 			Args.Add(TEXT("DamageDealt"), FText::AsNumber(DamageDealt));
 
-			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "TotalScoreFormat", "Damage Dealt : {DamageDealt}"), Args);
+			FText FormatText = FText::Format(NSLOCTEXT("GameOverWidget", "DamageDealtFormat", "Damage Dealt : {DamageDealt}"), Args);
 
 			DamageDealtText->SetText(FormatText);
 		}
@@ -293,7 +293,7 @@ void APEPlayerController::ShowGameClearWidget(FGameResult GameResult)
 			FFormatNamedArguments Args;
 			Args.Add(TEXT("KillCount"), FText::AsNumber(KillCount));
 
-			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "TotalScoreFormat", "Enemies Killed : {KillCount}"), Args);
+			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "KillCountFormat", "Enemies Killed : {KillCount}"), Args);
 
 			KillCountText->SetText(FormatText);
 		}
@@ -305,7 +305,7 @@ void APEPlayerController::ShowGameClearWidget(FGameResult GameResult)
 			FFormatNamedArguments Args;
 			Args.Add(TEXT("RunTime"), FText::AsNumber(RunTime));
 
-			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "TotalScoreFormat", "Run Time : {RunTime}"), Args);
+			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "RunTimeFormat", "Run Time : {RunTime}"), Args);
 
 			RunTimeText->SetText(FormatText);
 		}
@@ -317,7 +317,7 @@ void APEPlayerController::ShowGameClearWidget(FGameResult GameResult)
 			FFormatNamedArguments Args;
 			Args.Add(TEXT("DamageDealt"), FText::AsNumber(DamageDealt));
 
-			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "TotalScoreFormat", "Damage Dealt : {DamageDealt}"), Args);
+			FText FormatText = FText::Format(NSLOCTEXT("GameClearWidget", "DamageDealtFormat", "Damage Dealt : {DamageDealt}"), Args);
 
 			DamageDealtText->SetText(FormatText);
 		}
