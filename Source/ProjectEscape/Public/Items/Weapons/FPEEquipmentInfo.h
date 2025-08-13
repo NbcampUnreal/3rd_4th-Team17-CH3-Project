@@ -24,5 +24,5 @@ struct PROJECTESCAPE_API FPEEquipmentInfo
 	FString EquipmentDescription;
 
 	UPROPERTY()
-	TSoftObjectPtr<UTexture2D> EquipmentIcon;
+	TObjectPtr<UTexture2D> EquipmentIcon;
 };

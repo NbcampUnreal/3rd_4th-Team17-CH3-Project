@@ -130,7 +130,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
 
+	/* UI 관련 섹션 */
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	FInventoryInfo CurrentInventoryList;
+
+	void SetInventoryBagInfo(const FInventoryInfo& InventoryInfo);
+	void SetQuickSlotInfo(const FInventoryInfo& InventoryInfo);
+	void BroadcastInventoryChanged();
+	
 	// AI Perception Stimulus Source 컴포넌트
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI Perception")
 	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionStimuliSourceComponent;
 

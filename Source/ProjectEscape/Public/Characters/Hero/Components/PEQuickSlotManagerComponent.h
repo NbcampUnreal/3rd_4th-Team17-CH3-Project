@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
+#include "UI/Inventory/PEInventoryType.h"
 #include "PEQuickSlotManagerComponent.generated.h"
 
 
@@ -62,5 +63,11 @@ public:
 
 	AActor* GetActorFromQuickSlot(EPEEquipmentType EquipmentType) const;
 	TMap<EPEEquipmentType, TObjectPtr<AActor>> GetQuickSlotItem(EPEEquipmentType EquipmentType) const;
-	
+
+protected:
+	FInventoryInfo ConvertToQuickSlotInfo();
+
+	/* UI 반영 델리게이트 헬퍼 함수 관련 섹션*/
+protected:
+	void UpdateQuickSlotInfoAndBroadcast();
 };

@@ -129,6 +129,14 @@ protected:
 	void BroadcastWeaponStateChanged();
 	void BroadcastEmptyWeaponState();
 
+public:
+	// Getter methods for weapon stats
+	UFUNCTION(BlueprintCallable, Category = "Weapon Stats")
+	const FPEWeaponData& GetWeaponStats() const { return WeaponStats; }
+	
+	UFUNCTION(BlueprintCallable, Category = "Weapon Stats")
+	int32 GetCurrentAmmoCount() const { return CurrentAmmoCount; }
+
 	/* 아이템 장착 시각 효과 관련 섹션 */
 protected:
 	TObjectPtr<AActor> AttachedActor = nullptr;

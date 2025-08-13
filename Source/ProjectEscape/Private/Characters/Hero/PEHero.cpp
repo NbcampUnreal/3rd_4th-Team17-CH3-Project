@@ -257,13 +257,36 @@ UPEStorableItemComponent* APEHero::GetStorableItemComponent(FGameplayTag Tag) co
 	return InventoryManagerComponent->GetItemByTag(Tag);
 }
 
+void APEHero::SetInventoryBagInfo(const FInventoryInfo& InventoryInfo)
+{
+	CurrentInventoryList.Bags = InventoryInfo.Bags;
+}
+
+void APEHero::SetQuickSlotInfo(const FInventoryInfo& InventoryInfo)
+{
+	CurrentInventoryList.MainWeapon = InventoryInfo.MainWeapon;
+	CurrentInventoryList.SubWeapon = InventoryInfo.SubWeapon;
+	CurrentInventoryList.MeleeWeapon = InventoryInfo.MeleeWeapon;
+	CurrentInventoryList.QuickHeal = InventoryInfo.QuickHeal;
+	CurrentInventoryList.QuickGrenade = InventoryInfo.QuickGrenade;
+}
+
+void APEHero::BroadcastInventoryChanged()
+{
+	if (OnInventoryChanged.IsBound())
+	{
+		OnInventoryChanged.Broadcast(CurrentInventoryList);
+	}
+}
+
 float APEHero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
+	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	if (APEPlayerState* PEPlayerState = GetPlayerState<APEPlayerState>())
 	{
-		PEPlayerState->ReduceHealthPoint(DamageAmount);
+		PEPlayerState->ReduceHealthPoint(Damage);
 	}
-	return DamageAmount;
+	return Damage;
 }
 
 void APEHero::HandleInventoryItemDrop(FGameplayTag ItemTag, int32 DropCount)
