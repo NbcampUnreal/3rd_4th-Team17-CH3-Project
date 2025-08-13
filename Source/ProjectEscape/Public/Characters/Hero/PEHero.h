@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Interface/PEInteractManagerHandler.h"
 #include "Interface/PEQuickSlotHandler.h"
+#include "UI/Inventory/PEInventoryType.h"
 #include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
@@ -21,7 +22,7 @@ public:
 
 // Delegates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemDrop, FGameplayTag, ItemTag, int32, DropCount);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryList, InventoryList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryInfo&, InventoryInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemUse, FGameplayTag, ItemTag);
 
 class UCameraComponent;
