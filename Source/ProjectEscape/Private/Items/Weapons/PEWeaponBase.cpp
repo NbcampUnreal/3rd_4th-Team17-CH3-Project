@@ -312,6 +312,8 @@ AActor* APEWeaponBase::GetItemOwner() const
 
 void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 {
+	BroadcastEmptyWeaponState();
+	
 	WeaponOwnerActor = nullptr;
 	OnRelease();
 	
@@ -319,7 +321,7 @@ void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 	SetActorRotation(Rotation);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
-	
+
 	UE_LOG(LogTemp, Warning, TEXT("APEWeaponBase::OnDropped called on %s"), *GetName());
 }
 
@@ -374,9 +376,10 @@ void APEWeaponBase::BroadcastWeaponStateChanged()
 void APEWeaponBase::BroadcastEmptyWeaponState()
 {
 	FPEEquipmentInfo EmptyEquipmentInfo;
-	EmptyEquipmentInfo.EquipmentName = FName();
-	EmptyEquipmentInfo.AmmoCount = TEXT("");
-	EmptyEquipmentInfo.EquipmentDescription = TEXT("");
+	EmptyEquipmentInfo.EquipmentName = FName(" ");
+	EmptyEquipmentInfo.AmmoCount = TEXT(" ");
+	EmptyEquipmentInfo.EquipmentDescription = TEXT(" ");
+	EmptyEquipmentInfo.EquipmentIcon = nullptr;
 	
 	if (APEHero* Hero = Cast<APEHero>(WeaponOwnerActor))
 	{
