@@ -5,6 +5,7 @@
 #include "PEPlayerState.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnFloatStatusChanged, /*Current*/ float, /*Max*/ float)
+DECLARE_MULTICAST_DELEGATE_ThreeParams(FOnFloatStatusChangedOldAndNew, /*Old*/ float, /*Current*/ float, /*Max*/ float)
 
 UCLASS()
 class PROJECTESCAPE_API APEPlayerState : public APlayerState
@@ -17,7 +18,7 @@ public:
 	virtual void BeginPlay() override;
 
 	/* Status Delegates, Getters, Setters */
-	FOnFloatStatusChanged OnChangeHealthPoint;
+	FOnFloatStatusChangedOldAndNew OnChangeHealthPoint;
 	FOnFloatStatusChanged OnChangeStamina;
 
 	float GetHealthPoint() const { return HealthPoint; }

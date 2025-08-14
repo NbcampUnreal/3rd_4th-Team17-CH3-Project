@@ -112,13 +112,13 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 					if (bIsDead)
 					{
 						int32 KillScore = 500; // TODO: 
-						PEGameModeBase->OnKillEnemy(KillScore);
-						PEGameModeBase->OnDamageDealt(Damage);
+						PEGameModeBase->OnKillEnemy(PEPlayerController, KillScore);
+						PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
 						PEPlayerController->PlayKillMarkerAnimOfHUDWidget();
 					}
 					else
 					{
-						PEGameModeBase->OnDamageDealt(Damage);
+						PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
 						PEPlayerController->PlayHitMarkerAnimOfHUDWIdget();
 					}
 				}
