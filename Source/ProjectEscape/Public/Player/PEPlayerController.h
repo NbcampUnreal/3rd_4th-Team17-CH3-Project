@@ -57,6 +57,8 @@ public:
 	void ShowGameOverWidget(FGameResult GameResult);
 	void ShowGameClearWidget(FGameResult GameResult);
 
+	void EquipmentInitialization();
+
 protected:
 	virtual void BeginPlay() override;
 

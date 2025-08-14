@@ -38,6 +38,8 @@ void APEPlayerController::BeginPlay()
 	{
 		Hero->OnInventoryChanged.AddDynamic(this, &APEPlayerController::OnInventoryAndQuickSlotUpdate);
 	}
+
+	EquipmentInitialization();
 }
 
 void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
@@ -359,6 +361,16 @@ void APEPlayerController::ShowGameClearWidget(FGameResult GameResult)
 		}
 
 	}
+}
+
+void APEPlayerController::EquipmentInitialization()
+{
+	FPEEquipmentInfo EquipmentInfo;
+	EquipmentInfo.EquipmentName = FName(TEXT(" "));
+	EquipmentInfo.AmmoCount = TEXT(" ");
+	EquipmentInfo.EquipmentDescription = TEXT(" ");
+	EquipmentInfo.EquipmentIcon = nullptr;
+	OnChangeWeaponInfo(EquipmentInfo);
 }
 
 void APEPlayerController::ShowHUD()
