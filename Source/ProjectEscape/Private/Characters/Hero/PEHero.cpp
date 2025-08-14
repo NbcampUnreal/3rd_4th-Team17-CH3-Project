@@ -15,6 +15,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Player/PEPlayerController.h"
 #include "Player/PEPlayerState.h"
 
 APEHero::APEHero()
@@ -296,6 +297,18 @@ void APEHero::BroadcastInventoryChanged()
 	if (OnInventoryChanged.IsBound())
 	{
 		OnInventoryChanged.Broadcast(CurrentInventoryList);
+	}
+}
+
+void APEHero::BroadCastEquipmentChanged(FPEEquipmentInfo& EquipmentInfo)
+{
+	if (APEPlayerController* PlayerController = Cast<APEPlayerController>(GetController()))
+	{
+		PlayerController->OnWeaponInfoBroadcast.Broadcast(EquipmentInfo);
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("BroadCastEquipmentChanged: Controller is not APEPlayerController"));
 	}
 }
 
