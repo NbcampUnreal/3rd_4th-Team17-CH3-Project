@@ -1,4 +1,4 @@
-ï»¿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Enemies/AI/PEAICharacter.h"
@@ -8,7 +8,6 @@
 #include <Combat/Components/PEReceiveAttackComponent.h>
 #include "Player/PEPlayerController.h"
 #include "Items/Weapons/PEWeaponBase.h"
-#include "Kismet/GameplayStatics.h"
 #include "Core/PEGameModeBase.h"
 
 APEAICharacter::APEAICharacter()
@@ -74,7 +73,7 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 
 void APEAICharacter::BeginDestroy()
 {
-	// AI ì‚¬ë§ ì‹œ ë¸ë¦¬ê²Œì´íŠ¸ ë¸Œë¡œë“œìºìŠ¤íŠ¸
+	// AI »ç¸Á ½Ã µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
 	OnPawnDeath.Broadcast();
 
 	Super::BeginDestroy();
@@ -84,21 +83,6 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	UE_LOG(LogTemp, Warning, TEXT("Take Damage"));
-
-	if (DamageClass)
-	{
-		FTransform SpawnTransFrom = GetActorTransform();
-
-		APEUIDamage* Dmg = GetWorld()->SpawnActorDeferred<APEUIDamage>(DamageClass, SpawnTransFrom);
-
-		if (Dmg)
-		{
-			Dmg->DamageAmount = Damage;
-
-			UGameplayStatics::FinishSpawningActor(Dmg, SpawnTransFrom);
-
-		}
-	}
 
 	bool bIsDead = false;
 	if (ReceiveComponent)
@@ -110,8 +94,8 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 			{
 				EnemyHealth = 0.0f;
 				UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
-				OnPawnDeath.Broadcast(); // AI ì‚¬ë§ ì‹œ ë¸ë¦¬ê²Œì´íŠ¸ ë¸Œë¡œë“œìºìŠ¤íŠ¸
-				this->Destroy(); // AI ìºë¦­í„° ì œê±°
+				OnPawnDeath.Broadcast(); // AI »ç¸Á ½Ã µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
+				this->Destroy(); // AI Ä³¸¯ÅÍ Á¦°Å
 				bIsDead = true;
 			}
 		}
