@@ -34,10 +34,10 @@ public:
 	void RemoveItemFromQucikSlotAndDropToLand(FGameplayTag WeaponTag);
 
 	UFUNCTION(BlueprintCallable)
-	void AddItemFromBagToQuickSlot(FGameplayTag ItemTag, int32 FromSlotIndex);
+	void AddItemFromBagToQuickSlot(FGameplayTag ItemTag);
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveItemFromQuickSlotToBag(FGameplayTag ItemTag, int32 ToSlotIndex);
+	void RemoveItemFromQuickSlotToBag(FGameplayTag ItemTag);
 
 	// Interface, To be confirmed.
 	UPROPERTY(BlueprintReadOnly)
