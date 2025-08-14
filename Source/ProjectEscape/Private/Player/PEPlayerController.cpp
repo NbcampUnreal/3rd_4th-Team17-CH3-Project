@@ -131,10 +131,12 @@ void APEPlayerController::OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo)
 			if (EquipmentInfo.EquipmentIcon)
 			{
 				WeaponImage->SetBrushFromTexture(EquipmentInfo.EquipmentIcon);
+				WeaponImage->SetColorAndOpacity(FLinearColor(1, 1, 1, 1));
 			}
 			else
 			{
 				WeaponImage->SetBrush(FSlateBrush());
+				WeaponImage->SetColorAndOpacity(FLinearColor(1, 1, 1, 0));
 			}
 		}
 
