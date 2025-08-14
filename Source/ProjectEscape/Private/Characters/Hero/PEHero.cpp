@@ -15,6 +15,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Player/PEPlayerController.h"
 #include "Player/PEPlayerState.h"
 
 APEHero::APEHero()
@@ -234,23 +235,23 @@ void APEHero::HandleDropEquipmentToWorld(FGameplayTag EquipmentTag)
 	const FPEGameplayTags& GameplayTags = FPEGameplayTags::Get();
 	if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_MainWeapon)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Primary, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Primary, GetActorLocation(), GetActorRotation());
 	}
 	else if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_SubWeapon)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Secondary, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Secondary, GetActorLocation(), GetActorRotation());
 	}
 	else if (EquipmentTag == GameplayTags.Item_Weapon_MeleeWeapon)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Melee, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Melee, GetActorLocation(), GetActorRotation());
 	}
 	else if (EquipmentTag == GameplayTags.Item_Things_Heal)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
 	}
 	else if ( EquipmentTag == GameplayTags.Item_Things_Grenade)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Throwable, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Throwable, GetActorLocation(), GetActorRotation());
 	}
 }
 
@@ -296,6 +297,18 @@ void APEHero::BroadcastInventoryChanged()
 	if (OnInventoryChanged.IsBound())
 	{
 		OnInventoryChanged.Broadcast(CurrentInventoryList);
+	}
+}
+
+void APEHero::BroadCastEquipmentChanged(FPEEquipmentInfo& EquipmentInfo)
+{
+	if (APEPlayerController* PlayerController = Cast<APEPlayerController>(GetController()))
+	{
+		PlayerController->OnWeaponInfoBroadcast.Broadcast(EquipmentInfo);
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("BroadCastEquipmentChanged: Controller is not APEPlayerController"));
 	}
 }
 

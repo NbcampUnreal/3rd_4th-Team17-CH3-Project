@@ -312,6 +312,8 @@ AActor* APEWeaponBase::GetItemOwner() const
 
 void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 {
+	BroadcastEmptyWeaponState();
+	
 	WeaponOwnerActor = nullptr;
 	OnRelease();
 	
@@ -319,7 +321,7 @@ void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 	SetActorRotation(Rotation);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
-	
+
 	UE_LOG(LogTemp, Warning, TEXT("APEWeaponBase::OnDropped called on %s"), *GetName());
 }
 
@@ -342,37 +344,58 @@ UPEAttackBaseComponent* APEWeaponBase::CreateAttackComponent()
 FPEEquipmentInfo APEWeaponBase::CreateCurrentEquipmentInfo() const
 {
 	FPEEquipmentInfo EquipmentInfo;
-	EquipmentInfo.EquipmentName = WeaponRowName;
+	EquipmentInfo.EquipmentName = WeaponStats.Name;
 	EquipmentInfo.AmmoCount = FString::Printf(TEXT("%d/%d"), CurrentAmmoCount, WeaponStats.MaxAmmo);
+	EquipmentInfo.EquipmentIcon = WeaponStats.IconTexture2D;
 	EquipmentInfo.EquipmentDescription = FString::Printf(TEXT("Damage: %d, Range: %.1f"), 
 		WeaponStats.Damage, WeaponStats.Range);
-	// EquipmentInfo.EquipmentIcon = WeaponStats.WeaponIcon; // 필요시 추가
+
 	return EquipmentInfo;
 }
 
 void APEWeaponBase::BroadcastWeaponStateChanged()
 {
 	FPEEquipmentInfo EquipmentInfo = CreateCurrentEquipmentInfo();
+
+	if (APEHero* Hero = Cast<APEHero>(WeaponOwnerActor))
+	{
+		Hero->BroadCastEquipmentChanged(EquipmentInfo);
 	
-	OnWeaponStateChanged.Broadcast(EquipmentInfo);
-	
-	// 델리게이트 브로드캐스트 정보 로그 출력 (테스트 용 코드)
-	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
-		*EquipmentInfo.EquipmentName.ToString(),
-		*EquipmentInfo.AmmoCount,
-		*EquipmentInfo.EquipmentDescription);
-	
+		// 델리게이트 브로드캐스트 정보 로그 출력 (테스트 용 코드)
+		UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
+			*EquipmentInfo.EquipmentName.ToString(),
+			*EquipmentInfo.AmmoCount,
+			*EquipmentInfo.EquipmentDescription);
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("BroadcastWeaponStateChanged: WeaponOwnerActor is not APEHero"));
+	}
 }
 
 void APEWeaponBase::BroadcastEmptyWeaponState()
 {
 	FPEEquipmentInfo EmptyEquipmentInfo;
-	EmptyEquipmentInfo.EquipmentName = FName();
-	EmptyEquipmentInfo.AmmoCount = TEXT("");
-	EmptyEquipmentInfo.EquipmentDescription = TEXT("");
+	EmptyEquipmentInfo.EquipmentName = FName(" ");
+	EmptyEquipmentInfo.AmmoCount = TEXT(" ");
+	EmptyEquipmentInfo.EquipmentDescription = TEXT(" ");
+	EmptyEquipmentInfo.EquipmentIcon = nullptr;
 	
-	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Empty Weapon State"));
-	OnWeaponStateChanged.Broadcast(EmptyEquipmentInfo);
+	if (APEHero* Hero = Cast<APEHero>(WeaponOwnerActor))
+	{
+		Hero->BroadCastEquipmentChanged(EmptyEquipmentInfo);
+	
+		// 델리게이트 브로드캐스트 정보 로그 출력 (테스트 용 코드)
+		UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
+			*EmptyEquipmentInfo.EquipmentName.ToString(),
+			*EmptyEquipmentInfo.AmmoCount,
+			*EmptyEquipmentInfo.EquipmentDescription);
+		UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Empty Weapon State"));
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("BroadcastWeaponStateChanged: WeaponOwnerActor is not APEHero"));
+	}
 }
 
 void APEWeaponBase::AttachToOwner()

@@ -39,6 +39,8 @@ void APEPlayerController::BeginPlay()
 		Hero->OnInventoryChanged.AddDynamic(this, &APEPlayerController::OnInventoryAndQuickSlotUpdate);
 	}
 
+	OnEquipmentEmptyHand();
+  
 	// Score Init
 	if (GetWorld())
 	{
@@ -47,7 +49,7 @@ void APEPlayerController::BeginPlay()
 			OnChangeTotalScore(PEGameStateBsae->GetGameResult().TotalScore);
 		}
 	}
-	
+  
 }
 
 void APEPlayerController::OnChangeHealthPoint(float OldValue, float HealthPoint, float MaxHealthPoint)
@@ -142,10 +144,12 @@ void APEPlayerController::OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo)
 			if (EquipmentInfo.EquipmentIcon)
 			{
 				WeaponImage->SetBrushFromTexture(EquipmentInfo.EquipmentIcon);
+				WeaponImage->SetColorAndOpacity(FLinearColor(1, 1, 1, 1));
 			}
 			else
 			{
 				WeaponImage->SetBrush(FSlateBrush());
+				WeaponImage->SetColorAndOpacity(FLinearColor(1, 1, 1, 0));
 			}
 		}
 
@@ -399,6 +403,16 @@ void APEPlayerController::ShowGameClearWidget(FGameResult GameResult)
 		}
 
 	}
+}
+
+void APEPlayerController::OnEquipmentEmptyHand()
+{
+	FPEEquipmentInfo EquipmentInfo;
+	EquipmentInfo.EquipmentName = FName(TEXT(" "));
+	EquipmentInfo.AmmoCount = TEXT(" ");
+	EquipmentInfo.EquipmentDescription = TEXT(" ");
+	EquipmentInfo.EquipmentIcon = nullptr;
+	OnChangeWeaponInfo(EquipmentInfo);
 }
 
 void APEPlayerController::ShowHUD()

@@ -72,7 +72,7 @@ void UPEUseableItemManagerComponent::DropHandEquipmentToWorld()
 			FVector Location = ComponentOwnerActor->GetActorLocation();
 			FRotator Rotation = ComponentOwnerActor->GetActorRotation();
 
-			Hero->GetQuickSlotManagerComponent()->DropHandEquipmentToWorld(CurrentItemComponent->GetEquipmentType(), Location, Rotation);
+			Hero->GetQuickSlotManagerComponent()->DropEquipmentToWorld(CurrentItemComponent->GetEquipmentType(), Location, Rotation);
 			
 			UE_LOG(LogPE, Log, TEXT("UPEUseableItemManagerComponent::DropHandEquipmentToWorld"));
 		}

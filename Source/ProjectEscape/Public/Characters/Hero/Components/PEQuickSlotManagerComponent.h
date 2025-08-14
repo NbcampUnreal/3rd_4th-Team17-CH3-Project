@@ -59,7 +59,7 @@ public:
 	bool ContainWeaponType(EPEEquipmentType EquipmentType);
 
 	UFUNCTION(BlueprintCallable, Category = "Quick Slot")
-	void DropHandEquipmentToWorld(EPEEquipmentType EquipmentType, const FVector& Location, const FRotator& Rotation);
+	void DropEquipmentToWorld(EPEEquipmentType EquipmentType, const FVector& Location, const FRotator& Rotation);
 
 	AActor* GetActorFromQuickSlot(EPEEquipmentType EquipmentType) const;
 	TMap<EPEEquipmentType, TObjectPtr<AActor>> GetQuickSlotItem(EPEEquipmentType EquipmentType) const;

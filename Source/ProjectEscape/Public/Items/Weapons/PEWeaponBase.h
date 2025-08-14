@@ -30,10 +30,6 @@ class PROJECTESCAPE_API APEWeaponBase : public AActor, public IPEInteractable, p
 public:	
 	APEWeaponBase();
 
-	// 무기 상태 변화 델리게이트
-	UPROPERTY(BlueprintAssignable, Category = "Weapon Events")
-	FOnWeaponStateChanged OnWeaponStateChanged;
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
