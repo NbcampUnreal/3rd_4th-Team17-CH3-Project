@@ -41,6 +41,17 @@ public:
 	UFUNCTION()
 	void OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo);
 
+	UFUNCTION()
+	void OnChangeTotalScore(int32 TotalScore);
+
+	UFUNCTION()
+	void OnChangeMissionInfo(FText MissionInfo);
+
+	UFUNCTION()
+	void OnTakeDamage();
+
+	
+
 	void PlayDamageAnimOfHUDWidget();
 	void PlayHitMarkerAnimOfHUDWIdget();
 	void PlayKillMarkerAnimOfHUDWidget();

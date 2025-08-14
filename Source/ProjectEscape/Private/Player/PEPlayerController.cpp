@@ -42,7 +42,6 @@ void APEPlayerController::BeginPlay()
 
 void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
 {
-	PlayDamageAnimOfHUDWidget();
 	ChangeHealthBar(HealthPoint, MaxHealthPoint);
 }
 
@@ -141,6 +140,39 @@ void APEPlayerController::OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo)
 			AmmoText->SetText(FText::FromString(EquipmentInfo.AmmoCount));
 		}
 	}
+}
+
+void APEPlayerController::OnChangeTotalScore(int32 TotalScore)
+{
+	if (HUDWidget)
+	{
+		if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName("Score")))
+		{
+			ScoreText->SetText(FText::FromString(FString::FromInt(TotalScore)));
+		}
+	}
+}
+
+void APEPlayerController::OnChangeMissionInfo(FText MissionInfo)
+{
+	if (HUDWidget)
+	{
+		if (UTextBlock* MissionText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Mission"))))
+		{
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("Mission"), MissionInfo);
+
+			FText FormatText = FText::Format(NSLOCTEXT("HUDWidget", "MissionFormat", "{Mission}"), Args);
+
+			MissionText->SetText(FormatText);
+		}
+	}
+}
+
+void APEPlayerController::OnTakeDamage()
+{
+	PlayDamageAnimOfHUDWidget();
 }
 
 
