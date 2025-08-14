@@ -31,6 +31,13 @@ void APEUIDamage::BeginPlay()
 	
 }
 
+void APEUIDamage::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
+
+	Super::EndPlay(EndPlayReason);
+}
+
 void APEUIDamage::UpdateDamageUI()
 {
 	if (UUserWidget* DamageIns = WidgetComp->GetUserWidgetObject())
@@ -47,7 +54,7 @@ void APEUIDamage::UpdateDamageUI()
 	FVector EndLocation = ActorLocation + FVector(RandXY, RandXY, RandZ);
 	SetActorLocation(EndLocation);
 
-	FTimerHandle TimerHandle;
+	
 	GetWorldTimerManager().SetTimer(
 		TimerHandle,
 		this,

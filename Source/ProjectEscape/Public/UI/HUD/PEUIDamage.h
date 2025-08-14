@@ -29,6 +29,9 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	FTimerHandle TimerHandle;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Comp")
 	UWidgetComponent* WidgetComp;
