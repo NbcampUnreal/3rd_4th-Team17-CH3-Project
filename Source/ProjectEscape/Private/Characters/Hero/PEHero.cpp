@@ -7,6 +7,7 @@
 #include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
 #include "Characters/Hero/Components/PEUseableItemManagerComponent.h"
 #include "Combat/Components/PEReceiveAttackComponent.h"
+#include "Core/PELogChannels.h"
 #include "Items/PEEquipmentType.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Items/Components/PEStorableItemComponent.h"
@@ -71,6 +72,9 @@ void APEHero::BeginPlay()
 
 	// 인벤토리 아이템 드롭 델리게이트 바인딩
 	OnInventoryItemDrop.AddDynamic(this, &APEHero::HandleInventoryItemDrop);
+
+	// 퀵슬롯 장비 드롭 델리게이트 바인딩
+	OnQuickSlotEquipmentDrop.AddDynamic(this, &APEHero::HandleDropEquipmentToWorld);
 }
 
 void APEHero::Tick(float DeltaTime)
@@ -189,7 +193,6 @@ UPEUseableItemManagerComponent* APEHero::GetUseableItemManagerComponent() const
 
 void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 {
-	// Todo: 퀵슬롯으로 부터 아이템을 받은 다음 손에 장착
 	if (!QuickSlotManagerComponent || !UseableItemManagerComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Required components are not initialized!"));
@@ -222,6 +225,32 @@ void APEHero::DropHandEquipmentToWorld()
 	if (UseableItemManagerComponent)
 	{
 		UseableItemManagerComponent->DropHandEquipmentToWorld();
+	}
+}
+
+void APEHero::HandleDropEquipmentToWorld(FGameplayTag EquipmentTag)
+{
+	UE_LOG(LogPE, Warning, TEXT("DropEquipmentToWorld called with EquipmentType: %s"), *EquipmentTag.ToString());
+	const FPEGameplayTags& GameplayTags = FPEGameplayTags::Get();
+	if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_MainWeapon)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Primary, GetActorLocation(), GetActorRotation());
+	}
+	else if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_SubWeapon)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Secondary, GetActorLocation(), GetActorRotation());
+	}
+	else if (EquipmentTag == GameplayTags.Item_Weapon_MeleeWeapon)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Melee, GetActorLocation(), GetActorRotation());
+	}
+	else if (EquipmentTag == GameplayTags.Item_Things_Heal)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
+	}
+	else if ( EquipmentTag == GameplayTags.Item_Things_Grenade)
+	{
+		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Throwable, GetActorLocation(), GetActorRotation());
 	}
 }
 

@@ -59,8 +59,14 @@ void UPEInventoryHUD::UnequipWeaponAndDropToLand(FGameplayTag WeaponTag)
 	FString TagString = WeaponTag.ToString();
 	UE_LOG(LogTemp, Display, TEXT("[DEBUG] UnequipWeaponAndDropToLand Tag: %s"), *TagString);
 
-	// Notify to Character Component
-	// To Be Added.
+	if (APEHero* HeroActor = Cast<APEHero>(Hero))
+	{
+		HeroActor->OnQuickSlotEquipmentDrop.Broadcast(WeaponTag);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("[DEBUG] Failed to cast Hero to APEHero"));
+	}
 }
 
 void UPEInventoryHUD::RemoveItemFromQucikSlotAndDropToLand(FGameplayTag ItemTag)

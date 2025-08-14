@@ -177,7 +177,7 @@ FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
 			
 			QuickSlotInfo.SubWeapon.ItemTexture = WeaponStats.IconTexture2D;
 			QuickSlotInfo.SubWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
-			QuickSlotInfo.MainWeapon.ItemTag = GameplayTags.Item_Weapon_RangeWeapon_SubWeapon;
+			QuickSlotInfo.SubWeapon.ItemTag = GameplayTags.Item_Weapon_RangeWeapon_SubWeapon;
 			QuickSlotInfo.SubWeapon.CurrentAmmo = WeaponBase->GetCurrentAmmoCount();
 			QuickSlotInfo.SubWeapon.TotalAmmo = WeaponStats.MaxAmmo;
 			UE_LOG(LogPE, Log, TEXT("Converted Weapon to SubWeapon in QuickSlotInfo"));
@@ -193,7 +193,7 @@ FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
 			
 			QuickSlotInfo.MeleeWeapon.ItemTexture = WeaponStats.IconTexture2D; 
 			QuickSlotInfo.MeleeWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
-			QuickSlotInfo.MainWeapon.ItemTag = GameplayTags.Item_Weapon_MeleeWeapon;
+			QuickSlotInfo.MeleeWeapon.ItemTag = GameplayTags.Item_Weapon_MeleeWeapon;
 			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Melee in QuickSlotInfo"));
 		}
 	}
@@ -204,9 +204,9 @@ FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
 		{
 			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
 			
-			QuickSlotInfo.MeleeWeapon.ItemTexture = WeaponStats.IconTexture2D; 
-			QuickSlotInfo.MeleeWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
-			QuickSlotInfo.MainWeapon.ItemTag = GameplayTags.Item_Things_Heal;
+			QuickSlotInfo.QuickHeal.ItemTexture = WeaponStats.IconTexture2D; 
+			QuickSlotInfo.QuickHeal.ItemDescription = FText::FromString(WeaponStats.Description);
+			QuickSlotInfo.QuickHeal.ItemTag = GameplayTags.Item_Things_Heal;
 			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Healing in QuickSlotInfo"));
 		}
 	}
@@ -217,9 +217,9 @@ FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
 		{
 			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
 			
-			QuickSlotInfo.MeleeWeapon.ItemTexture = WeaponStats.IconTexture2D; 
-			QuickSlotInfo.MeleeWeapon.ItemDescription = FText::FromString(WeaponStats.Description);
-			QuickSlotInfo.MainWeapon.ItemTag = GameplayTags.Item_Things_Grenade;
+			QuickSlotInfo.QuickGrenade.ItemTexture = WeaponStats.IconTexture2D; 
+			QuickSlotInfo.QuickGrenade.ItemDescription = FText::FromString(WeaponStats.Description);
+			QuickSlotInfo.QuickGrenade.ItemTag = GameplayTags.Item_Things_Grenade;
 			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Throwable in QuickSlotInfo"));
 		}
 	}
