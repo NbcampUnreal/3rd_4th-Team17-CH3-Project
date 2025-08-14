@@ -34,5 +34,4 @@ private:
     FDelegateHandle PawnDeathDelegateHandle;
     TWeakObjectPtr<UBehaviorTreeComponent> CachedOwnerComp;
     void ClearAttackTimer();
-
 };
