@@ -1,10 +1,11 @@
-#pragma once
+﻿#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Characters/Enemies/AI/PEAIController.h"
 #include "Combat/Components/PEAttackBaseComponent.h"
 #include "Combat/Components/PEReceiveAttackComponent.h"
+#include "UI/HUD/PEUIDamage.h"
 #include "PEAICharacter.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnPawnDeath);
@@ -38,6 +39,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	TSubclassOf<APEAIController> AIControllerClassBP = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	TSubclassOf<class APEUIDamage> DamageClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	float WalkSpeed = 300.0f;
