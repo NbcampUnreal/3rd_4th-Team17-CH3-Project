@@ -24,11 +24,15 @@ APEItemBase::APEItemBase()
 	StackCount = 1;
 }
 
+void APEItemBase::PostLoad()
+{
+	Super::PostLoad();
+	InitializeFromDataTable();
+}
+
 void APEItemBase::BeginPlay()
 {
-	Super::BeginPlay();
-
-	InitializeFromDataTable();
+	Super::BeginPlay();	
 	StorableItemComponent->SetItemTag(ItemStats.ItemTag);
 }
 
@@ -96,6 +100,11 @@ int32 APEItemBase::GetItemStackCount() const
 int32 APEItemBase::GetStackCapacity() const
 {
 	return ItemStats.StackCapacity;
+}
+
+FPEItemData APEItemBase::GetItemStats() const
+{
+	return ItemStats;
 }
 
 void APEItemBase::SetInventroyManagerComponent(UPEInventoryManagerComponent* NewComponentOwnerInterface)

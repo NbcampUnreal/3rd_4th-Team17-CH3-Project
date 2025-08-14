@@ -7,6 +7,7 @@
 #include "UObject/Object.h"
 #include "FPEItemData.generated.h"
 
+class UPaperSprite;
 /**
  * 
  */
@@ -20,10 +21,16 @@ struct FPEItemData: public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	int32 StackCapacity = 1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+	TObjectPtr<UTexture2D> IconTexture;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
+	TObjectPtr<UPaperSprite> IconSprite;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
 	FGameplayTag ItemTag = FGameplayTag::EmptyTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item Data")
-	FString Description = TEXT("No Description");
+	FText Description = FText::GetEmpty();
 };

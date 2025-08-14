@@ -9,6 +9,9 @@
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 #include "Components/CapsuleComponent.h"
+#include "Player/PEPlayerController.h"
+#include "Items/Weapons/PEWeaponBase.h"
+#include "Core/PEGameModeBase.h"
 
 APEAICharacter::APEAICharacter()
 {
@@ -115,8 +118,33 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 		}
 	}
 	
+	if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(DamageCauser))
+	{
+		if (APawn* WeaponOwner = Cast<APawn>(WeaponBase->GetItemOwner()))
+		{
+			if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(WeaponOwner->GetController()))
+			{
+				if (APEGameModeBase* PEGameModeBase = Cast<APEGameModeBase>(PEPlayerController->GetWorld()->GetAuthGameMode()))
+				{
+					if (bIsDead)
+					{
+						int32 KillScore = 500; // TODO: 
+						PEGameModeBase->OnKillEnemy(PEPlayerController, KillScore);
+						PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
+						PEPlayerController->PlayKillMarkerAnimOfHUDWidget();
+					}
+					else
+					{
+						PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
+						PEPlayerController->PlayHitMarkerAnimOfHUDWIdget();
+					}
+				}
+			}
+		}
+	}
 	return Damage;
 }
+
 bool APEAICharacter::PerformAttack()
 {
 	if (!AttackComponent || bIsDead || bIsAttacking)

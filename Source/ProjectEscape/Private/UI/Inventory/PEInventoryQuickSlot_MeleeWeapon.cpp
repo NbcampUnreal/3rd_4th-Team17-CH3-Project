@@ -7,7 +7,7 @@
 void UPEInventoryQuickSlotWidget_MeleeWeapon::SetSlot(FInventoryMeleeWeaponInfo& WeaponInfo)
 {
 	const FPEGameplayTags& ItemTags = FPEGameplayTags::Get();
-	if (WeaponInfo.ItemTag.MatchesTag(SlotTag))
+	if (WeaponInfo.ItemTag.MatchesTag(SlotCategoryTag))
 	{
 		if (WeaponInfo.ItemTexture)
 		{
@@ -21,6 +21,7 @@ void UPEInventoryQuickSlotWidget_MeleeWeapon::SetSlot(FInventoryMeleeWeaponInfo&
 		{
 			SetImageFromTexture(nullptr);
 		}
+		SetSlotTag(WeaponInfo.ItemTag);
 		SetShortCutBoxVisiblity(true);
 		IsVaildSlot = true;
 	}

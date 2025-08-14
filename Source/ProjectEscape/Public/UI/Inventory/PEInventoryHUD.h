@@ -19,13 +19,13 @@ public:
 	virtual void NativeOnInitialized() override;
 
 	// Interface, To be confirmed.
-	void SetupComponentReference(UActorComponent* InIntenvoryBagComponent, UActorComponent* InEquipmentQuickSlotComponent);
+	void SetupComponentReference(UActorComponent* InIntenvoryBagComponent, UActorComponent* InEquipmentQuickSlotComponent, AActor* InHero);
 
 	UFUNCTION(BlueprintCallable)
 	void UpdateInventoryUI(UPARAM(ref) FInventoryInfo& InInventoryInfo);
 
 	UFUNCTION(BlueprintCallable)
-	void DropItemFromBagToLand(int32 Index);
+	void DropItemFromBagToLand(const FGameplayTag& Tag, const int32& Count);
 
 	UFUNCTION(BlueprintCallable)
 	void UnequipWeaponAndDropToLand(FGameplayTag WeaponTag);
@@ -34,10 +34,10 @@ public:
 	void RemoveItemFromQucikSlotAndDropToLand(FGameplayTag WeaponTag);
 
 	UFUNCTION(BlueprintCallable)
-	void AddItemFromBagToQuickSlot(FGameplayTag ItemTag, int32 FromSlotIndex);
+	void AddItemFromBagToQuickSlot(FGameplayTag ItemTag);
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveItemFromQuickSlotToBag(FGameplayTag ItemTag, int32 ToSlotIndex);
+	void RemoveItemFromQuickSlotToBag(FGameplayTag ItemTag);
 
 	// Interface, To be confirmed.
 	UPROPERTY(BlueprintReadOnly)
@@ -46,6 +46,9 @@ public:
 	// Interface, To be confirmed.
 	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UActorComponent> EquipmentQuickSlotComponent;
+
+	UPROPERTY(BlueprintReadOnly)
+	TObjectPtr<AActor> Hero;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UPEInventoryBagSlot_Widget> BagSlotWidget;

@@ -11,6 +11,7 @@
 #include "Items/Components/PEInteractableComponent.h"
 #include "Characters/Hero/Interface/PEWeaponAttachable.h"
 #include "Characters/Hero/PEHero.h"
+#include "Player/PEPlayerController.h"
 
 APEWeaponBase::APEWeaponBase()
 {
@@ -242,6 +243,11 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 		else
 		{
 			PEHero->PlayFireWeaponAnimation(0);
+		}
+
+		if (APEPlayerController* PEPlayerController = PEHero->GetController<APEPlayerController>())
+		{
+			PEPlayerController->PlayAimAnimOfHUDWidget();
 		}
 	}
 

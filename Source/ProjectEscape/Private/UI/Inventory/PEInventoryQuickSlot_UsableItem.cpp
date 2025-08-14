@@ -7,8 +7,7 @@
 void UPEInventoryQuickSlotWidget_UsableItem::SetSlot(FInventoryUsableItemInfo& ItemInfo)
 {
 	const FPEGameplayTags& ItemTags = FPEGameplayTags::Get();
-	//if (ItemInfo.ItemTag.MatchesTag(ItemTags.Item_Things_Heal) || ItemInfo.ItemTag.MatchesTag(ItemTags.Item_Things_Grenade))
-	if (ItemInfo.ItemTag.MatchesTag(SlotTag))
+	if (ItemInfo.ItemTag.MatchesTag(SlotCategoryTag))
 	{
 		if (ItemInfo.ItemTexture)
 		{
@@ -22,6 +21,7 @@ void UPEInventoryQuickSlotWidget_UsableItem::SetSlot(FInventoryUsableItemInfo& I
 		{
 			SetImageFromTexture(nullptr);
 		}
+		SetSlotTag(ItemInfo.ItemTag);
 		SetStackCount(ItemInfo.StackCount, ItemInfo.MaxStackCount, ItemInfo.IsStackable);
 		SetShortCutBoxVisiblity(true);
 		IsVaildSlot = true;

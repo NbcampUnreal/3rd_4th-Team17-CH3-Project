@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "Interface/PEInteractManagerHandler.h"
 #include "Interface/PEQuickSlotHandler.h"
+#include "UI/Inventory/PEInventoryType.h"
 #include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
@@ -21,8 +22,9 @@ public:
 
 // Delegates
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnInventoryItemDrop, FGameplayTag, ItemTag, int32, DropCount);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryList, InventoryList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryChanged, FInventoryInfo&, InventoryInfo);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnInventoryItemUse, FGameplayTag, ItemTag);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnQuickSlotEquipmentDrop, FGameplayTag, EquipmentTag);
 
 class UCameraComponent;
 class UPEInteractManagerComponent;
@@ -82,7 +84,14 @@ protected:
 public:
 	virtual void HandEquipment(EPEEquipmentType EquipmentType) override;
 	virtual void DropHandEquipmentToWorld() override;
+
+	UFUNCTION()
+	virtual void HandleDropEquipmentToWorld(FGameplayTag EquipmentTag);
+	
 	UPEQuickSlotManagerComponent* GetQuickSlotManagerComponent() const;
+	
+	UPROPERTY(BlueprintAssignable, Category = "Inventory Events")
+	FOnQuickSlotEquipmentDrop OnQuickSlotEquipmentDrop;
 	
 	/* Inventroy 관련 섹션 */
 protected:
@@ -115,11 +124,23 @@ public:
 	virtual USceneComponent* GetAttackStartPoint() const override;
 	virtual UPEStorableItemComponent* GetStorableItemComponent(FGameplayTag Tag) const override;
 
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Combat", meta = (AllowPrivate))
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveAttackComponent;
 
+	/* UI 관련 섹션 */
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	FInventoryInfo CurrentInventoryList;
+
+	void SetInventoryBagInfo(const FInventoryInfo& InventoryInfo);
+	void SetQuickSlotInfo(const FInventoryInfo& InventoryInfo);
+	void BroadcastInventoryChanged();
+	
 	// AI Perception Stimulus Source 컴포넌트
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "AI Perception")
 	TObjectPtr<UAIPerceptionStimuliSourceComponent> AIPerceptionStimuliSourceComponent;
 

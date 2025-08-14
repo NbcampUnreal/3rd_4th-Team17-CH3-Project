@@ -7,7 +7,7 @@
 void UPEInventoryQuickSlotWidget_RangeWeapon::SetSlot(FInventoryRangeWeaponInfo& WeaponInfo)
 {
 	const FPEGameplayTags& ItemTags = FPEGameplayTags::Get();
-	if (WeaponInfo.ItemTag.MatchesTag(SlotTag))
+	if (WeaponInfo.ItemTag.MatchesTag(SlotCategoryTag))
 	{
 		if (WeaponInfo.ItemTexture)
 		{
@@ -21,6 +21,7 @@ void UPEInventoryQuickSlotWidget_RangeWeapon::SetSlot(FInventoryRangeWeaponInfo&
 		{
 			SetImageFromTexture(nullptr);
 		}
+		SetSlotTag(WeaponInfo.ItemTag);
 		SetAmmoCount(WeaponInfo.CurrentAmmo, WeaponInfo.TotalAmmo);
 		SetShortCutBoxVisiblity(true);
 		IsVaildSlot = true;
@@ -39,14 +40,7 @@ void UPEInventoryQuickSlotWidget_RangeWeapon::SetAmmoCount(int32 Current, int32 
 {
 	if (AmmoCountText)
 	{
-		if (Current > 0 && Total > 0)
-		{
-			FString FormatString = FString::Printf(TEXT("%d/%d"), Current, Total);
-			AmmoCountText->SetText(FText::FromString(FormatString));
-		}
-		else
-		{
-			AmmoCountText->SetText(FText::FromString(FString("")));
-		}
+		FString FormatString = FString::Printf(TEXT("%d/%d"), Current, Total);
+		AmmoCountText->SetText(FText::FromString(FormatString));
 	}
 }

@@ -18,6 +18,7 @@ void UPEStorableItemComponent::BeginPlay()
 	Super::BeginPlay();
 
 	ComponentOwnerInterface = GetOwner();
+	ItemStats = ComponentOwnerInterface->GetItemStats();
 }
 
 void UPEStorableItemComponent::OnItemPickedUp() const
@@ -109,6 +110,11 @@ int32 UPEStorableItemComponent::GetStackCapacity() const
 		return ComponentOwnerInterface->GetStackCapacity();
 	}
 	return 0; // 기본값 반환
+}
+
+FPEItemData UPEStorableItemComponent::GetItemStats() const
+{
+	return ItemStats;
 }
 
 
