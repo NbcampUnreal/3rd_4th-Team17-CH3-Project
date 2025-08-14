@@ -193,7 +193,6 @@ UPEUseableItemManagerComponent* APEHero::GetUseableItemManagerComponent() const
 
 void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 {
-	// Todo: 퀵슬롯으로 부터 아이템을 받은 다음 손에 장착
 	if (!QuickSlotManagerComponent || !UseableItemManagerComponent)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Required components are not initialized!"));
@@ -237,19 +236,19 @@ void APEHero::HandleDropEquipmentToWorld(FGameplayTag EquipmentTag)
 	{
 		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Primary, GetActorLocation(), GetActorRotation());
 	}
-	if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_SubWeapon)
+	else if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_SubWeapon)
 	{
 		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Secondary, GetActorLocation(), GetActorRotation());
 	}
-	if (EquipmentTag == GameplayTags.Item_Weapon_MeleeWeapon)
+	else if (EquipmentTag == GameplayTags.Item_Weapon_MeleeWeapon)
 	{
 		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Melee, GetActorLocation(), GetActorRotation());
 	}
-	if (EquipmentTag == GameplayTags.Item_Things_Heal)
+	else if (EquipmentTag == GameplayTags.Item_Things_Heal)
 	{
 		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
 	}
-	if ( EquipmentTag == GameplayTags.Item_Things_Grenade)
+	else if ( EquipmentTag == GameplayTags.Item_Things_Grenade)
 	{
 		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Throwable, GetActorLocation(), GetActorRotation());
 	}
