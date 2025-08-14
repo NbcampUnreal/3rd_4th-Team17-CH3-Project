@@ -24,11 +24,15 @@ APEItemBase::APEItemBase()
 	StackCount = 1;
 }
 
+void APEItemBase::PostLoad()
+{
+	Super::PostLoad();
+	InitializeFromDataTable();
+}
+
 void APEItemBase::BeginPlay()
 {
-	Super::BeginPlay();
-
-	InitializeFromDataTable();
+	Super::BeginPlay();	
 	StorableItemComponent->SetItemTag(ItemStats.ItemTag);
 }
 
