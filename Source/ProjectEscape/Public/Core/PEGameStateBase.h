@@ -25,6 +25,13 @@ public:
 		return GameResult;
 	}
 
+	void Reset();
+	void AddDamageDealt(float Damage);
+	void AddKillScore(int32 KillScore);
+	void SetGameStart(float TimeSeconds);
+	void SetGameEnd(float TimeSeconds);
+	void AddTotalScore(int32 TotalScore);
+
 protected:
 	FGameResult GameResult;
 };
