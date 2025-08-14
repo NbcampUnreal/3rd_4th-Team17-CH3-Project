@@ -30,7 +30,7 @@ public:
 	void ClearAllWidget();
 
 	UFUNCTION()
-	void OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint);
+	void OnChangeHealthPoint(float OldValue, float HealthPoint, float MaxHealthPoint);
 
 	UFUNCTION()
 	void OnChangeStamina(float HealthPoint, float MaxHealthPoint);
@@ -40,6 +40,12 @@ public:
 
 	UFUNCTION()
 	void OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo);
+
+	UFUNCTION()
+	void OnChangeTotalScore(int32 TotalScore);
+
+	UFUNCTION()
+	void OnChangeMissionInfo(FText MissionInfo);
 
 	void PlayDamageAnimOfHUDWidget();
 	void PlayHitMarkerAnimOfHUDWIdget();

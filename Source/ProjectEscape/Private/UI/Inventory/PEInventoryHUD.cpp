@@ -78,19 +78,19 @@ void UPEInventoryHUD::RemoveItemFromQucikSlotAndDropToLand(FGameplayTag ItemTag)
 	// To Be Added.
 }
 
-void UPEInventoryHUD::AddItemFromBagToQuickSlot(FGameplayTag ItemTag, int32 FromSlotIndex)
+void UPEInventoryHUD::AddItemFromBagToQuickSlot(FGameplayTag ItemTag)
 {
 	FString TagString = ItemTag.ToString();
-	UE_LOG(LogTemp, Display, TEXT("[DEBUG] AddItemFromBagToQuickSlot Tag: %s, Index: %d"), *TagString, FromSlotIndex);
+	UE_LOG(LogTemp, Display, TEXT("[DEBUG] AddItemFromBagToQuickSlot Tag: %s"), *TagString);
 
 	// Notify to Character Component
 	// To Be Added.
 }
 
-void UPEInventoryHUD::RemoveItemFromQuickSlotToBag(FGameplayTag ItemTag, int32 ToSlotIndex)
+void UPEInventoryHUD::RemoveItemFromQuickSlotToBag(FGameplayTag ItemTag)
 {
 	FString TagString = ItemTag.ToString();
-	UE_LOG(LogTemp, Display, TEXT("[DEBUG] RemoveItemFromQuickSlotToBag Tag: %s, Index: %d"), *TagString, ToSlotIndex);
+	UE_LOG(LogTemp, Display, TEXT("[DEBUG] RemoveItemFromQuickSlotToBag Tag: %s"), *TagString);
 
 	// Notify to Character Component
 	// To Be Added.
