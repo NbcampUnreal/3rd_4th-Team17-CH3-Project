@@ -68,12 +68,6 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
 
     // 플레이어와의 거리 체크
     float DistanceToPlayer = FVector::Dist(MyPawn->GetActorLocation(), TargetActor->GetActorLocation());
-    if (DistanceToPlayer > CharacterAttackRange)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Attack Fail: Player too far (%.1f > %.1f)"), DistanceToPlayer, CharacterAttackRange);
-        return EBTNodeResult::Failed;
-    }
-
     float CurrentTime = GetWorld()->GetTimeSeconds();
     float LastAttackTime = BlackboardComp->GetValueAsFloat(TEXT("LastAttackTime"));
 
