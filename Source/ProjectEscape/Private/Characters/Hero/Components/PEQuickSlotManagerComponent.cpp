@@ -115,7 +115,7 @@ bool UPEQuickSlotManagerComponent::ContainWeaponType(EPEEquipmentType EquipmentT
 	return false;
 }
 
-void UPEQuickSlotManagerComponent::DropHandEquipmentToWorld(EPEEquipmentType EquipmentType, const FVector& Location, const FRotator& Rotation)
+void UPEQuickSlotManagerComponent::DropEquipmentToWorld(EPEEquipmentType EquipmentType, const FVector& Location, const FRotator& Rotation)
 {
 	if (QuickSlotItems.Contains(EquipmentType))
 	{

@@ -39,7 +39,7 @@ void APEPlayerController::BeginPlay()
 		Hero->OnInventoryChanged.AddDynamic(this, &APEPlayerController::OnInventoryAndQuickSlotUpdate);
 	}
 
-	EquipmentInitialization();
+	OnEquipmentEmptyHand();
 }
 
 void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
@@ -365,7 +365,7 @@ void APEPlayerController::ShowGameClearWidget(FGameResult GameResult)
 	}
 }
 
-void APEPlayerController::EquipmentInitialization()
+void APEPlayerController::OnEquipmentEmptyHand()
 {
 	FPEEquipmentInfo EquipmentInfo;
 	EquipmentInfo.EquipmentName = FName(TEXT(" "));

@@ -235,23 +235,23 @@ void APEHero::HandleDropEquipmentToWorld(FGameplayTag EquipmentTag)
 	const FPEGameplayTags& GameplayTags = FPEGameplayTags::Get();
 	if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_MainWeapon)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Primary, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Primary, GetActorLocation(), GetActorRotation());
 	}
 	else if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_SubWeapon)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Secondary, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Secondary, GetActorLocation(), GetActorRotation());
 	}
 	else if (EquipmentTag == GameplayTags.Item_Weapon_MeleeWeapon)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Melee, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Melee, GetActorLocation(), GetActorRotation());
 	}
 	else if (EquipmentTag == GameplayTags.Item_Things_Heal)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
 	}
 	else if ( EquipmentTag == GameplayTags.Item_Things_Grenade)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Throwable, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Throwable, GetActorLocation(), GetActorRotation());
 	}
 }
 
