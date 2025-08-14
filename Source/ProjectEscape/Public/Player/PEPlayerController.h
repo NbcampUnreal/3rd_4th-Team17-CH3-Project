@@ -30,7 +30,7 @@ public:
 	void ClearAllWidget();
 
 	UFUNCTION()
-	void OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint);
+	void OnChangeHealthPoint(float OldValue, float HealthPoint, float MaxHealthPoint);
 
 	UFUNCTION()
 	void OnChangeStamina(float HealthPoint, float MaxHealthPoint);

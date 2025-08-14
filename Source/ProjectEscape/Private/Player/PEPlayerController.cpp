@@ -40,9 +40,12 @@ void APEPlayerController::BeginPlay()
 	}
 }
 
-void APEPlayerController::OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint)
+void APEPlayerController::OnChangeHealthPoint(float OldValue, float HealthPoint, float MaxHealthPoint)
 {
-	PlayDamageAnimOfHUDWidget();
+	if (OldValue > HealthPoint)
+	{
+		PlayDamageAnimOfHUDWidget();
+	}
 	ChangeHealthBar(HealthPoint, MaxHealthPoint);
 }
 
