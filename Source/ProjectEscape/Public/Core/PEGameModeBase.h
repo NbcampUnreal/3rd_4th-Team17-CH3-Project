@@ -22,10 +22,10 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void GameClear(APlayerController* PlayerController);
 
-	void OnDamageDealt(float Damage);
-	void OnKillEnemy(int32 KillScore);
+	void OnDamageDealt(APlayerController* PlayerController, float Damage);
+	void OnKillEnemy(APlayerController* PlayerController, int32 KillScore);
 	void OnGameStart(float TimeSeconds);
-	void OnGameEnd(float TimeSeconds, bool IsClear);
+	void OnGameEnd(APlayerController* PlayerController, float TimeSeconds, bool IsClear);
 
 protected:
 	FTimerHandle GameEndTimer;

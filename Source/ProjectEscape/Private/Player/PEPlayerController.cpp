@@ -38,6 +38,16 @@ void APEPlayerController::BeginPlay()
 	{
 		Hero->OnInventoryChanged.AddDynamic(this, &APEPlayerController::OnInventoryAndQuickSlotUpdate);
 	}
+
+	// Score Init
+	if (GetWorld())
+	{
+		if (APEGameStateBase* PEGameStateBsae = GetWorld()->GetGameState<APEGameStateBase>())
+		{
+			OnChangeTotalScore(PEGameStateBsae->GetGameResult().TotalScore);
+		}
+	}
+	
 }
 
 void APEPlayerController::OnChangeHealthPoint(float OldValue, float HealthPoint, float MaxHealthPoint)
@@ -146,6 +156,33 @@ void APEPlayerController::OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo)
 	}
 }
 
+void APEPlayerController::OnChangeTotalScore(int32 TotalScore)
+{
+	if (HUDWidget)
+	{
+		if (UTextBlock* ScoreText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName("Score")))
+		{
+			ScoreText->SetText(FText::FromString(FString::FromInt(TotalScore)));
+		}
+	}
+}
+
+void APEPlayerController::OnChangeMissionInfo(FText MissionInfo)
+{
+	if (HUDWidget)
+	{
+		if (UTextBlock* MissionText = Cast<UTextBlock>(HUDWidget->GetWidgetFromName(TEXT("Mission"))))
+		{
+
+			FFormatNamedArguments Args;
+			Args.Add(TEXT("Mission"), MissionInfo);
+
+			FText FormatText = FText::Format(NSLOCTEXT("HUDWidget", "MissionFormat", "{Mission}"), Args);
+
+			MissionText->SetText(FormatText);
+		}
+	}
+}
 
 void APEPlayerController::ChangeHealthBar(float HealthPoint, float MaxHealthPoint)
 {

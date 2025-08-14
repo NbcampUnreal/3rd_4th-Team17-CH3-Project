@@ -1,4 +1,5 @@
 #include "Core/PEGameStateBase.h"
+#include "Player/PEPlayerController.h"
 
 void APEGameStateBase::Reset()
 {
@@ -29,7 +30,11 @@ void APEGameStateBase::SetGameEnd(float TimeSeconds)
 	GameResult.GameRunTime = GameResult.GameEndTime - GameResult.GameStartTime;
 }
 
-void APEGameStateBase::AddTotalScore(int32 TotalScore)
+void APEGameStateBase::AddTotalScore(APlayerController* PlayerController, int32 TotalScore)
 {
 	GameResult.TotalScore += TotalScore;
+	if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(PlayerController))
+	{
+		PEPlayerController->OnChangeTotalScore(GameResult.TotalScore);
+	}
 }

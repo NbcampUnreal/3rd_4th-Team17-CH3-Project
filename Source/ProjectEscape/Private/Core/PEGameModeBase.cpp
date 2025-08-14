@@ -21,7 +21,7 @@ void APEGameModeBase::GameOver(APlayerController* PlayerController)
 {
 	if (PlayerController && GetWorld())
 	{
-		OnGameEnd(GetWorld()->TimeSeconds, false);
+		OnGameEnd(PlayerController, GetWorld()->TimeSeconds, false);
 		if (APawn* Pawn = PlayerController->GetPawn())
 		{
 			Pawn->Destroy();
@@ -36,7 +36,7 @@ void APEGameModeBase::GameClear(APlayerController* PlayerController)
 {
 	if (PlayerController && GetWorld())
 	{
-		OnGameEnd(GetWorld()->TimeSeconds, true);
+		OnGameEnd(PlayerController, GetWorld()->TimeSeconds, true);
 		if (APawn* Pawn = PlayerController->GetPawn())
 		{
 			Pawn->Destroy();
@@ -47,7 +47,7 @@ void APEGameModeBase::GameClear(APlayerController* PlayerController)
 	}
 }
 
-void APEGameModeBase::OnDamageDealt(float Damage)
+void APEGameModeBase::OnDamageDealt(APlayerController* PlayerController, float Damage)
 {
 	static const int DamageScoreMultiplier = 2;
 	if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
@@ -55,11 +55,11 @@ void APEGameModeBase::OnDamageDealt(float Damage)
 		PEGameStateBase->AddDamageDealt(Damage);
 
 		int32 DamageScore = (int32)(Damage * DamageScoreMultiplier);
-		PEGameStateBase->AddTotalScore(DamageScore);
+		PEGameStateBase->AddTotalScore(PlayerController, DamageScore);
 	}
 }
 
-void APEGameModeBase::OnKillEnemy(int32 KillScore)
+void APEGameModeBase::OnKillEnemy(APlayerController* PlayerController, int32 KillScore)
 {
 	if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
 	{
@@ -76,7 +76,7 @@ void APEGameModeBase::OnGameStart(float TimeSeconds)
 	}
 }
 
-void APEGameModeBase::OnGameEnd(float TimeSeconds, bool IsClear)
+void APEGameModeBase::OnGameEnd(APlayerController* PlayerController, float TimeSeconds, bool IsClear)
 {
 	static const float TimeBonusBasis = 60.0f * 20; // 20 min
 	static const float TimeBonusScoreMultiplier = 50.0f; // 600 sec left -> 30000 score bonus
@@ -87,7 +87,7 @@ void APEGameModeBase::OnGameEnd(float TimeSeconds, bool IsClear)
 		if (IsClear)
 		{
 			int32 TimeBonusScore = (RemainTime > 0) ? (RemainTime * TimeBonusScoreMultiplier) : 0;
-			PEGameStateBase->AddTotalScore(TimeBonusScore);
+			PEGameStateBase->AddTotalScore(PlayerController, TimeBonusScore);
 		}
 	}
 }

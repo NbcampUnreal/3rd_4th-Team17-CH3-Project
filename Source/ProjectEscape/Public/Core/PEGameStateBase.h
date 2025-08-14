@@ -30,7 +30,7 @@ public:
 	void AddKillScore(int32 KillScore);
 	void SetGameStart(float TimeSeconds);
 	void SetGameEnd(float TimeSeconds);
-	void AddTotalScore(int32 TotalScore);
+	void AddTotalScore(APlayerController* PlayerController, int32 TotalScore);
 
 protected:
 	FGameResult GameResult;
