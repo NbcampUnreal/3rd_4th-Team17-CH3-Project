@@ -31,8 +31,12 @@ APEAICharacter::APEAICharacter()
 		UE_LOG(LogTemp, Warning, TEXT("AICharacterMovementComponent is nullptr!"));
 	}
 
+	
+
 	AttackComponent = CreateDefaultSubobject<UPEAttackHitscanComponent>(TEXT("AttackComponent"));
 	ReceiveComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveComponent"));
+	ReceiveComponent->SetHiddenInGame(false);
+	ReceiveComponent->SetupAttachment(RootComponent);
 }
 
 void APEAICharacter::PreInitializeComponents()
@@ -73,8 +77,8 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 	if (Movement)
 	{
 		Movement->MaxWalkSpeed = NewSpeed; // Update the walk speed
-		WalkSpeed = NewSpeed; // Update the WalkSpeed property
-		UE_LOG(LogTemp, Warning, TEXT("AICharacter movement speed set to: %f"), WalkSpeed);
+		//WalkSpeed = NewSpeed; // Update the WalkSpeed property
+		UE_LOG(LogTemp, Warning, TEXT("AICharacter movement speed set to: %f"), NewSpeed);
 	}
 	else
 	{
