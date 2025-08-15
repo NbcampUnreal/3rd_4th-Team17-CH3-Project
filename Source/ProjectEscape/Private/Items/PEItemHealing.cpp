@@ -29,6 +29,11 @@ void APEItemHealing::BeginPlay()
 	}
 }
 
+FPEWeaponData APEItemHealing::GetEquipmentStats()
+{
+	return EquipmentStats;
+}
+
 AActor* APEItemHealing::GetItemOwner() const
 {
 	return ItemOwnerActor;
@@ -102,7 +107,12 @@ FPEEquipmentInfo APEItemHealing::CreateCurrentEquipmentInfo() const
 {
 	FPEEquipmentInfo EquipmentInfo;
 	//TODO: Weapon Data Table을 재활용
-	
+	EquipmentInfo.EquipmentName = EquipmentStats.Name;
+	EquipmentInfo.AmmoCount = FString::Printf(TEXT(" "));
+	EquipmentInfo.EquipmentIcon = EquipmentStats.IconTexture2D;
+	EquipmentInfo.EquipmentDescription = FString::Printf(TEXT("Damage: %d, Range: %.1f"), 
+		EquipmentStats.Damage, EquipmentStats.Range);
+
 	return EquipmentInfo;
 }
 

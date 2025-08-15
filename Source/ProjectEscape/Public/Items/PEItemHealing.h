@@ -33,6 +33,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Weapon Stats")
 	FPEWeaponData EquipmentStats;
 
+public:
+	FPEWeaponData GetEquipmentStats();
+	
 	/* Quick Slot 관련 섹션 */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Quick Slot")

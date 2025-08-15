@@ -8,6 +8,7 @@
 #include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Weapons/PEWeaponBase.h"
 #include "Characters/Hero/PEHero.h"
+#include "Items/PEItemHealing.h"
 
 /*
  * 퀵슬롯에서 필요한 기능
@@ -200,9 +201,10 @@ FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
 	
 	if (QuickSlotItems.Contains(EPEEquipmentType::Healing) && QuickSlotItems[EPEEquipmentType::Healing])
 	{
-		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Healing]))
+		//TODO: 각각의 클래스로 캐스트하는 것이 아닌 QuickSlotItem Interface를 구현한 클래스로 캐스트하여 처리할 수 있도록 개선 필요
+		if (APEItemHealing* HealingItem = Cast<APEItemHealing>(QuickSlotItems[EPEEquipmentType::Healing]))
 		{
-			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
+			const FPEWeaponData& WeaponStats = HealingItem->GetEquipmentStats();
 			
 			QuickSlotInfo.QuickHeal.ItemTexture = WeaponStats.IconTexture2D; 
 			QuickSlotInfo.QuickHeal.ItemDescription = FText::FromString(WeaponStats.Description);
