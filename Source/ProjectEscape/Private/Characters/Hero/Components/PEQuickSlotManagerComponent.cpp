@@ -209,6 +209,8 @@ FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
 			QuickSlotInfo.QuickHeal.ItemTexture = WeaponStats.IconTexture2D; 
 			QuickSlotInfo.QuickHeal.ItemDescription = FText::FromString(WeaponStats.Description);
 			QuickSlotInfo.QuickHeal.ItemTag = GameplayTags.Item_Things_Heal;
+			QuickSlotInfo.QuickHeal.StackCount = HealingItem->GetItemCount();
+			QuickSlotInfo.QuickHeal.MaxStackCount = HealingItem->GetStackCapacity();
 			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Healing in QuickSlotInfo"));
 		}
 	}

@@ -351,7 +351,6 @@ void APEHero::UseItemByInventory(FGameplayTag ItemTag)
 	if (InventoryManagerComponent && QuickSlotManagerComponent)
 	{
 		AActor* Actor = InventoryManagerComponent->GetItemByTag(ItemTag)->GetOwner();
-		InventoryManagerComponent->DropItemFromInventoryByTag(1, ItemTag);
 		if (UPEQuickSlotItemComponent* QuickSlotItemComponent = Actor->FindComponentByClass<UPEQuickSlotItemComponent>())
 		{
 			// 컴포넌트가 존재할 때 실행
