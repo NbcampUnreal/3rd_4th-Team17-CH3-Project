@@ -82,9 +82,15 @@ void UPEInventoryHUD::AddItemFromBagToQuickSlot(FGameplayTag ItemTag)
 {
 	FString TagString = ItemTag.ToString();
 	UE_LOG(LogTemp, Display, TEXT("[DEBUG] AddItemFromBagToQuickSlot Tag: %s"), *TagString);
-
-	// Notify to Character Component
-	// To Be Added.
+	
+	if (APEHero* HeroActor = Cast<APEHero>(Hero))
+	{
+		HeroActor->UseItemByInventory(ItemTag);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("[DEBUG] Failed to cast Hero to APEHero"));
+	}
 }
 
 void UPEInventoryHUD::RemoveItemFromQuickSlotToBag(FGameplayTag ItemTag)

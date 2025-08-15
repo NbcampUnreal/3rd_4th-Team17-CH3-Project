@@ -347,7 +347,16 @@ void APEHero::HandleInventoryItemUse(FGameplayTag ItemTag)
 void APEHero::UseItemByInventory(FGameplayTag ItemTag)
 {
 	// NOTE: 인벤토리에서 아이템에 마우스 오른쪽 버튼을 눌렀을 때의 액션이 이곳에 호출됩니다.
-	//			ItemBase는 해당 함수를 비워둡니다.
+
+	if (InventoryManagerComponent && QuickSlotManagerComponent)
+	{
+		AActor* Actor = InventoryManagerComponent->GetItemByTag(ItemTag)->GetOwner();
+		if (UPEQuickSlotItemComponent* QuickSlotItemComponent = Cast<UPEQuickSlotItemComponent>(Actor))
+		{
+			QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), Actor);
+		}
+		InventoryManagerComponent->DropItemFromInventoryByTag(1, ItemTag);
+	}
 }
 
 bool APEHero::HasWeapon() const

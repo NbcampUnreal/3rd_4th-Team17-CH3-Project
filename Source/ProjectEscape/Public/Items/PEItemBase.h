@@ -78,4 +78,7 @@ public:
 	virtual void AddItemCount(int32 Count) override;
 	virtual void ReduceItemCount(int32 Count) override;
 	virtual void DestoryItem() override;
+
+	/* UI 관련 섹션 */
+	virtual void OnUseFromInventory();
 };
