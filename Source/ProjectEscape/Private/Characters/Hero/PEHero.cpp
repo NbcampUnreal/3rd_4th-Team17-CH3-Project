@@ -360,6 +360,11 @@ void APEHero::UseItemByInventory(FGameplayTag ItemTag)
 	}
 }
 
+UPEInventoryManagerComponent* APEHero::GetInventoryManagerComponent() const
+{
+	return InventoryManagerComponent;
+}
+
 bool APEHero::HasWeapon() const
 {
 	if (UseableItemManagerComponent)

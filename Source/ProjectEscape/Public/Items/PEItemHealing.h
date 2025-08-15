@@ -21,6 +21,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	/* Stat 관련 섹션 */
 protected:
@@ -77,4 +78,15 @@ protected:
 
 	void AttachToOwner();
 	void DetachFromOwner();
+
+	/* Healing 관련 섹션 */
+private:
+	void PerformHealing(AActor* Holder);
+	void ClearHealingTimer();
+	
+	UPROPERTY()
+	FTimerHandle HealingTimerHandle;
+
+	bool bIsReleasedButton;
+	bool bIsHealing;
 };

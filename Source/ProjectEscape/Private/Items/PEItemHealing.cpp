@@ -4,15 +4,22 @@
 #include "Items/PEItemHealing.h"
 
 #include "Characters/Hero/PEHero.h"
+#include "Characters/Hero/Components/PEInventoryManagerComponent.h"
 #include "Core/PELogChannels.h"
 #include "Items/Components/PEQuickSlotItemComponent.h"
 #include "Items/Components/PEUseableComponent.h"
+#include "Player/PEPlayerState.h"
 
+
+class APEPlayerState;
 
 APEItemHealing::APEItemHealing()
 {
 	QuickSlotItemComponent = CreateDefaultSubobject<UPEQuickSlotItemComponent>(TEXT("QuickSlotItemComponent"));
 	UseableComponent = CreateDefaultSubobject<UPEUseableComponent>(TEXT("UseableComponent"));
+
+	bIsReleasedButton = false;
+	bIsHealing = false;
 }
 
 void APEItemHealing::BeginPlay()
@@ -29,6 +36,12 @@ void APEItemHealing::BeginPlay()
 	}
 }
 
+void APEItemHealing::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	ClearHealingTimer();
+	Super::EndPlay(EndPlayReason);
+}
+
 FPEWeaponData APEItemHealing::GetEquipmentStats()
 {
 	return EquipmentStats;
@@ -42,6 +55,7 @@ AActor* APEItemHealing::GetItemOwner() const
 void APEItemHealing::OnDropped(const FVector& Location, const FRotator& Rotation)
 {
 	BroadcastEmptyHUDState();
+	ClearHealingTimer();
 	
 	ItemOwnerActor = nullptr;
 	OnRelease();
@@ -66,12 +80,42 @@ EPEEquipmentType APEItemHealing::GetEquipmentType() const
 
 void APEItemHealing::DoPrimaryAction(AActor* Holder)
 {
-	//Todo: Heal logic here
-	UE_LOG(LogPE, Log, TEXT("APEItemHealing::DoPrimaryAction called"));
+	if (Holder && !bIsHealing)
+	{
+		bIsHealing = true;
+		bIsReleasedButton = false;
+		// 기존 타이머가 있다면 클리어
+		if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(HealingTimerHandle))
+		{
+			GetWorld()->GetTimerManager().ClearTimer(HealingTimerHandle);
+		}
+		
+		// ReloadTime 후에 PerformHealing 실행 (Holder를 직접 캡처)
+		if (GetWorld())
+		{
+			GetWorld()->GetTimerManager().SetTimer(
+				HealingTimerHandle,
+				[this, Holder]()
+				{
+					PerformHealing(Holder);
+				},
+				EquipmentStats.ReloadTime,
+				false
+			);
+			
+			UE_LOG(LogPE, Log, TEXT("Healing scheduled in %f seconds"), EquipmentStats.ReloadTime);
+		}
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("Holder is null in DoPrimaryAction"));
+	}
 }
 
 void APEItemHealing::CompletePrimaryAction(AActor* Holder)
 {
+	bIsHealing = false;
+	bIsReleasedButton = true;
 }
 
 void APEItemHealing::DoSecondaryAction(AActor* Holder)
@@ -91,6 +135,7 @@ void APEItemHealing::OnHand(AActor* NewOwner)
 
 void APEItemHealing::OnRelease()
 {
+	ClearHealingTimer();
 
 	DetachFromOwner();
 	
@@ -194,5 +239,41 @@ void APEItemHealing::DetachFromOwner()
 	}
 }
 
+void APEItemHealing::PerformHealing(AActor* Holder)
+{
+	if (bIsReleasedButton)
+	{
+		bIsReleasedButton = false;
+		return;
+	}
+	
+	if (Holder)
+	{
+		if (APEHero* Hero = Cast<APEHero>(Holder))
+		{
+			Hero->GetPlayerState<APEPlayerState>()->IncreaseHealthPoint(EquipmentStats.Damage);
+			if (ItemCount <= 1)
+			{
+				Hero->DropHandEquipmentToWorld();
+			}
+			Hero->GetInventoryManagerComponent()->ReduceItemFromInventoryByTag(1, ItemStats.ItemTag);
+			UE_LOG(LogPE, Log, TEXT("Healed %s by %d"), *Hero->GetName(), EquipmentStats.Damage);
+		}
+		else
+		{
+			UE_LOG(LogPE, Warning, TEXT("Holder is not APEHero"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("Holder is null"));
+	}
+}
 
-
+void APEItemHealing::ClearHealingTimer()
+{
+	if (GetWorld() && GetWorld()->GetTimerManager().IsTimerActive(HealingTimerHandle))
+	{
+		GetWorld()->GetTimerManager().ClearTimer(HealingTimerHandle);
+	}
+}
