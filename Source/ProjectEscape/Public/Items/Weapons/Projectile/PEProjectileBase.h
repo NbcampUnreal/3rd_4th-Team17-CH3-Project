@@ -41,7 +41,7 @@ protected:
 
 	/* Projectile 관련 섹션 */
 public:
-	void Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
+	virtual void Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Projectile")

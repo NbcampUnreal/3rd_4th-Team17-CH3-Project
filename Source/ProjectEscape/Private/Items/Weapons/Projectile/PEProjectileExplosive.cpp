@@ -21,13 +21,29 @@ void APEProjectileExplosive::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
 	UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	PerformExplosion();
+}
+
+void APEProjectileExplosive::PerformExplosion()
+{
+	UGameplayStatics::ApplyRadialDamage(
+		GetWorld(),
+		ProjectileStats.DamageAmount,
+		GetActorLocation(),
+		ProjectileStats.ExplosionRadius,
+		UDamageType::StaticClass(),
+		TArray<AActor*>(), // 무시할 액터들
+		this,              // 데미지 원인자
+		GetInstigatorController(),
+		true,              // 풀 데미지 적용
+		ProjectileStats.CollisionChannel
+	);
 	
 	if (HitEffect)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(
 			GetWorld(),
 			HitEffect,
-			Hit.Location
+			GetActorLocation()
 		);
 	}
 
@@ -37,27 +53,8 @@ void APEProjectileExplosive::OnHit(UPrimitiveComponent* HitComponent, AActor* Ot
 		UGameplayStatics::PlaySoundAtLocation(
 			GetWorld(),
 			HitSound,
-			Hit.Location
+			GetActorLocation()
 		);
 	}
-}
-
-void APEProjectileExplosive::PerformExplosion()
-{
-	float ExplosionRadius = 500.0f;
-	
-	UGameplayStatics::ApplyRadialDamage(
-		GetWorld(),
-		ProjectileStats.DamageAmount,
-		GetActorLocation(),
-		ExplosionRadius,
-		UDamageType::StaticClass(),
-		TArray<AActor*>(), // 무시할 액터들
-		this,              // 데미지 원인자
-		GetInstigatorController(),
-		true,              // 풀 데미지 적용
-		ProjectileStats.CollisionChannel
-	);
-
 	OnProjectileExpired();
 }
