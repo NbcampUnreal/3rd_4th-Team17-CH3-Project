@@ -59,4 +59,11 @@ protected:
 
 	UFUNCTION()
 	void OnProjectileExpired();
+
+	/* Effect 관련 섹션 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
+	UParticleSystem* HitEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
+	USoundBase* HitSound;
 };
