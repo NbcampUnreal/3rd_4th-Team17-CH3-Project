@@ -25,7 +25,7 @@ public:
 
 	void StartBehaviorTree();
 	void EndInvestigating();
-
+	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
 	float SightRadius = 1500.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
@@ -33,7 +33,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
 	float SightAngle = 90.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI|Sight")
-	float SightDuration = 5.0f;
+	float SightDuration = 5.0f;*/
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "AI")
 	float InvestigateDuration = 5.0f; // 플레이어를 놓쳤을 때 조사하는 시간

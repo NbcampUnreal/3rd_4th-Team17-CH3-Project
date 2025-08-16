@@ -62,7 +62,7 @@ void APEAICharacter::BeginPlay()
 
 	EnemyHealth = EnemyMaxHealth;
 
-	//ì• ë‹ˆë©”ì´ì…˜ ëª½íƒ€ì£¼ ì™„ë£Œ ë¸ë¦¬ê²Œì´íŠ¸ ë°”ì¸ë”© ì¶”ê°€
+	//¾Ö´Ï¸ÞÀÌ¼Ç ¸ùÅ¸ÁÖ ¿Ï·á µ¨¸®°ÔÀÌÆ® ¹ÙÀÎµù Ãß°¡
 		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 		{
 			if (AttackMontage)
@@ -91,7 +91,7 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 
 void APEAICharacter::BeginDestroy()
 {
-	// AI ì‚¬ë§ ì‹œ ë¸ë¦¬ê²Œì´íŠ¸ ë¸Œë¡œë“œìºìŠ¤íŠ¸
+	// AI »ç¸Á ½Ã µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
 	OnPawnDeath.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Destory"));
 	Super::BeginDestroy();
@@ -111,8 +111,8 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 			{
 				EnemyHealth = 0.0f;
 				UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
-				OnPawnDeath.Broadcast(); // AI ì‚¬ë§ ì‹œ ë¸ë¦¬ê²Œì´íŠ¸ ë¸Œë¡œë“œìºìŠ¤íŠ¸
-				Die(); // ì‚¬ë§ ì²˜ë¦¬
+				OnPawnDeath.Broadcast(); // AI »ç¸Á ½Ã µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
+				Die(); // »ç¸Á Ã³¸®
 			}
 
 		}
@@ -169,15 +169,21 @@ void APEAICharacter::Die()
 	PlayDeathAnimation();
 	UE_LOG(LogTemp, Warning, TEXT("%s has died!"), *GetName());
 
-	// ì½œë¦¬ì „ ë¹„í™œì„±í™”
+	// ÄÝ¸®Àü ºñÈ°¼ºÈ­
 	SetActorEnableCollision(false);
 
-	// 3ì´ˆ í›„ íŒŒê´´
+	// 3ÃÊ ÈÄ ÆÄ±«
 	SetLifeSpan(3.0f);
 }
 
 void APEAICharacter::PlayAttackAnimation()
 {
+	if (!AttackMontage)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AttackMontage is nullptr!"));
+		return;
+	}
+
 	if (!AttackMontage || bIsDead || bIsAttacking) return;
 
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
@@ -194,10 +200,10 @@ void APEAICharacter::PlayDeathAnimation()
 
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		// ëª¨ë“  ê¸°ì¡´ ì• ë‹ˆë©”ì´ì…˜ ì¤‘ë‹¨
+		// ¸ðµç ±âÁ¸ ¾Ö´Ï¸ÞÀÌ¼Ç Áß´Ü
 		AnimInstance->StopAllMontages(0.2f);
 
-		// ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ìž¬ìƒ
+		// »ç¸Á ¾Ö´Ï¸ÞÀÌ¼Ç Àç»ý
 		AnimInstance->Montage_Play(DeathMontage, 1.0f);
 		UE_LOG(LogTemp, Log, TEXT("%s playing death animation"), *GetName());
 	}

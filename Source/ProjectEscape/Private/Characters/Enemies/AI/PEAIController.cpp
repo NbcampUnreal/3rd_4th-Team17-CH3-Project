@@ -17,10 +17,10 @@ APEAIController::APEAIController()
 
 	//시야 감지(Sight) 설정을 위한 환경 센스 구성요소를 생성하고, 각종 탐지 반경과 시야각 및 인식 지속 시간 등의 주요 설정 값을 지정.
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = SightRadius; 
-	SightConfig->LoseSightRadius = LoseSightRadius; 
-	SightConfig->PeripheralVisionAngleDegrees = SightAngle; 
-	SightConfig->SetMaxAge(SightDuration);
+	SightConfig->SightRadius = 1500.0f;
+	SightConfig->LoseSightRadius = 2000.0f; 
+	SightConfig->PeripheralVisionAngleDegrees = 60.0f; 
+	SightConfig->SetMaxAge(5.0f);
 
 	// AI의 시야가 적(Enemies), 중립(Neutrals), 아군(Friendlies) 모두를 인식하도록 설정. 추후 수정 예정
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true; 
@@ -37,14 +37,26 @@ APEAIController::APEAIController()
 void APEAIController::BeginPlay()
 {
 	Super::BeginPlay();
+	APawn* MyPawn = GetPawn();
+	APEAICharacter* AICharacter = Cast<APEAICharacter>(MyPawn);
+
+	SightConfig->SightRadius = AICharacter->SightRadius;
+	SightConfig->LoseSightRadius = AICharacter->LoseSightRadius;
+	SightConfig->PeripheralVisionAngleDegrees = AICharacter->SightAngle;
+	SightConfig->SetMaxAge(AICharacter->SightDuration);
+	AIPerception->ConfigureSense(*SightConfig);
+	AIPerception->SetDominantSense(SightConfig->GetSenseImplementation());
+
+	InvestigateDuration = AICharacter->InvestigateDuration;
+
+	UE_LOG(LogTemp, Display, TEXT("SightRadius = %f"), SightConfig->SightRadius);
+
 
 	if(BlackboardComp)
 	{
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), false); // 블랙보드 값 초기화
 		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), false);
 		BlackboardComp->SetValueAsFloat(TEXT("LastAttackTime"), 0.0f);
-		APawn* MyPawn = GetPawn();
-		APEAICharacter* AICharacter = Cast<APEAICharacter>(MyPawn);
 		if (MyPawn && AICharacter)
 		{
 			// 캐릭터 BP의 AttackRange 값을 읽어와서 Blackboard에 설정
