@@ -28,10 +28,14 @@ void APEWeaponGranade::DoPrimaryAction(AActor* Holder)
 		UE_LOG(LogPE, Warning, TEXT("APEWeaponGranade::DoPrimaryAction: No ammo left!"));
 		return;
 	}
+
+	if (bIsFiring || bIsReleasedButton)
+	{
+		return;
+	}
 	
 	// 상태 변수 초기화
-	bIsThrowingReady = false;
-	bIsReleasedButton = false;
+	bIsFiring = true;
 	
 	// 수류탄 투척 시작 - ThrowingReadyTime초 후에 ThrowingReady 호출
 	FTimerDelegate TimerDelegate;
@@ -108,8 +112,11 @@ void APEWeaponGranade::PerformThrowing(AActor* Holder)
 		UE_LOG(LogPE, Log, TEXT("PerformThrowing: %s has thrown a grenade with stats: Range: %f, Damage: %f, ProjectileSpeed: %f"),
 			*GetName(), AttackStats.AttackRange, AttackStats.DamageAmount, AttackStats.ProjectileSpeed);
 		CurrentAmmoCount--;
+
+		bIsThrowingReady = false;
+		bIsReleasedButton = false;
+		bIsFiring = false;
+		
 		BroadcastWeaponStateChanged();
 	}
-	bIsThrowingReady = false;
-	bIsReleasedButton = false;
 }

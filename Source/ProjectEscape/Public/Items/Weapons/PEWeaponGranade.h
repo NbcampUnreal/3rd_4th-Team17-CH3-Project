@@ -30,7 +30,8 @@ protected:
 	float ThrowingReadyTime = 0.3f; // 그레네이드 던지기 준비 시간
 
 	FTimerHandle ThrowingReadyTimerHandle;
-	
+
+	bool bIsFiring = false;
 	bool bIsThrowingReady = false;
 	bool bIsReleasedButton = false;
 
