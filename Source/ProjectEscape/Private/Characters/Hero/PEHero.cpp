@@ -247,7 +247,15 @@ void APEHero::HandleDropEquipmentToWorld(FGameplayTag EquipmentTag)
 	}
 	else if (EquipmentTag == GameplayTags.Item_Things_Heal)
 	{
-		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
+		if (UPEUseableComponent* UseableComponent = UseableItemManagerComponent->GetCurrentItem())
+		{
+			if (UseableComponent->GetEquipmentType() == EPEEquipmentType::Healing)
+			{
+				UseableItemManagerComponent->ReleaseHandItem();
+			}
+		}
+		QuickSlotManagerComponent->RemoveQuickSlotItem(EPEEquipmentType::Healing);
+		
 	}
 	else if ( EquipmentTag == GameplayTags.Item_Things_Grenade)
 	{

@@ -74,8 +74,15 @@ void UPEInventoryHUD::RemoveItemFromQucikSlotAndDropToLand(FGameplayTag ItemTag)
 	FString TagString = ItemTag.ToString();
 	UE_LOG(LogTemp, Display, TEXT("[DEBUG] RemoveItemFromQucikSlotAndDropToLand Tag: %s"), *TagString);
 
-	// Notify to Character Component
-	// To Be Added.
+	
+	if (APEHero* HeroActor = Cast<APEHero>(Hero))
+	{
+		HeroActor->OnQuickSlotEquipmentDrop.Broadcast(ItemTag);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Display, TEXT("[DEBUG] Failed to cast Hero to APEHero"));
+	}
 }
 
 void UPEInventoryHUD::AddItemFromBagToQuickSlot(FGameplayTag ItemTag)
