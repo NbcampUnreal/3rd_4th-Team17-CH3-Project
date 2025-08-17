@@ -350,12 +350,14 @@ void APEHero::UseItemByInventory(FGameplayTag ItemTag)
 
 	if (InventoryManagerComponent && QuickSlotManagerComponent)
 	{
-		AActor* Actor = InventoryManagerComponent->GetItemByTag(ItemTag)->GetOwner();
-		if (UPEQuickSlotItemComponent* QuickSlotItemComponent = Actor->FindComponentByClass<UPEQuickSlotItemComponent>())
+		if (AActor* Actor = InventoryManagerComponent->GetItemByTag(ItemTag)->GetOwner())
 		{
-			// 컴포넌트가 존재할 때 실행
-			QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), Actor);
-			UE_LOG(LogPE, Log, TEXT("UseItemByInventory: Item with tag added to quick slot"));
+			if (UPEQuickSlotItemComponent* QuickSlotItemComponent = Actor->FindComponentByClass<UPEQuickSlotItemComponent>())
+			{
+				// 컴포넌트가 존재할 때 실행
+				QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), Actor);
+				UE_LOG(LogPE, Log, TEXT("UseItemByInventory: Item with tag added to quick slot"));
+			}
 		}
 	}
 }
