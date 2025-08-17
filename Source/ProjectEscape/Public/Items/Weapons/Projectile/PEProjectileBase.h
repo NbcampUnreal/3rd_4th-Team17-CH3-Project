@@ -42,7 +42,7 @@ protected:
 	/* Projectile 관련 섹션 */
 public:
 	virtual void Launch(AActor* InInstigator, const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
-
+	AActor* GetInstigator() const;
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Projectile")
 	FPEAttackStats ProjectileStats;
@@ -52,6 +52,9 @@ protected:
 
 	UPROPERTY()
 	FTimerHandle ProjectileLifetimeTimer;
+
+	UPROPERTY()
+	TObjectPtr<AActor> InstigatorActor;
 
 protected:
 	UFUNCTION()

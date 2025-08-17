@@ -78,7 +78,7 @@ void APEProjectileBase::Tick(float DeltaTime)
 void APEProjectileBase::Launch(AActor* InInstigator, const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
 	ProjectileStats = AttackStats;
-	SetOwner(InInstigator);
+	InstigatorActor = InInstigator;
 	
 	SetActorLocation(StartLocation);
 	
@@ -97,6 +97,11 @@ void APEProjectileBase::Launch(AActor* InInstigator, const FPEAttackStats& Attac
 	}
 }
 
+AActor* APEProjectileBase::GetInstigator() const
+{
+	return InstigatorActor;
+}
+
 void APEProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// 자기 자신이나 소유자와의 충돌은 무시
@@ -113,7 +118,7 @@ void APEProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 				ProjectileStats.DamageAmount,
 				Hit.Location,
 				Hit.Normal,
-				GetOwner()
+				InstigatorActor
 			);
 			UE_LOG(LogTemp, Log, TEXT("Damage applied: %f to %s"), 
 				ProjectileStats.DamageAmount, *OtherActor->GetName());

@@ -127,7 +127,7 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 	}
 	else if (APEProjectileBase* Projectile = Cast<APEProjectileBase>(DamageCauser))
 	{
-		if (APEHero* Hero = Cast<APEHero>(Projectile->GetOwner()))
+		if (APEHero* Hero = Cast<APEHero>(Projectile->GetInstigator()))
 		{
 			PEPlayerController = Hero->GetController<APEPlayerController>();
 		}
