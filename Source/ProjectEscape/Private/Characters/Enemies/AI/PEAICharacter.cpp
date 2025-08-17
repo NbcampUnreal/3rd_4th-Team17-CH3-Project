@@ -6,6 +6,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Combat/Components/PEAttackHitscanComponent.h>
 #include <Combat/Components/PEReceiveAttackComponent.h>
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
 #include "Components/CapsuleComponent.h"
@@ -166,6 +168,25 @@ void APEAICharacter::Die()
 	}
 
 	bIsDead = true;
+
+	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
+	{
+		Movement->DisableMovement(); // 움직임 비활성화
+		Movement->StopMovementImmediately(); // 즉시 정지
+	}
+
+	// AI Controller도 완전히 정지
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
+	{
+		AIController->StopMovement(); // AI 이동 명령 중단
+
+		// Behavior Tree도 정지 (선택사항)
+		if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(AIController->GetBrainComponent()))
+		{
+			BTComp->StopTree(); // BT 완전 중단
+		}
+	}
+
 	PlayDeathAnimation();
 	UE_LOG(LogTemp, Warning, TEXT("%s has died!"), *GetName());
 

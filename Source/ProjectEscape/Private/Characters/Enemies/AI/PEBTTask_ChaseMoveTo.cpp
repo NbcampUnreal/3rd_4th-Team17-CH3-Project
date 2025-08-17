@@ -3,6 +3,7 @@
 
 #include "Characters/Enemies/AI/PEBTTask_ChaseMoveTo.h"
 #include "Characters/Enemies/AI/PEAICharacter.h"
+#include "Characters/Enemies/AI/PEAIBossCharacter.h"
 #include "AIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Engine/Engine.h"
@@ -21,6 +22,15 @@ EBTNodeResult::Type UPEBTTask_ChaseMoveTo::ExecuteTask(UBehaviorTreeComponent& O
 
     APEAICharacter* AICharacter = Cast<APEAICharacter>(AIController->GetPawn());
     if (!AICharacter) return EBTNodeResult::Failed;
+
+    if (APEAIBossCharacter* BossCharacter = Cast<APEAIBossCharacter>(AICharacter))
+    {
+        if (BossCharacter->bIsInPhaseTransition)
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Boss is in phase transition, canceling chase"));
+            return EBTNodeResult::Failed; // 또는 InProgress로 대기
+        }
+    }
 
     UCharacterMovementComponent* MovementComp = AICharacter->GetCharacterMovement();
     if (!MovementComp) return EBTNodeResult::Failed;
