@@ -43,6 +43,14 @@ void APEAIController::BeginPlay()
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), false); // 블랙보드 값 초기화
 		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), false);
 		BlackboardComp->SetValueAsFloat(TEXT("LastAttackTime"), 0.0f);
+		APawn* MyPawn = GetPawn();
+		APEAICharacter* AICharacter = Cast<APEAICharacter>(MyPawn);
+		if (MyPawn && AICharacter)
+		{
+			// 캐릭터 BP의 AttackRange 값을 읽어와서 Blackboard에 설정
+			float CharacterAttackRange = AICharacter->AttackRange;
+			BlackboardComp->SetValueAsFloat(TEXT("AcceptableRadius"), CharacterAttackRange - 50.0f); // 50유닛 여유
+		}
 
 		StartBehaviorTree();
 	}

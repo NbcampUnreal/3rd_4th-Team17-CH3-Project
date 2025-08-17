@@ -402,27 +402,36 @@ void APEHero::AttachWeapon(AActor* WeaponActor, FTransform Transform)
 
 void APEHero::PlayEquipAnimation()
 {
-	float PlayRate = 1.0f;
-	PlayMontageAnimation(EquipAnimMontage, PlayRate);
+	if (EquipAnimMontage)
+	{
+		float PlayRate = 1.0f;
+		PlayMontageAnimation(EquipAnimMontage, PlayRate);
+	}
 }
 
 void APEHero::PlayReloadAnimation(float ReloadDelay)
 {
-	float AnimationLength = ReloadAnimMontage->GetPlayLength();
-	float PlayRate = ReloadDelay == 0 ? 1.0f : AnimationLength / ReloadDelay;
-	PlayMontageAnimation(ReloadAnimMontage, PlayRate);
+	if (ReloadAnimMontage)
+	{
+		float AnimationLength = ReloadAnimMontage->GetPlayLength();
+		float PlayRate = ReloadDelay == 0 ? 1.0f : AnimationLength / ReloadDelay;
+		PlayMontageAnimation(ReloadAnimMontage, PlayRate);
+	}
 }
 
 void APEHero::PlayFireWeaponAnimation(float ShotInterval)
 {
-	float AnimationLength = ReloadAnimMontage->GetPlayLength();
-	float PlayRate = ShotInterval == 0 ? 1.0f : AnimationLength / ShotInterval;
-	PlayMontageAnimation(FireWeaponAnimMontage, PlayRate);
+	if (FireWeaponAnimMontage)
+	{
+		float AnimationLength = FireWeaponAnimMontage->GetPlayLength();
+		float PlayRate = ShotInterval == 0 ? 1.0f : AnimationLength / ShotInterval;
+		PlayMontageAnimation(FireWeaponAnimMontage, PlayRate);
+	}
 }
 
 void APEHero::PlayMontageAnimation(UAnimMontage* Animation, float PlayRate)
 {
-	if (Animation && EquipAnimMontage)
+	if (Animation)
 	{
 		if (UAnimInstance* AnimInstance = FirstPersonSkeletalMesh->GetAnimInstance())
 		{
