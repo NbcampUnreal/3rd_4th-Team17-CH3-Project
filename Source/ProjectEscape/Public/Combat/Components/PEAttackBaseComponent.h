@@ -19,6 +19,8 @@ struct PROJECTESCAPE_API FPEAttackStats
 	float AttackRange = 1000.0f;
 	float SpreadAngle = 0.0f;
 	float ProjectileSpeed = 1000.0f;
+	float ExplosionRadius = 200.0f;
+	float ExplosionDelay = 3.0f;
 	ECollisionChannel CollisionChannel = ECC_Pawn;
 };
 

@@ -193,3 +193,10 @@ void APEItemBase::DestoryItem()
 	}
 }
 
+void APEItemBase::OnUseFromInventory()
+{
+	// NOTE: 아이템을 인벤토리에서 사용했을 때의 액션은 이곳에 구현합니다.
+	//			ItemBase는 기본적으로 아무 동작도 하지 않습니다.
+	UE_LOG(LogTemp, Warning, TEXT("OnUseFromInventory called on %s"), *GetName());
+}
+

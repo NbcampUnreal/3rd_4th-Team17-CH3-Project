@@ -52,7 +52,11 @@ void UPEUseableItemManagerComponent::SetHandItem(UPEUseableComponent* NewItemCom
 
 UPEUseableComponent* UPEUseableItemManagerComponent::GetCurrentItem() const
 {
-	return CurrentItemComponent;
+	if (CurrentItemComponent)
+	{
+		return CurrentItemComponent;
+	}
+	return nullptr;
 }
 
 void UPEUseableItemManagerComponent::ReleaseHandItem()

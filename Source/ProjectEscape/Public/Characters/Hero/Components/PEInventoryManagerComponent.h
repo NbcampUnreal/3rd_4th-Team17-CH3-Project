@@ -48,6 +48,7 @@ protected:
 public:
 	void AddItemToInventory(UPEStorableItemComponent* Item);
 	void DropItemFromInventoryByTag(const int32 &Count, const FGameplayTag &Tag);
+	void ReduceItemFromInventoryByTag(const int32 &Count, const FGameplayTag &Tag);
 	void RemoveItemFromInventoryByTag(const FGameplayTag &Tag);
 	void ClearInventory();
 	UPEStorableItemComponent* GetItemByTag(const FGameplayTag &Tag) const;

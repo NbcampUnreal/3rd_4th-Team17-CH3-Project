@@ -225,7 +225,9 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	AttackStats.SpreadAngle = WeaponStats.Spread;
 	AttackStats.ProjectileClass = WeaponStats.ProjectileClass;
 	AttackStats.ProjectileSpeed = WeaponStats.ProjectileSpeed;
-	AttackStats.CollisionChannel = ECC_Visibility;
+	AttackStats.ExplosionRadius = WeaponStats.ExplosionRadius;
+	AttackStats.ExplosionDelay = WeaponStats.ExplosionDelayTime;
+	AttackStats.CollisionChannel = ECC_Visibility; //TODO: Collision 수정 필요
 
 	// 1회 발사 시 몇 개의 탄환을 발사할지 설정 (e.g. 산탄총은 12개의 펠릿이 발사됌)
 	for (int32 i = 0; i < WeaponStats.BulletsPerShot; ++i)

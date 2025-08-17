@@ -53,7 +53,6 @@ void UPEUseableComponent::Release()
 
 void UPEUseableComponent::DoPrimaryAction(AActor* User)
 {
-	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::DoPrimaryAction"));
 	if (bIsHold)
 	{
 		if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
@@ -64,6 +63,10 @@ void UPEUseableComponent::DoPrimaryAction(AActor* User)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("PEUseableComponent: Owner %s does not implement IPEUseable interface!"), *GetOwner()->GetName());
 		}
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::DoPrimaryAction called but component is not held!"));
 	}
 }
 
