@@ -28,10 +28,10 @@ void APEProjectileDelayedExplosive::EndPlay(const EEndPlayReason::Type EndPlayRe
 	};
 }
 
-void APEProjectileDelayedExplosive::Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation,
-                                           const FVector& Direction)
+void APEProjectileDelayedExplosive::Launch(AActor* InInstigator, const FPEAttackStats& AttackStats,
+                                           const FVector& StartLocation, const FVector& Direction)
 {
-	Super::Launch(AttackStats, StartLocation, Direction);
+	Super::Launch(InInstigator, AttackStats, StartLocation, Direction);
 
 	UE_LOG(LogPE, Log, TEXT("APEProjectileDelayedExplosive::Launch called with AttackStats: %f"), AttackStats.ExplosionDelay);
 	// 지연 폭발 타이머 설정

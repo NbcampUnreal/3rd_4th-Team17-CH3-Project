@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Enemies/AI/PEAICharacter.h"
@@ -8,10 +8,12 @@
 #include <Combat/Components/PEReceiveAttackComponent.h>
 #include "Animation/AnimMontage.h"
 #include "Animation/AnimInstance.h"
+#include "Characters/Hero/PEHero.h"
 #include "Components/CapsuleComponent.h"
 #include "Player/PEPlayerController.h"
 #include "Items/Weapons/PEWeaponBase.h"
 #include "Core/PEGameModeBase.h"
+#include "Items/Weapons/Projectile/PEProjectileBase.h"
 
 APEAICharacter::APEAICharacter()
 {
@@ -118,30 +120,38 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 		}
 	}
 	
-	if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(DamageCauser))
+	APEPlayerController* PEPlayerController = nullptr;
+	if (APEHero* Pawn = Cast<APEHero>(DamageCauser))
 	{
-		if (APawn* WeaponOwner = Cast<APawn>(WeaponBase->GetItemOwner()))
+		PEPlayerController = Pawn->GetController<APEPlayerController>();
+	}
+	else if (APEProjectileBase* Projectile = Cast<APEProjectileBase>(DamageCauser))
+	{
+		if (APEHero* Hero = Cast<APEHero>(Projectile->GetOwner()))
 		{
-			if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(WeaponOwner->GetController()))
+			PEPlayerController = Hero->GetController<APEPlayerController>();
+		}
+	}
+
+	if (PEPlayerController)
+	{
+		if (APEGameModeBase* PEGameModeBase = Cast<APEGameModeBase>(PEPlayerController->GetWorld()->GetAuthGameMode()))
+		{
+			if (bIsDead)
 			{
-				if (APEGameModeBase* PEGameModeBase = Cast<APEGameModeBase>(PEPlayerController->GetWorld()->GetAuthGameMode()))
-				{
-					if (bIsDead)
-					{
-						int32 KillScore = 500; // TODO: 
-						PEGameModeBase->OnKillEnemy(PEPlayerController, KillScore);
-						PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
-						PEPlayerController->PlayKillMarkerAnimOfHUDWidget();
-					}
-					else
-					{
-						PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
-						PEPlayerController->PlayHitMarkerAnimOfHUDWIdget();
-					}
-				}
+				int32 KillScore = 500; // TODO: 
+				PEGameModeBase->OnKillEnemy(PEPlayerController, KillScore);
+				PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
+				PEPlayerController->PlayKillMarkerAnimOfHUDWidget();
+			}
+			else
+			{
+				PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
+				PEPlayerController->PlayHitMarkerAnimOfHUDWIdget();
 			}
 		}
 	}
+	
 	return Damage;
 }
 

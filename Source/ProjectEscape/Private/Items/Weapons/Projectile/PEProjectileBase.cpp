@@ -75,9 +75,10 @@ void APEProjectileBase::Tick(float DeltaTime)
 	
 }
 
-void APEProjectileBase::Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
+void APEProjectileBase::Launch(AActor* InInstigator, const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
 	ProjectileStats = AttackStats;
+	SetOwner(InInstigator);
 	
 	SetActorLocation(StartLocation);
 	

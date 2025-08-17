@@ -21,7 +21,7 @@ protected:
 
 	/* Explosive 관련 섹션 */
 protected:
-	virtual void Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction) override;
+	virtual void Launch(AActor* InInstigator, const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction) override;
 
 	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit) override;
 
