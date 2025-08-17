@@ -5,6 +5,7 @@
 
 #include "Characters/Hero/PEHero.h"
 #include "Characters/Hero/Components/PEInventoryManagerComponent.h"
+#include "Characters/Hero/Components/PEQuickSlotManagerComponent.h"
 #include "Core/PELogChannels.h"
 #include "Player/PEPlayerState.h"
 
@@ -114,6 +115,7 @@ void APEItemHealing::PerformHealing(AActor* Holder)
 					Hero->DropHandEquipmentToWorld();
 				}
 				Hero->GetInventoryManagerComponent()->ReduceItemFromInventoryByTag(1, ItemStats.ItemTag);
+				Hero->GetQuickSlotManagerComponent()->UpdateQuickSlotInfoAndBroadcast();
 				UE_LOG(LogPE, Log, TEXT("Healed %s by %d"), *Hero->GetName(), EquipmentStats.Damage);
 			}
 		}
