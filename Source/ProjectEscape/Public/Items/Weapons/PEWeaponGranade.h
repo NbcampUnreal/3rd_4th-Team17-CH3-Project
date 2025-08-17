@@ -6,6 +6,10 @@
 #include "PEWeaponProjectile.h"
 #include "PEWeaponGranade.generated.h"
 
+/*
+ *	NOTE: 해당 클래스는 더이상 사용되지 않습니다.
+ */
+
 UCLASS()
 class PROJECTESCAPE_API APEWeaponGranade : public APEWeaponProjectile
 {

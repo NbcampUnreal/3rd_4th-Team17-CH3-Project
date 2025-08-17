@@ -69,6 +69,7 @@ void APEItemHealing::CompletePrimaryAction(AActor* Holder)
 {
 	bIsHealing = false;
 	bIsReleasedButton = true;
+	ClearHealingTimer();
 }
 
 void APEItemHealing::DoSecondaryAction(AActor* Holder)
@@ -105,13 +106,16 @@ void APEItemHealing::PerformHealing(AActor* Holder)
 	{
 		if (APEHero* Hero = Cast<APEHero>(Holder))
 		{
-			Hero->GetPlayerState<APEPlayerState>()->IncreaseHealthPoint(EquipmentStats.Damage);
-			if (ItemCount <= 1)
+			if (APEPlayerState* PlayerState = Hero->GetPlayerState<APEPlayerState>())
 			{
-				Hero->DropHandEquipmentToWorld();
+				PlayerState->IncreaseHealthPoint(EquipmentStats.Damage);
+				if (ItemCount <= 1)
+				{
+					Hero->DropHandEquipmentToWorld();
+				}
+				Hero->GetInventoryManagerComponent()->ReduceItemFromInventoryByTag(1, ItemStats.ItemTag);
+				UE_LOG(LogPE, Log, TEXT("Healed %s by %d"), *Hero->GetName(), EquipmentStats.Damage);
 			}
-			Hero->GetInventoryManagerComponent()->ReduceItemFromInventoryByTag(1, ItemStats.ItemTag);
-			UE_LOG(LogPE, Log, TEXT("Healed %s by %d"), *Hero->GetName(), EquipmentStats.Damage);
 		}
 		else
 		{
