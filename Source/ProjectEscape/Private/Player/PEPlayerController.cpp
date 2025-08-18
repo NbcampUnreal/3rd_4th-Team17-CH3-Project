@@ -278,6 +278,7 @@ void APEPlayerController::ShowBossUI()
 
 void APEPlayerController::OnRemoveBossUI()
 {
+	GetWorld()->GetTimerManager().ClearTimer(BossDeathTimerHandle);
 	if (BossWidget && BossWidget->IsInViewport())
 	{
 		BossWidget->RemoveFromParent();
