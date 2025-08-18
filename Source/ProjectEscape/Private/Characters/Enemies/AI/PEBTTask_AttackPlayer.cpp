@@ -119,12 +119,13 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
         {
             AICharacter->PerformAttack();
         }
-        //AICharacter->PerformAttack();
-
+        
+		AICharacter->AttackComponent->SetAttackStartPoint(AICharacter->AttackStart); // 공격 시작 위치 설정
+        //MyPawn->GetActorLocation(
         FPEAttackStats AttackStats;
         AttackStats.AttackRange = AICharacter->AttackRange; // 공격 범위 설정
         AttackStats.DamageAmount = AICharacter->AttackAmount; // 임시 데미지 값 설정
-        AICharacter->AttackComponent->ExcuteAttack(AttackStats, MyPawn->GetActorLocation(), Direction); // 공격 실행
+        AICharacter->AttackComponent->ExcuteAttack(AttackStats, AICharacter->AttackStart->GetComponentLocation(), Direction); // 공격 실행
 	}
 
     // 화면에도 표시

@@ -27,12 +27,14 @@ public:
 	TObjectPtr<UPEAttackBaseComponent> AttackComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Combat")
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Combat")
+	USceneComponent* AttackStart;
 
 	// Drop
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Combat")
 	TObjectPtr<UEnemyDropComponent> DropComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy||Status")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	int32 AttackAmount = 10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	float AttackRange = 1000.0f;

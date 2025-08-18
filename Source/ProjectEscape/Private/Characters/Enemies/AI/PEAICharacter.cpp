@@ -42,6 +42,8 @@ APEAICharacter::APEAICharacter()
 	
 
 	AttackComponent = CreateDefaultSubobject<UPEAttackHitscanComponent>(TEXT("AttackComponent"));
+	AttackStart = CreateDefaultSubobject<USceneComponent>(TEXT("AttackStartPoint"));
+	AttackStart->SetupAttachment(RootComponent);
 	ReceiveComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveComponent"));
 	ReceiveComponent->SetHiddenInGame(false);
 	ReceiveComponent->SetupAttachment(RootComponent);
