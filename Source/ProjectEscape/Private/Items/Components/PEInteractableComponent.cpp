@@ -16,7 +16,6 @@ UPEInteractableComponent::UPEInteractableComponent(const FObjectInitializer& Obj
 	SetCollisionProfileName(TEXT("InteractBox"));
 	SetCollisionObjectType(ECC_GameTraceChannel5); // CCHANNEL_INTERACTABLE
 	
-	// 하이라이트 초기 상태를 비활성화로 설정
 	SetRenderCustomDepth(false);
 	SetCustomDepthStencilValue(0);
 }
@@ -33,7 +32,7 @@ void UPEInteractableComponent::BeginPlay()
 		// 폴백: 메시 직접 찾기
 		CachedMesh = OwnerActor->FindComponentByClass<UMeshComponent>();
 	}
-	
+  
 	// 하이라이트 초기 설정
 	Highlight(false);
 }
