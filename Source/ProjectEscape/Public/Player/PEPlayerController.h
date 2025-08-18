@@ -20,14 +20,21 @@ public:
 	UPROPERTY()
 	FOnWeaponInfoBroadcast OnWeaponInfoBroadcast;
 
+
 	UFUNCTION(BlueprintCallable)
 	void PauseGameAndShowPauseMenu();
 
 	UFUNCTION(BlueprintCallable)
 	void OnClickResume();
 
+	UFUNCTION(BlueprintCallable)
+	void ShowBossUI();
+
 	void ShowHUD();
 	void ClearAllWidget();
+
+	UFUNCTION()
+	void OnRemoveBossUI();
 
 	UFUNCTION()
 	void OnChangeHealthPoint(float OldValue, float HealthPoint, float MaxHealthPoint);
@@ -46,6 +53,15 @@ public:
 
 	UFUNCTION()
 	void OnChangeMissionInfo(FText MissionInfo);
+
+	UFUNCTION()
+	void OnChangeBossHealth(float HealthPoint, float MaxHealthPoint);
+
+	UFUNCTION()
+	void OnBossDeath();
+
+	UFUNCTION()
+	void OnBossPhaseTwo();
 
 	void PlayDamageAnimOfHUDWidget();
 	void PlayHitMarkerAnimOfHUDWIdget();
@@ -83,6 +99,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
 	TSubclassOf<UUserWidget> GameClearWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
+	TSubclassOf<UUserWidget> BossWidgetClass;
+
 	UPROPERTY()
 	UUserWidget* HUDWidget;
 
@@ -97,4 +116,9 @@ protected:
 
 	UPROPERTY()
 	UUserWidget* GameClearWidget;
+
+	UPROPERTY()
+	UUserWidget* BossWidget;
+
+	FTimerHandle BossDeathTimerHandle;
 };

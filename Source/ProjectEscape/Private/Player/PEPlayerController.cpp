@@ -1,12 +1,14 @@
 ﻿#include "Player/PEPlayerController.h"
-#include "Player\PEPlayerState.h"
-#include "Components\ProgressBar.h"
+#include "Player/PEPlayerState.h"
+#include "Components/ProgressBar.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "UI/Inventory/PEInventoryHUD.h"
 #include "Core/PEGameStateBase.h"
 #include "Components/TextBlock.h"
+#include "Kismet/GameplayStatics.h"
+#include "Characters/Enemies/AI/PEAIBossCharacter.h"
 #include "Characters/Hero/PEHero.h"
 
 
@@ -41,6 +43,15 @@ void APEPlayerController::BeginPlay()
 
 	OnEquipmentEmptyHand();
   
+	APEAIBossCharacter* Boss = Cast<APEAIBossCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), APEAIBossCharacter::StaticClass()));
+
+	if (Boss)
+	{
+		Boss->OnBossDeath.AddUObject(this, &APEPlayerController::OnBossDeath);
+		Boss->OnBossPhaseTwo.AddUObject(this, &APEPlayerController::OnBossPhaseTwo);
+		Boss->OnBossHealthChanged.AddUObject(this, &APEPlayerController::OnChangeBossHealth);
+	}
+
 	// Score Init
 	if (GetWorld())
 	{
@@ -185,6 +196,91 @@ void APEPlayerController::OnChangeMissionInfo(FText MissionInfo)
 
 			MissionText->SetText(FormatText);
 		}
+	}
+}
+
+void APEPlayerController::OnChangeBossHealth(float HealthPoint, float MaxHealthPoint)
+{
+	if (MaxHealthPoint <= 0)
+	{
+		return;
+	}
+	if (BossWidget)
+	{
+		UProgressBar* BossHealthBar = Cast<UProgressBar>(BossWidget->GetWidgetFromName(TEXT("BossHealthBar")));
+
+		if (BossHealthBar)
+		{
+			BossHealthBar->SetPercent(HealthPoint / MaxHealthPoint);
+			UE_LOG(LogTemp, Warning, TEXT("Boss hp : %.f , %.f"), HealthPoint, MaxHealthPoint);
+		}
+	}
+}
+
+void APEPlayerController::OnBossDeath()
+{
+	if (BossWidget)
+	{
+		UFunction* ReversePlate = BossWidget->FindFunction(FName("PlayBossPlateReverse"));
+		if (ReversePlate)
+		{
+			BossWidget->ProcessEvent(ReversePlate, nullptr);
+		}
+	}
+
+	GetWorldTimerManager().SetTimer(
+		BossDeathTimerHandle,
+		this,
+		&APEPlayerController::OnRemoveBossUI,
+		3.0f,
+		false
+	);
+
+}
+
+void APEPlayerController::OnBossPhaseTwo()
+{
+	if (BossWidget)
+	{
+		UFunction* ChangePhase = BossWidget->FindFunction(FName("PlayPhaseChangeAnim"));
+		if (ChangePhase)
+		{
+			BossWidget->ProcessEvent(ChangePhase, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::ShowBossUI()
+{
+	if (!BossWidget && BossWidgetClass)
+	{
+		BossWidget = CreateWidget<UUserWidget>(this, BossWidgetClass);
+	}
+
+	if (BossWidget && !BossWidget->IsInViewport())
+	{
+		BossWidget->AddToViewport();
+		SetInputMode(FInputModeGameOnly());
+		bShowMouseCursor = false;
+		SetPause(false);
+	}
+
+	if (BossWidget)
+	{
+		UFunction* Plate = BossWidget->FindFunction(FName("PlayBossPlateForward"));
+		if (Plate)
+		{
+			BossWidget->ProcessEvent(Plate, nullptr);
+		}
+	}
+}
+
+void APEPlayerController::OnRemoveBossUI()
+{
+	GetWorld()->GetTimerManager().ClearTimer(BossDeathTimerHandle);
+	if (BossWidget && BossWidget->IsInViewport())
+	{
+		BossWidget->RemoveFromParent();
 	}
 }
 
@@ -430,6 +526,8 @@ void APEPlayerController::ShowHUD()
 		SetPause(false);
 	}
 }
+
+
 
 void APEPlayerController::PauseGameAndShowPauseMenu()
 {
