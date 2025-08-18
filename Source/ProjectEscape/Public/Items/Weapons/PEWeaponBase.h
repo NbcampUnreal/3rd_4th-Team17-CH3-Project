@@ -12,6 +12,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "PEWeaponBase.generated.h"
 
+class UWidgetComponent;
 struct FPEWeaponData;
 class UPEAttackBaseComponent;
 class UPEQuickSlotItemComponent;
@@ -82,6 +83,19 @@ protected:
 public:
 	virtual void Interact(AActor* Interactor) override;
 	virtual bool IsInteractable() const override;
+	virtual void ShowInteractionUI() override;
+	virtual void HideInteractionUI() override;
+	
+	// 3D UI Widget 관련
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> InteractWidgetClass;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UWidgetComponent> InteractWidgetComponent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	float InteractionUIOffsetZ = 50.0f;
+	
 	
 	/* 퀵슬롯 관련 섹션 */
 protected:

@@ -3,8 +3,11 @@
 
 #include "Items/Components/PEInteractableComponent.h"
 #include "Items/Interface/PEInteractable.h"
+#include "Components/WidgetComponent.h"
+#include "Components/MeshComponent.h"
 
-UPEInteractableComponent::UPEInteractableComponent()
+UPEInteractableComponent::UPEInteractableComponent(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	ComponentOwner = nullptr;
@@ -13,6 +16,9 @@ UPEInteractableComponent::UPEInteractableComponent()
 	SetCollisionProfileName(TEXT("InteractBox"));
 	SetCollisionObjectType(ECC_GameTraceChannel5); // CCHANNEL_INTERACTABLE
 	
+	// 하이라이트 초기 상태를 비활성화로 설정
+	SetRenderCustomDepth(false);
+	SetCustomDepthStencilValue(0);
 }
 
 void UPEInteractableComponent::BeginPlay()
@@ -21,6 +27,15 @@ void UPEInteractableComponent::BeginPlay()
 	
 	// 소유자 액터가 IPEInteractable 인터페이스를 구현하는지 확인
 	SetComponentOwnerInterface(GetOwner());
+
+	if (AActor* OwnerActor = GetOwner())
+	{
+		// 폴백: 메시 직접 찾기
+		CachedMesh = OwnerActor->FindComponentByClass<UMeshComponent>();
+	}
+	
+	// 하이라이트 초기 설정
+	Highlight(false);
 }
 
 bool UPEInteractableComponent::Interact(AActor* Interactor)
@@ -55,5 +70,30 @@ void UPEInteractableComponent::SetComponentOwnerInterface(UObject* NewOwner)
 	{
 		ComponentOwner.SetObject(nullptr);
 		ComponentOwner.SetInterface(nullptr);
+	}
+}
+
+void UPEInteractableComponent::Highlight(bool bIsEnable)
+{
+	if (AActor* Owner = GetOwner())
+	{
+		if (IPEInteractable* InteractableItem = Cast<IPEInteractable>(Owner))
+		{
+			if (bIsEnable)
+			{
+				InteractableItem->ShowInteractionUI();
+			}
+			else
+			{
+				InteractableItem->HideInteractionUI();
+			}
+		}
+	}
+
+	if (CachedMesh)
+	{
+		CachedMesh->SetRenderCustomDepth(bIsEnable);
+		// 필요 시 색상 지정 (Material에서 이 StencilValue를 기준으로 색상 분기)
+		CachedMesh->SetCustomDepthStencilValue(bIsEnable ? 1 : 0);
 	}
 }
