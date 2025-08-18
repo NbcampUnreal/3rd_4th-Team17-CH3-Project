@@ -116,19 +116,7 @@ bool APEWeaponBase::TryReload()
 	if (AmmoComponent->GetItemCount() > 0)
 	{
 		bIsReloading = true;
-	
-		GetWorldTimerManager().SetTimer(
-			ReloadTimerHandle,
-			this,
-			&APEWeaponBase::PerformReload,
-			WeaponStats.ReloadTime,
-			false);
-		UE_LOG(LogPE, Log, TEXT("Reloading..."));
-
-		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
-		{
-			PEHero->PlayReloadAnimation(WeaponStats.ReloadTime);
-		}
+		PerformReload();
 	}
 	else
 	{
@@ -140,6 +128,39 @@ bool APEWeaponBase::TryReload()
 }
 
 void APEWeaponBase::PerformReload()
+{
+	if (WeaponStats.IsMagazineReload)
+	{
+		GetWorldTimerManager().SetTimer(
+			ReloadTimerHandle,
+			this,
+			&APEWeaponBase::MagazineReload,
+			WeaponStats.ReloadTime,
+			false);
+		
+		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+		{
+			PEHero->PlayReloadAnimation(WeaponStats.ReloadTime);
+		}
+	}
+	else
+	{
+		GetWorldTimerManager().SetTimer(
+			ReloadTimerHandle,
+			this,
+			&APEWeaponBase::SingleRoundReload,
+			WeaponStats.ReloadTime,
+			false);
+		
+		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+		{
+			PEHero->PlayReloadAnimation(WeaponStats.ReloadTime);
+		}
+	}
+		UE_LOG(LogPE, Log, TEXT("Reloading..."));
+}
+
+void APEWeaponBase::MagazineReload()
 {
 	if (!GetUseableComponent()->IsHolding())
 	{
@@ -157,6 +178,46 @@ void APEWeaponBase::PerformReload()
 	bIsReloading = false;
 	UE_LOG(LogPE, Log, TEXT("Reload complete. Current ammo: %d"), CurrentAmmoCount);
 	
+	BroadcastWeaponStateChanged();
+}
+
+void APEWeaponBase::SingleRoundReload()
+{
+	if (!GetUseableComponent()->IsHolding())
+	{
+		bIsReloading = false;
+		return;
+	}
+	
+	if (!AmmoComponent.IsValid() || AmmoComponent->GetItemCount() <= 0)
+	{
+		bIsReloading = false;
+		UE_LOG(LogPE, Warning, TEXT("SingleRoundReload: No ammo available"));
+		return;
+	}
+	
+	CurrentAmmoCount++;
+	AmmoComponent->ReduceItemCount(1);
+	
+	UE_LOG(LogPE, Log, TEXT("SingleRoundReload: Loaded 1 round. Current ammo: %d/%d"), CurrentAmmoCount, WeaponStats.MaxAmmo);
+	
+	// 최대 탄약수에 도달했거나 더 이상 탄약이 없으면 재장전 완료
+	if (CurrentAmmoCount >= WeaponStats.MaxAmmo || !AmmoComponent.IsValid())
+	{
+		bIsReloading = false;
+		UE_LOG(LogPE, Log, TEXT("SingleRoundReload complete. Final ammo: %d"), CurrentAmmoCount);
+		BroadcastWeaponStateChanged();
+		return;
+	}
+	
+	// 아직 재장전할 탄약이 있고 최대치에 도달하지 않았다면 다음 재장전 예약
+	GetWorldTimerManager().SetTimer(
+		ReloadTimerHandle,
+		this,
+		&APEWeaponBase::PerformReload,
+		WeaponStats.ReloadTime,
+		false);
+		
 	BroadcastWeaponStateChanged();
 }
 
@@ -185,15 +246,22 @@ void APEWeaponBase::Interact(AActor* Interactor)
 void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Use called on %s by %s"), *GetName(), *Holder->GetName());
-	if (CurrentAmmoCount <= 0)
+	if (CurrentAmmoCount <= 0 && !WeaponStats.IsInfiniteAmmo)
 	{
 		return; 
 	}
 
-	// NOTE: 무기 발사 불가능 상태가 많아지면 Tag로 전환하는 것을 고려해야 함
-	if (bIsReloading)
+	// 관형 탄창이 아닌 무기는 재장전 중 발사 불가
+	if (bIsReloading && WeaponStats.IsMagazineReload)
 	{
 		return;
+	}
+
+	// 관형 탄창 무기가 재장전 중이면 재장전 취소
+	if (bIsReloading && !WeaponStats.IsMagazineReload)
+	{
+		CancleReload();
+		UE_LOG(LogPE, Log, TEXT("SingleRound reload cancelled due to firing"));
 	}
 
 	if (!WeaponStats.IsAutomatic && bIsFiring)
@@ -201,7 +269,7 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 		UE_LOG(LogTemp, Log, TEXT("Weapon is not automatic and already firing. Ignoring primary action."));
 		return;
 	}
-	
+
 	// FireRate 체크 (RPM을 초당 발사 횟수로 변환)
 	if (WeaponStats.FireRate > 0.0f)
 	{
@@ -254,7 +322,10 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 		}
 	}
 
-	CurrentAmmoCount--;
+	if (!WeaponStats.IsInfiniteAmmo)
+	{
+		CurrentAmmoCount--;
+	}
 	bIsFiring = true;
 	
 	BroadcastWeaponStateChanged();

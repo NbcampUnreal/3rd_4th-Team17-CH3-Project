@@ -70,6 +70,8 @@ public:
 
 protected:
 	void PerformReload();
+	void MagazineReload();
+	void SingleRoundReload();
 
 	/* Interact 관련 섹션 */
 protected:
