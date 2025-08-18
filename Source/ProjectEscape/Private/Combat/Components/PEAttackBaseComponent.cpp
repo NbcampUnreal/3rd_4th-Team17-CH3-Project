@@ -4,6 +4,9 @@
 #include "Combat/Components/PEAttackBaseComponent.h"
 
 #include "Core/PELogChannels.h"
+#include "Kismet/GameplayStatics.h"
+#include "Particles/ParticleSystem.h"
+#include "Sound/SoundBase.h"
 
 UPEAttackBaseComponent::UPEAttackBaseComponent()
 {
@@ -40,6 +43,55 @@ bool UPEAttackBaseComponent::ExcuteAttack(const FPEAttackStats& AttackStats, con
 
 	PerformAttack(AttackStats, StartLocation, FinalDirection);
 	return true;
+}
+
+void UPEAttackBaseComponent::PlayParticleEffect(UParticleSystem* ParticleEffect, const FVector& Location,
+	const FRotator& Rotation)
+{
+	if (!ParticleEffect)
+	{
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			World,
+			ParticleEffect,
+			Location,
+			Rotation,
+			true  // AutoDestroy
+		);
+	}
+}
+
+void UPEAttackBaseComponent::PlayParticleEffect(UParticleSystem* ParticleEffect)
+{
+	PlayParticleEffect(ParticleEffect, AttackStartPoint->GetComponentLocation(), AttackStartPoint->GetComponentRotation());	
+}
+
+void UPEAttackBaseComponent::PlaySoundEffect(USoundBase* SoundEffect, const FVector& Location)
+{
+	if (!SoundEffect)
+	{
+		return;
+	}
+
+	if (UWorld* World = GetWorld())
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			World,
+			SoundEffect,
+			Location,
+			1.0f,  // VolumeMultiplier
+			1.0f   // PitchMultiplier
+		);
+	}
+}
+
+void UPEAttackBaseComponent::PlaySoundEffect(USoundBase* SoundEffect)
+{
+	PlaySoundEffect(SoundEffect, AttackStartPoint->GetComponentLocation());
 }
 
 void UPEAttackBaseComponent::SetAttackStartPoint(USceneComponent* NewStartPoint)
