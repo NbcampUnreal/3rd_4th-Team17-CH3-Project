@@ -1,4 +1,4 @@
-ï»¿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Enemies/AI/PEAICharacter.h"
@@ -69,7 +69,7 @@ void APEAICharacter::BeginPlay()
 
 	EnemyHealth = EnemyMaxHealth;
 
-	//ì• ë‹ˆë©”ì´ì…˜ ëª½íƒ€ì£¼ ì™„ë£Œ ë¸ë¦¬ê²Œì´íŠ¸ ë°”ì¸ë”© ì¶”ê°€
+	//¾Ö´Ï¸ÞÀÌ¼Ç ¸ùÅ¸ÁÖ ¿Ï·á µ¨¸®°ÔÀÌÆ® ¹ÙÀÎµù Ãß°¡
 		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 		{
 			if (AttackMontage)
@@ -98,7 +98,7 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 
 void APEAICharacter::BeginDestroy()
 {
-	// AI ì‚¬ë§ ì‹œ ë¸ë¦¬ê²Œì´íŠ¸ ë¸Œë¡œë“œìºìŠ¤íŠ¸
+	// AI »ç¸Á ½Ã µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
 	OnPawnDeath.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Destory"));
 	Super::BeginDestroy();
@@ -118,8 +118,8 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 			{
 				EnemyHealth = 0.0f;
 				UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
-				OnPawnDeath.Broadcast(); // AI ì‚¬ë§ ì‹œ ë¸ë¦¬ê²Œì´íŠ¸ ë¸Œë¡œë“œìºìŠ¤íŠ¸
-				Die(); // ì‚¬ë§ ì²˜ë¦¬
+				OnPawnDeath.Broadcast(); // AI »ç¸Á ½Ã µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
+				Die(); // »ç¸Á Ã³¸®
 			}
 
 		}
@@ -184,29 +184,29 @@ void APEAICharacter::Die()
 
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
 	{
-		Movement->DisableMovement(); // ¿òÁ÷ÀÓ ºñÈ°¼ºÈ­
-		Movement->StopMovementImmediately(); // Áï½Ã Á¤Áö
+		Movement->DisableMovement(); // ?????? ??????
+		Movement->StopMovementImmediately(); // ??? ????
 	}
 
-	// AI Controllerµµ ¿ÏÀüÈ÷ Á¤Áö
+	// AI Controller?? ?????? ????
 	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
-		AIController->StopMovement(); // AI ÀÌµ¿ ¸í·É Áß´Ü
+		AIController->StopMovement(); // AI ??? ??? ???
 
-		// Behavior Treeµµ Á¤Áö (¼±ÅÃ»çÇ×)
+		// Behavior Tree?? ???? (???????)
 		if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(AIController->GetBrainComponent()))
 		{
-			BTComp->StopTree(); // BT ¿ÏÀü Áß´Ü
+			BTComp->StopTree(); // BT ???? ???
 		}
 	}
 
 	PlayDeathAnimation();
 	UE_LOG(LogTemp, Warning, TEXT("%s has died!"), *GetName());
 
-	// ì½œë¦¬ì „ ë¹„í™œì„±í™”
+	// ÄÝ¸®Àü ºñÈ°¼ºÈ­
 	SetActorEnableCollision(false);
 
-	// 3ì´ˆ í›„ íŒŒê´´
+	// 3ÃÊ ÈÄ ÆÄ±«
 	SetLifeSpan(3.0f);
 
 	// Drop
@@ -240,10 +240,10 @@ void APEAICharacter::PlayDeathAnimation()
 
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		// ëª¨ë“  ê¸°ì¡´ ì• ë‹ˆë©”ì´ì…˜ ì¤‘ë‹¨
+		// ¸ðµç ±âÁ¸ ¾Ö´Ï¸ÞÀÌ¼Ç Áß´Ü
 		AnimInstance->StopAllMontages(0.2f);
 
-		// ì‚¬ë§ ì• ë‹ˆë©”ì´ì…˜ ìž¬ìƒ
+		// »ç¸Á ¾Ö´Ï¸ÞÀÌ¼Ç Àç»ý
 		AnimInstance->Montage_Play(DeathMontage, 1.0f);
 		UE_LOG(LogTemp, Log, TEXT("%s playing death animation"), *GetName());
 	}

@@ -71,7 +71,11 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
     float DistanceToPlayer = FVector::Dist(MyPawn->GetActorLocation(), TargetActor->GetActorLocation());
     float CurrentTime = GetWorld()->GetTimeSeconds();
     float LastAttackTime = BlackboardComp->GetValueAsFloat(TEXT("LastAttackTime"));
+    FVector Direction = (TargetActor->GetActorLocation() - MyPawn->GetActorLocation()).GetSafeNormal();
+    FRotator LookRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 
+    MyPawn->SetActorRotation(LookRotation);
+	AttackCoolTime = AICharacter ? AICharacter->AttackCoolTime : 2.0f; 
     // 쿨다운 체크
     if (CurrentTime - LastAttackTime < AttackCoolTime)
     {
@@ -86,7 +90,7 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
             [WeakThis, &OwnerComp]()
             {
                 if (WeakThis.IsValid())
-                {
+                {       
                     WeakThis->FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
                 }
             },
@@ -97,11 +101,6 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
         return EBTNodeResult::InProgress;
     }
 
-    // 플레이어를 바라보도록 회전
-    //MyPawn->SetActorRotation(FMath::RInterpTo(MyPawn->GetActorRotation(), LookRotation, GetWorld()->GetDeltaSeconds(), 5.0f));
-	//MyPawn->SetActorRotation(LookRotation);
-    FVector Direction = (TargetActor->GetActorLocation() - MyPawn->GetActorLocation()).GetSafeNormal();
-    FRotator LookRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
     // 공격 실행 (로그)
     UE_LOG(LogTemp, Warning, TEXT("AI ATTACKING PLAYER! Distance: %.1f"), DistanceToPlayer);
     if (AICharacter)

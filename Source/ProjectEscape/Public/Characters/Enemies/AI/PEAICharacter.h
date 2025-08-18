@@ -53,6 +53,8 @@ public:
 	FRotator RotateSpeed = FRotator(0.0f, 540.0f, 0.0f);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	float AirControl = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
+	float AttackCoolTime = 0.2f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Status")
 	bool bIsDead = false;
