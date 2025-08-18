@@ -11,6 +11,10 @@ APEItemBase::APEItemBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	// Mesh 컴포넌트 생성 및 설정
+	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMesh"));
+	RootComponent = ItemMesh;
+	
 	// InteractableComponent 생성 및 설정
 	InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->SetupAttachment(RootComponent);

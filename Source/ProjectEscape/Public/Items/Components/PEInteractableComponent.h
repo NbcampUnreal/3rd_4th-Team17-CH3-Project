@@ -5,11 +5,14 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Blueprint/UserWidget.h"
 #include "PEInteractableComponent.generated.h"
 
 
 class IPEInteractable;
 class UBoxComponent;
+class UWidgetComponent;
 
 /**
  * UPEInteractableComponent는 상호작용 가능한 액터에 부착되어 상호작용 기능을 제공하는 컴포넌트입니다.
@@ -24,6 +27,7 @@ class PROJECTESCAPE_API UPEInteractableComponent : public UBoxComponent
 	/* Lifecycle 관련 섹션 */
 public:	
 	UPEInteractableComponent();
+	UPEInteractableComponent(const FObjectInitializer& ObjectInitializer);
 
 protected:
 	virtual void BeginPlay() override;
@@ -36,7 +40,23 @@ protected:
 public:	
 	UFUNCTION(BlueprintCallable, Category = "Interaction")
 	bool Interact(AActor* Interactor);
+	
 
 	void SetComponentOwnerInterface(UObject* NewOwner);
-};
 
+	/* 하이라이트 관련 섹션 */
+	void Highlight(bool bIsEnable);
+
+protected:
+	// 3D UI Widget 관련
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UWidgetComponent> InteractWidgetComponent;
+
+private:
+	UPROPERTY()
+	TObjectPtr<UMeshComponent> CachedMesh; // 대상 Mesh 보관용
+
+	UPROPERTY()
+	TObjectPtr<USceneComponent> RootComp; // 루트 컴포넌트 가져오기
+	
+};

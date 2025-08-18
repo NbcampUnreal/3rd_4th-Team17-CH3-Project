@@ -38,6 +38,7 @@ void UPEInteractManagerComponent::TickComponent(float DeltaTime, ELevelTick Tick
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	// Todo: 상호작용 가능 UI 호출
+	CheckInteractableUnderRay();
 }
 
 void UPEInteractManagerComponent::TryInteract()
@@ -150,4 +151,54 @@ void UPEInteractManagerComponent::OnInteractPressed(const FInputActionValue& Val
 {
 	// 상호작용 실행
 	TryInteract();
+}
+
+void UPEInteractManagerComponent::CheckInteractableUnderRay()
+{
+	/* 상호작용을 위한 Ray 발사 섹션 */
+	// 카메라 위치와 방향 가져오기
+	FVector CameraLocation;
+	FRotator CameraRotation;
+
+	// Pawn의 Control Rotation 사용 (화면 중앙 방향)
+	// NOTE: 액터 카메라가 아닌 Pawn의 특정 부분이 사용되는 것 같음 수정 필요
+	OwnerPawn->GetActorEyesViewPoint(CameraLocation, CameraRotation);
+
+	// Ray 시작점과 끝점 계산
+	FVector StartLocation = CameraLocation;
+	FVector ForwardVector = CameraRotation.Vector();
+	FVector EndLocation = StartLocation + (ForwardVector * InteractionRange);
+
+	FHitResult Hit;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(GetOwner());
+
+	if (GetWorld()->LineTraceSingleByChannel(Hit, StartLocation, EndLocation, CCHANNEL_INTERACT, Params))
+	{
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor)
+		{
+			if (UPEInteractableComponent* InteractableComp = HitActor->FindComponentByClass<UPEInteractableComponent>())
+			{
+				// 이전 대상과 다르면 전 대상은 끄기
+				if (LastHighlightedComp && LastHighlightedComp != InteractableComp)
+				{
+					LastHighlightedComp->Highlight(false);
+				}
+
+				// 새 대상 Highlight 켜기
+				InteractableComp->Highlight(true);
+				LastHighlightedComp = InteractableComp;
+				return;
+			}
+		}
+	}
+
+	// 부딪힌게 없거나 상호작용 대상이 아니면
+	if (LastHighlightedComp)
+	{
+		LastHighlightedComp->Highlight(false);
+		LastHighlightedComp = nullptr;
+	}
+
 }

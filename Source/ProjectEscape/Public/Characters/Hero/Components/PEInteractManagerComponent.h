@@ -64,4 +64,13 @@ public:
 protected:
 	// 상호작용 입력 처리 함수
 	void OnInteractPressed(const FInputActionValue& Value);
+
+	/* Interact 하이라이트 관련 섹션 */
+protected:
+	UPROPERTY()
+	TObjectPtr<UPEInteractableComponent> LastHighlightedComp;
+
+public:
+	void CheckInteractableUnderRay();
+	
 };
