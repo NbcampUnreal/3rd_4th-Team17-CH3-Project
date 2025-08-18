@@ -1,33 +1,21 @@
-//#include "Actors/PEDoorSwitch.h"
-#include "Actors/PEDoorActor.h"
+#include "PEDoorSwitch.h"
+#include "PEDoorActor.h"
+#include "Components/StaticMeshComponent.h"
 
 APEDoorSwitch::APEDoorSwitch()
 {
-    bReplicates = true;
+    PrimaryActorTick.bCanEverTick = false;
 
     Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
     SetRootComponent(Root);
 
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     Mesh->SetupAttachment(Root);
-    Mesh->SetIsReplicated(true);
 }
 
-void APEDoorSwitch::Interact_Implementation(APawn* InstigatorPawn)
+void APEDoorSwitch::Interact(AActor* Interactor)
 {
-    if (HasAuthority())
-    {
-        Server_ToggleLinked(); // 서버에서 실행
-    }
-    else
-    {
-        Server_ToggleLinked(); // 클라 → 서버 RPC
-    }
-}
-
-void APEDoorSwitch::Server_ToggleLinked_Implementation()
-{
-    for (APEDoorSlidingActor* Door : LinkedDoors)
+    for (APEDoorActor* Door : LinkedDoors)
     {
         if (IsValid(Door))
         {

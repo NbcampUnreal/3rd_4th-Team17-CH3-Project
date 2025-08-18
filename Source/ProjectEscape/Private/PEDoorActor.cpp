@@ -43,6 +43,23 @@ FVector APEDoorActor::DirVectorLocal() const
     }
 }
 
+void APEDoorActor::Open()
+{
+    if (!bOpen && HasAuthority())
+    {
+        bOpen = true;
+        OnRep_OpenState();
+    }
+}
+
+void APEDoorActor::Close()
+{
+    if (bOpen && HasAuthority())
+    {
+        bOpen = false;
+        OnRep_OpenState();
+    }
+}
 void APEDoorActor::ToggleOpen()
 {
     if (HasAuthority())

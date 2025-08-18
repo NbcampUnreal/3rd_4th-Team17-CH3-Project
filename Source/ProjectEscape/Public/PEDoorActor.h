@@ -46,8 +46,9 @@ public:
     UPROPERTY(ReplicatedUsing = OnRep_OpenState, VisibleInstanceOnly, Category = "Net")
     bool bOpen = false;
 
-    UFUNCTION(BlueprintCallable)
-    void ToggleOpen();
+    UFUNCTION(BlueprintCallable) void ToggleOpen();
+    UFUNCTION(BlueprintCallable) void Open();
+    UFUNCTION(BlueprintCallable) void Close();
 
 protected:
     // Called when the game starts or when spawned
