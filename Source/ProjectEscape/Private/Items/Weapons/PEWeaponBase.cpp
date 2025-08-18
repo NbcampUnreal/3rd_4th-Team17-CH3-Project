@@ -12,6 +12,7 @@
 #include "Characters/Hero/Interface/PEWeaponAttachable.h"
 #include "Characters/Hero/PEHero.h"
 #include "Player/PEPlayerController.h"
+#include "Camera/CameraComponent.h"
 
 APEWeaponBase::APEWeaponBase()
 {
@@ -302,7 +303,29 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	{
 		AttackComponent->ExcuteAttack(AttackStats);
 	}
-	AttackComponent->PlaySoundEffect(WeaponStats.FireSound, GetActorLocation());
+
+	if (WeaponStats.FireSound)
+	{
+		AttackComponent->PlaySoundEffect(WeaponStats.FireSound, GetActorLocation());
+	}
+	if (WeaponStats.FireParticles)
+	{
+		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+		{
+			if (UCameraComponent* Camera = PEHero->FirstPersonCameraComponent)
+			{
+				FVector ParticleLocation = Camera->GetComponentLocation();
+				FRotator ParticleRotation = Camera->GetComponentRotation();
+				FVector Offset = WeaponStats.ParticleTransform.GetLocation();
+				ParticleLocation += Offset.X * Camera->GetForwardVector();
+				ParticleLocation += Offset.Y * Camera->GetRightVector();
+				ParticleLocation += Offset.Z * Camera->GetUpVector();
+				ParticleRotation += WeaponStats.ParticleTransform.GetRotation().Rotator();
+				AttackComponent->PlayParticleEffect(WeaponStats.FireParticles, ParticleLocation, ParticleRotation);
+			}
+		}
+	}
+	
 
 	if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
 	{

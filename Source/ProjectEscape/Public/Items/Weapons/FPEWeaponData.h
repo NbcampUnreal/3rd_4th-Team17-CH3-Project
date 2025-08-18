@@ -91,4 +91,7 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<UParticleSystem> FireParticles = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform ParticleTransform = FTransform::Identity;
 };
