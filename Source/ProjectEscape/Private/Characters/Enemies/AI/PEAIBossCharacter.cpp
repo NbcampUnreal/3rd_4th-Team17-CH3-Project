@@ -56,6 +56,8 @@ float APEAIBossCharacter::TakeDamage(float DamageAmount, const FDamageEvent& Dam
     // 부모 클래스의 TakeDamage 호출
     float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+    OnBossHealthChanged.Broadcast(EnemyHealth, EnemyMaxHealth);
+
     // 페이즈 전환 체크 (체력이 절반 이하로 떨어졌을 때)
     if (!bHasEnteredPhaseTwo && EnemyHealth <= (EnemyMaxHealth * 0.5f))
     {

@@ -9,6 +9,7 @@
 
 DECLARE_MULTICAST_DELEGATE(FOnBossPhaseTwo);
 DECLARE_MULTICAST_DELEGATE(FOnBossDeath);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnBossHealthChanged, float, float); // CurrentHealth, MaxHealth
 
 UENUM(BlueprintType)
 enum class EBossPhase : uint8
@@ -28,6 +29,7 @@ public:
     // 델리게이트
     FOnBossPhaseTwo OnBossPhaseTwo;
     FOnBossDeath OnBossDeath;
+    FOnBossHealthChanged OnBossHealthChanged;
 
     // Boss 전용 공격 스탯
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Boss|Combat")
@@ -122,6 +124,15 @@ public:
 
     UFUNCTION(BlueprintPure, Category = "Enemy|Boss|Phase")
     EBossPhase GetCurrentPhase() const { return CurrentPhase; }
+
+    UFUNCTION(BlueprintPure, Category = "Enemy|Boss|Health")
+    float GetCurrentHealth() const { return EnemyHealth; }
+
+    UFUNCTION(BlueprintPure, Category = "Enemy|Boss|Health")
+    float GetMaxHealth() const { return EnemyMaxHealth; }
+
+    UFUNCTION(BlueprintPure, Category = "Enemy|Boss|Health")
+    float GetHealthPercent() const { return EnemyMaxHealth > 0 ? (EnemyHealth / EnemyMaxHealth) : 0.0f; }
 
 protected:
 	virtual void BeginPlay() override;
