@@ -81,7 +81,7 @@ void UPEAttackHitscanComponent::PerformAttack(const FPEAttackStats& AttackStats,
 	// 디버그용 ray 그리기
 	FColor DebugColor = bHit ? FColor::Red : FColor::Green;  // 히트하면 빨간색, 안 하면 초록색
 	FVector DebugEndLocation = bHit ? HitResult.Location : EndLocation;
-	DrawDebugLine(World, StartLocation, DebugEndLocation, DebugColor, false, 2.0f, 0, 2.0f);
+	//DrawDebugLine(World, StartLocation, DebugEndLocation, DebugColor, false, 2.0f, 0, 2.0f);
 	
 	// 히트 지점에 디버그 구체 그리기
 	if (bHit)
