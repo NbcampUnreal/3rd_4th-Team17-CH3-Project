@@ -47,7 +47,6 @@ void APEPlayerController::BeginPlay()
 
 	if (Boss)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("WWWWWWWWWWWWWWWW"));
 		Boss->OnBossDeath.AddUObject(this, &APEPlayerController::OnBossDeath);
 		Boss->OnBossPhaseTwo.AddUObject(this, &APEPlayerController::OnBossPhaseTwo);
 		Boss->OnBossHealthChanged.AddUObject(this, &APEPlayerController::OnChangeBossHealth);
