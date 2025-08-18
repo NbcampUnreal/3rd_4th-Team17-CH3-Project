@@ -50,7 +50,12 @@ public:
 	virtual bool ExcuteAttack(const FPEAttackStats& AttackStats);	//AttackStartPoint 기준으로 공격을 실행합니다. (카메라같은 기준 액터를 사용할 때)
 	virtual bool ExcuteAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
 
+	void PlayParticleEffect(UParticleSystem* ParticleEffect, const FVector& Location, const FRotator& Rotation = FRotator::ZeroRotator);
+	void PlayParticleEffect(UParticleSystem* ParticleEffect);
+	void PlaySoundEffect(USoundBase* SoundEffect, const FVector& Location);
+	void PlaySoundEffect(USoundBase* SoundEffect);
 	void SetAttackStartPoint(USceneComponent* NewStartPoint);
+	
 
 protected:
 	FVector ApplyAccuracyDeviation(const FVector& OriginalDirection, const float& SpreadAngle) const;

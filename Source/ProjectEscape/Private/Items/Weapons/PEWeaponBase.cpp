@@ -234,6 +234,7 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	{
 		AttackComponent->ExcuteAttack(AttackStats);
 	}
+	AttackComponent->PlaySoundEffect(WeaponStats.FireSound, GetActorLocation());
 
 	if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
 	{
