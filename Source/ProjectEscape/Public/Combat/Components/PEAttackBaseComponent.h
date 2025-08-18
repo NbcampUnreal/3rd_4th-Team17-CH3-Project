@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Combat/Interface/PEAttackable.h"
 #include "Components/ActorComponent.h"
+#include "Core/PEPhysics.h"
 #include "PEAttackBaseComponent.generated.h"
 
 class APEProjectileBase;
@@ -21,7 +22,7 @@ struct PROJECTESCAPE_API FPEAttackStats
 	float ProjectileSpeed = 1000.0f;
 	float ExplosionRadius = 200.0f;
 	float ExplosionDelay = 3.0f;
-	ECollisionChannel CollisionChannel = ECC_Pawn;
+	ECollisionChannel CollisionChannel = CCHANNEL_HEROHITSCAN;
 };
 
 /*
