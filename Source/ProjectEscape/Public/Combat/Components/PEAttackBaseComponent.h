@@ -22,7 +22,8 @@ struct PROJECTESCAPE_API FPEAttackStats
 	float ProjectileSpeed = 1000.0f;
 	float ExplosionRadius = 200.0f;
 	float ExplosionDelay = 3.0f;
-	ECollisionChannel CollisionChannel = CCHANNEL_HEROHITSCAN;
+	ECollisionChannel HitscanChannel = CCHANNEL_ENEMYHITSCAN;
+	ECollisionChannel ProjectileCollisionChannel = CCHANNEL_ENEMYPROJECTILE;
 };
 
 /*
