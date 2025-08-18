@@ -3,6 +3,7 @@
 
 #include "Characters/Enemies/AI/PEBTTask_FindRandomLocation.h"
 #include "Characters/Enemies/AI/PEAIController.h"
+#include "Characters/Enemies/AI/PEAIBossCharacter.h"
 #include "NavigationSystem.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -26,6 +27,15 @@ EBTNodeResult::Type UPEBTTask_FindRandomLocation::ExecuteTask(UBehaviorTreeCompo
 	if(!MyPawn)
 	{
 		return EBTNodeResult::Failed;
+	}
+
+	if (APEAIBossCharacter* BossCharacter = Cast<APEAIBossCharacter>(MyPawn))
+	{
+		if (BossCharacter->bIsInPhaseTransition)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Boss is in phase transition, skipping random location search"));
+			return EBTNodeResult::Failed; // 또는 InProgress로 대기
+		}
 	}
 
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());

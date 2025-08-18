@@ -4,6 +4,7 @@
 #include "Characters/Enemies/AI/PEBTTask_AttackPlayer.h"
 #include "Characters/Enemies/AI/PEAIController.h"
 #include "Characters/Enemies/AI/PEAICharacter.h"
+#include "Characters/Enemies/AI/PEAIBossCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
@@ -106,7 +107,20 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
     if (AICharacter)
     {
         MyPawn->SetActorRotation(LookRotation);
-        AICharacter->PerformAttack();
+        if (APEAIBossCharacter* BossCharacter = Cast<APEAIBossCharacter>(AICharacter))
+        {
+            if (BossCharacter->bIsInPhaseTransition || BossCharacter->bIsUsingSpecialSkill)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Boss is in phase transition, skipping attack"));
+                return EBTNodeResult::Failed; // 또는 InProgress로 대기
+            }
+            BossCharacter->PerformBossAttack(DistanceToPlayer);
+        }
+        else
+        {
+            AICharacter->PerformAttack();
+        }
+        //AICharacter->PerformAttack();
 
         FPEAttackStats AttackStats;
         AttackStats.AttackRange = AICharacter->AttackRange; // 공격 범위 설정
