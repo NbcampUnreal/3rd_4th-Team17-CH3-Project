@@ -11,15 +11,22 @@ APEDoorSwitch::APEDoorSwitch()
 
     Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
     Mesh->SetupAttachment(Root);
+
+    InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
+    InteractableComponent->SetupAttachment(Mesh);
 }
 
 void APEDoorSwitch::Interact(AActor* Interactor)
 {
     for (APEDoorActor* Door : LinkedDoors)
     {
-        if (IsValid(Door))
+        if (!IsValid(Door)) continue;
+
+        switch (Command)
         {
-            Door->ToggleOpen();
+        case ESwitchCommand::Toggle:     Door->ToggleOpen(); break;
+        case ESwitchCommand::ForceOpen:  Door->Open();       break; // 2ÃþÀ¸·Î
+        case ESwitchCommand::ForceClose: Door->Close();      break; // 1ÃþÀ¸·Î
         }
     }
 }
