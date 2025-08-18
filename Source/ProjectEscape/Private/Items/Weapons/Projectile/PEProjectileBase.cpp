@@ -9,6 +9,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Engine/Engine.h"
 #include "Items/Weapons/PEWeaponBase.h"
+#include "Kismet/GameplayStatics.h"
 
 APEProjectileBase::APEProjectileBase()
 {
@@ -74,9 +75,10 @@ void APEProjectileBase::Tick(float DeltaTime)
 	
 }
 
-void APEProjectileBase::Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
+void APEProjectileBase::Launch(AActor* InInstigator, const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
 	ProjectileStats = AttackStats;
+	InstigatorActor = InInstigator;
 	
 	SetActorLocation(StartLocation);
 	
@@ -95,6 +97,11 @@ void APEProjectileBase::Launch(const FPEAttackStats& AttackStats, const FVector&
 	}
 }
 
+AActor* APEProjectileBase::GetInstigator() const
+{
+	return InstigatorActor;
+}
+
 void APEProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
 {
 	// 자기 자신이나 소유자와의 충돌은 무시
@@ -111,14 +118,35 @@ void APEProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 				ProjectileStats.DamageAmount,
 				Hit.Location,
 				Hit.Normal,
-				GetOwner()
+				InstigatorActor
 			);
 			UE_LOG(LogTemp, Log, TEXT("Damage applied: %f to %s"), 
 				ProjectileStats.DamageAmount, *OtherActor->GetName());
-		
-			OnProjectileExpired();
+
+			
 		}
 	}
+
+	if (HitEffect)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitEffect,
+			Hit.Location
+		);
+	}
+
+	// 사운드 이펙트
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			HitSound,
+			Hit.Location
+		);
+	}
+	
+	OnProjectileExpired();
 }
 
 void APEProjectileBase::OnProjectileExpired()

@@ -8,6 +8,7 @@
 #include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Weapons/PEWeaponBase.h"
 #include "Characters/Hero/PEHero.h"
+#include "Items/PEItemUseable.h"
 
 /*
  * 퀵슬롯에서 필요한 기능
@@ -200,27 +201,34 @@ FInventoryInfo UPEQuickSlotManagerComponent::ConvertToQuickSlotInfo()
 	
 	if (QuickSlotItems.Contains(EPEEquipmentType::Healing) && QuickSlotItems[EPEEquipmentType::Healing])
 	{
-		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Healing]))
+		//TODO: 각각의 클래스로 캐스트하는 것이 아닌 QuickSlotItem Interface를 구현한 클래스로 캐스트하여 처리할 수 있도록 개선 필요
+		if (APEItemUseable* HealingItem = Cast<APEItemUseable>(QuickSlotItems[EPEEquipmentType::Healing]))
 		{
-			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
+			const FPEWeaponData& EquipmentStats = HealingItem->GetEquipmentStats();
 			
-			QuickSlotInfo.QuickHeal.ItemTexture = WeaponStats.IconTexture2D; 
-			QuickSlotInfo.QuickHeal.ItemDescription = FText::FromString(WeaponStats.Description);
+			QuickSlotInfo.QuickHeal.ItemTexture = EquipmentStats.IconTexture2D; 
+			QuickSlotInfo.QuickHeal.ItemDescription = FText::FromString(EquipmentStats.Description);
 			QuickSlotInfo.QuickHeal.ItemTag = GameplayTags.Item_Things_Heal;
-			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Healing in QuickSlotInfo"));
+			QuickSlotInfo.QuickHeal.StackCount = HealingItem->GetItemStackCount();
+			QuickSlotInfo.QuickHeal.MaxStackCount = HealingItem->GetItemStackCount();
+			QuickSlotInfo.QuickHeal.IsStackable = false;
+			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Healing in QuickSlotInfo, %d"), HealingItem->GetItemCount());
 		}
 	}
 	
 	if (QuickSlotItems.Contains(EPEEquipmentType::Throwable) && QuickSlotItems[EPEEquipmentType::Throwable])
 	{
-		if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(QuickSlotItems[EPEEquipmentType::Throwable]))
+		if (APEItemUseable* ThrowableItem = Cast<APEItemUseable>(QuickSlotItems[EPEEquipmentType::Throwable]))
 		{
-			const FPEWeaponData& WeaponStats = WeaponBase->GetWeaponStats();
+			const FPEWeaponData& EquipmentStats = ThrowableItem->GetEquipmentStats();
 			
-			QuickSlotInfo.QuickGrenade.ItemTexture = WeaponStats.IconTexture2D; 
-			QuickSlotInfo.QuickGrenade.ItemDescription = FText::FromString(WeaponStats.Description);
+			QuickSlotInfo.QuickGrenade.ItemTexture = EquipmentStats.IconTexture2D; 
+			QuickSlotInfo.QuickGrenade.ItemDescription = FText::FromString(EquipmentStats.Description);
 			QuickSlotInfo.QuickGrenade.ItemTag = GameplayTags.Item_Things_Grenade;
-			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Throwable in QuickSlotInfo"));
+			QuickSlotInfo.QuickGrenade.StackCount = ThrowableItem->GetItemCount();
+			QuickSlotInfo.QuickGrenade.MaxStackCount = ThrowableItem->GetItemCount();
+			QuickSlotInfo.QuickGrenade.IsStackable = false;
+			UE_LOG(LogPE, Log, TEXT("Converted Weapon to Throwable in QuickSlotInfo, %d"), ThrowableItem->GetItemCount());
 		}
 	}
 

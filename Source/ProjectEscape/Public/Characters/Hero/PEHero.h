@@ -120,6 +120,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void UseItemByInventory(FGameplayTag ItemTag);
 
+	UPEInventoryManagerComponent* GetInventoryManagerComponent() const;
+
 	/* Combat 관련 섹션 */
 public:
 	virtual USceneComponent* GetAttackStartPoint() const override;
