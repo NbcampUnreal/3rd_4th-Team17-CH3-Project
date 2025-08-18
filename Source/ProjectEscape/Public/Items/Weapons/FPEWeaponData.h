@@ -46,6 +46,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool IsMagazineReload = true; // 명시적으로 사용, 실제로는 무기 클래스 안에 구현해야 함
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsInfiniteAmmo = false;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 BulletsPerShot = 1;
