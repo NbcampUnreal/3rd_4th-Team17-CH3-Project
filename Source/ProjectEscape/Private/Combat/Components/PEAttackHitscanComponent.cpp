@@ -5,6 +5,7 @@
 #include "Combat/Components/PEReceiveAttackComponent.h"
 #include "Engine/World.h"
 #include "Components/ActorComponent.h"
+#include "Components/BoxComponent.h"
 #include "Core/PELogChannels.h"
 #include "DrawDebugHelpers.h"
 #include "Items/Weapons/PEWeaponBase.h"
@@ -43,17 +44,21 @@ void UPEAttackHitscanComponent::PerformAttack(const FPEAttackStats& AttackStats,
 		HitResult,
 		StartLocation,
 		EndLocation,
-		AttackStats.CollisionChannel, 
+		AttackStats.HitscanChannel, 
 		QueryParams
 	);
 	
 	if (bHit && HitResult.GetActor())
 	{
 		AActor* HitActor = HitResult.GetActor();
+		UPrimitiveComponent* HitComponent = HitResult.GetComponent();
 		
-		// PEReceiveAttackComponent를 찾아서 데미지 전달
-		if (UPEReceiveAttackComponent* ReceiveAttackComponent = HitActor->FindComponentByClass<UPEReceiveAttackComponent>())
+		// 맞은 컴포넌트 자체가 PEReceiveAttackComponent인지 확인
+		if (UPEReceiveAttackComponent* ReceiveAttackComponent = Cast<UPEReceiveAttackComponent>(HitComponent))
 		{
+			UE_LOG(LogPE, Log, TEXT("Hit PEReceiveAttackComponent: %s on Actor: %s"), 
+				*ReceiveAttackComponent->GetName(), *HitActor->GetName());
+			
 			AActor* InstigatorActor = nullptr;
 			if (APEWeaponBase* Weapon = Cast<APEWeaponBase>(GetOwner()))
 			{

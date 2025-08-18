@@ -120,7 +120,7 @@ void APEItemThrowable::PerformThrowing(AActor* Holder)
 		AttackStats.ProjectileSpeed = EquipmentStats.ProjectileSpeed;
 		AttackStats.ExplosionRadius = EquipmentStats.ExplosionRadius;
 		AttackStats.ExplosionDelay = EquipmentStats.ExplosionDelayTime;
-		AttackStats.CollisionChannel = ECC_Visibility; //TODO: Collision 수정 필요
+		AttackStats.HitscanChannel = ECC_Visibility; //TODO: Collision 수정 필요
 
 		AttackComponent->ExcuteAttack(AttackStats);
 		

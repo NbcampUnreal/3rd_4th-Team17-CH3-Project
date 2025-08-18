@@ -19,9 +19,6 @@ APEProjectileBase::APEProjectileBase()
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
 	CollisionComponent->SetBoxExtent(FVector(2.5f, 2.5f, 5.0f)); // 박스 크기 설정 (길이 5, 폭/높이 2.5)
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	CollisionComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	CollisionComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	CollisionComponent->SetHiddenInGame(false);
 	RootComponent = CollisionComponent;
 
@@ -81,6 +78,12 @@ void APEProjectileBase::Launch(AActor* InInstigator, const FPEAttackStats& Attac
 	InstigatorActor = InInstigator;
 	
 	SetActorLocation(StartLocation);
+	
+	// CollisionComponent의 Object Type을 AttackStats의 ProjectileCollision으로 설정
+	if (CollisionComponent)
+	{
+		CollisionComponent->SetCollisionObjectType(AttackStats.ProjectileCollisionChannel);
+	}
 	
 	if (ProjectileMovement)
 	{
