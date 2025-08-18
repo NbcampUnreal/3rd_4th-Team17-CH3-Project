@@ -31,7 +31,16 @@ APEWeaponBase::APEWeaponBase()
 
 	// 퀵슬롯 아이템 컴포넌트 생성 및 설정
 	QuickSlotItemComponent = CreateDefaultSubobject<UPEQuickSlotItemComponent>(TEXT("QuickSlotItemComponent"));
-
+	
+	// InteractWidgetComponent 생성 및 설정
+	InteractWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionUIComponent"));
+	InteractWidgetComponent->SetupAttachment(RootComponent);
+	InteractWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, InteractionUIOffsetZ)); // 아이템 위쪽에 표시
+	InteractWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // 3D 공간에 표시
+	InteractWidgetComponent->SetDrawSize(FVector2D(200.0f, 100.0f)); // UI 크기 설정
+	InteractWidgetComponent->SetVisibility(false); // 기본적으로 숨김
+	
+	
 	bIsFiring = false;
 	bIsReloading = false;
 	LastAttackTime = 0.0f;
@@ -373,6 +382,34 @@ bool APEWeaponBase::IsInteractable() const
 		return false;
 	}
 	return true;
+}
+
+void APEWeaponBase::ShowInteractionUI()
+{
+	if (InteractWidgetComponent && InteractWidgetClass)
+	{
+		// 위젯 클래스가 설정되어 있으면 위젯 생성
+		if (!InteractWidgetComponent->GetWidget())
+		{
+			InteractWidgetComponent->SetWidgetClass(InteractWidgetClass);
+		}
+		
+		InteractWidgetComponent->SetVisibility(true);
+		UE_LOG(LogTemp, Log, TEXT("Interaction UI shown for %s"), *GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InteractionUIComponent or InteractionUIWidgetClass is null for %s"), *GetName());
+	}
+}
+
+void APEWeaponBase::HideInteractionUI()
+{
+	if (InteractWidgetComponent)
+	{
+		InteractWidgetComponent->SetVisibility(false);
+		UE_LOG(LogTemp, Log, TEXT("Interaction UI hidden for %s"), *GetName());
+	}
 }
 
 UPEUseableComponent* APEWeaponBase::GetUseableComponent() const
