@@ -68,6 +68,6 @@ protected:
 	FInventoryInfo ConvertToQuickSlotInfo();
 
 	/* UI 반영 델리게이트 헬퍼 함수 관련 섹션*/
-protected:
+public:
 	void UpdateQuickSlotInfoAndBroadcast();
 };

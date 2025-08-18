@@ -96,7 +96,7 @@ void APEItemUseable::DoTertiaryAction(AActor* Holder)
 void APEItemUseable::OnHand(AActor* NewOwner)
 {
 	AttachToOwner();
-
+	
 	BroadcastHUDStateChanged();
 }
 

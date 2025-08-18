@@ -7,6 +7,7 @@
 #include "Components/ActorComponent.h"
 #include "Core/PELogChannels.h"
 #include "DrawDebugHelpers.h"
+#include "Items/Weapons/PEWeaponBase.h"
 
 UPEAttackHitscanComponent::UPEAttackHitscanComponent()
 {
@@ -53,11 +54,20 @@ void UPEAttackHitscanComponent::PerformAttack(const FPEAttackStats& AttackStats,
 		// PEReceiveAttackComponent를 찾아서 데미지 전달
 		if (UPEReceiveAttackComponent* ReceiveAttackComponent = HitActor->FindComponentByClass<UPEReceiveAttackComponent>())
 		{
+			AActor* InstigatorActor = nullptr;
+			if (APEWeaponBase* Weapon = Cast<APEWeaponBase>(GetOwner()))
+			{
+				InstigatorActor = Weapon->GetItemOwner();
+			}
+			else
+			{
+				InstigatorActor = GetOwner();
+			}
 			ReceiveAttackComponent->ReceiveDamage(
 				AttackStats.DamageAmount,
 				HitResult.Location,
 				HitResult.Normal,
-				GetOwner()
+				InstigatorActor
 			);
 		}
 	}

@@ -29,6 +29,15 @@ void APEItemThrowable::Interact(AActor* Interactor)
 	UE_LOG(LogPE, Warning, TEXT("Interact called on %s by %s"), *GetName(), *Interactor->GetName());
 	
 	ItemOwnerActor = Interactor;
+	if (ItemOwnerActor)
+	{
+		UE_LOG(LogPE, Log, TEXT("ItemOwnerActor set to %s"), *GetNameSafe(ItemOwnerActor));
+	}
+	else
+	{
+		UE_LOG(LogPE, Log, TEXT("ItemOwnerActor is NULL"));
+	}
+	
 	if (IPEAttackable* AttackableInterface = Cast<IPEAttackable>(Interactor))
 	{
 		AttackComponent->SetAttackStartPoint(AttackableInterface->GetAttackStartPoint());
