@@ -22,4 +22,6 @@ class PROJECTESCAPE_API IPEInteractable
 public:
 	virtual void Interact(class AActor* Interactor) = 0;
 	virtual bool IsInteractable() const = 0;
+	virtual void ShowInteractionUI() = 0;
+	virtual void HideInteractionUI() = 0;
 };

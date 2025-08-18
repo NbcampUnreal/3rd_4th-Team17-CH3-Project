@@ -47,11 +47,6 @@ public:
 	/* 하이라이트 관련 섹션 */
 	void Highlight(bool bIsEnable);
 
-protected:
-	// 3D UI Widget 관련
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
-	TObjectPtr<UWidgetComponent> InteractWidgetComponent;
-
 private:
 	UPROPERTY()
 	TObjectPtr<UMeshComponent> CachedMesh; // 대상 Mesh 보관용
