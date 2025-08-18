@@ -9,6 +9,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Engine/Engine.h"
 #include "Items/Weapons/PEWeaponBase.h"
+#include "Kismet/GameplayStatics.h"
 
 APEProjectileBase::APEProjectileBase()
 {
@@ -115,10 +116,31 @@ void APEProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 			);
 			UE_LOG(LogTemp, Log, TEXT("Damage applied: %f to %s"), 
 				ProjectileStats.DamageAmount, *OtherActor->GetName());
-		
-			OnProjectileExpired();
+
+			
 		}
 	}
+
+	if (HitEffect)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitEffect,
+			Hit.Location
+		);
+	}
+
+	// 사운드 이펙트
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			HitSound,
+			Hit.Location
+		);
+	}
+	
+	OnProjectileExpired();
 }
 
 void APEProjectileBase::OnProjectileExpired()

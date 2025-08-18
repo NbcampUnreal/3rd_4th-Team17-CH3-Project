@@ -140,7 +140,6 @@ void APEHero::DoPrimaryAction()
 	if (UseableItemManagerComponent)
 	{
 		UseableItemManagerComponent->DoPrimaryActionCurrentItem(this);
-		UE_LOG(LogTemp, Warning, TEXT("Primary Action with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
 	{
@@ -247,7 +246,15 @@ void APEHero::HandleDropEquipmentToWorld(FGameplayTag EquipmentTag)
 	}
 	else if (EquipmentTag == GameplayTags.Item_Things_Heal)
 	{
-		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
+		if (UPEUseableComponent* UseableComponent = UseableItemManagerComponent->GetCurrentItem())
+		{
+			if (UseableComponent->GetEquipmentType() == EPEEquipmentType::Healing)
+			{
+				UseableItemManagerComponent->ReleaseHandItem();
+			}
+		}
+		QuickSlotManagerComponent->RemoveQuickSlotItem(EPEEquipmentType::Healing);
+		
 	}
 	else if ( EquipmentTag == GameplayTags.Item_Things_Grenade)
 	{
@@ -347,7 +354,24 @@ void APEHero::HandleInventoryItemUse(FGameplayTag ItemTag)
 void APEHero::UseItemByInventory(FGameplayTag ItemTag)
 {
 	// NOTE: 인벤토리에서 아이템에 마우스 오른쪽 버튼을 눌렀을 때의 액션이 이곳에 호출됩니다.
-	//			ItemBase는 해당 함수를 비워둡니다.
+
+	if (InventoryManagerComponent && QuickSlotManagerComponent)
+	{
+		if (AActor* Actor = InventoryManagerComponent->GetItemByTag(ItemTag)->GetOwner())
+		{
+			if (UPEQuickSlotItemComponent* QuickSlotItemComponent = Actor->FindComponentByClass<UPEQuickSlotItemComponent>())
+			{
+				// 컴포넌트가 존재할 때 실행
+				QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), Actor);
+				UE_LOG(LogPE, Log, TEXT("UseItemByInventory: Item with tag added to quick slot"));
+			}
+		}
+	}
+}
+
+UPEInventoryManagerComponent* APEHero::GetInventoryManagerComponent() const
+{
+	return InventoryManagerComponent;
 }
 
 bool APEHero::HasWeapon() const
