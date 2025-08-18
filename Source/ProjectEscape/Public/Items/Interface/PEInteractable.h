@@ -1,22 +1,25 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
+
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
 #include "PEInteractable.generated.h"
 
-UINTERFACE(BlueprintType)
+UINTERFACE(MinimalAPI)
 class UPEInteractable : public UInterface
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 };
 
-class IPEInteractable
+/**
+ * 
+ */
+class PROJECTESCAPE_API IPEInteractable
 {
-    GENERATED_BODY()
+	GENERATED_BODY()
 
 public:
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-    void Interact(APawn* InstigatorPawn);
-
-    UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
-    FText GetInteractText();
+	virtual void Interact(class AActor* Interactor) = 0;
+	virtual bool IsInteractable() const = 0;
 };
