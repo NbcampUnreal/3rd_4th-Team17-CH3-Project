@@ -14,6 +14,7 @@
 #include "Items/Weapons/PEWeaponBase.h"
 #include "Core/PEGameModeBase.h"
 #include "Items/Weapons/Projectile/PEProjectileBase.h"
+#include "Characters/Enemies/Drop/EnemyDropComponent.h"
 
 APEAICharacter::APEAICharacter()
 {
@@ -42,6 +43,8 @@ APEAICharacter::APEAICharacter()
 	ReceiveComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveComponent"));
 	ReceiveComponent->SetHiddenInGame(false);
 	ReceiveComponent->SetupAttachment(RootComponent);
+
+	DropComponent = CreateDefaultSubobject<UEnemyDropComponent>(TEXT("DropComponent"));
 }
 
 void APEAICharacter::PreInitializeComponents()
@@ -64,7 +67,7 @@ void APEAICharacter::BeginPlay()
 
 	EnemyHealth = EnemyMaxHealth;
 
-	//¾Ö´Ï¸ÞÀÌ¼Ç ¸ùÅ¸ÁÖ ¿Ï·á µ¨¸®°ÔÀÌÆ® ¹ÙÀÎµù Ãß°¡
+	//ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½Ï·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½Îµï¿½ ï¿½ß°ï¿½
 		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 		{
 			if (AttackMontage)
@@ -93,7 +96,7 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 
 void APEAICharacter::BeginDestroy()
 {
-	// AI »ç¸Á ½Ã µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
+	// AI ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Îµï¿½Ä³ï¿½ï¿½Æ®
 	OnPawnDeath.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Destory"));
 	Super::BeginDestroy();
@@ -113,8 +116,8 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 			{
 				EnemyHealth = 0.0f;
 				UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
-				OnPawnDeath.Broadcast(); // AI »ç¸Á ½Ã µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
-				Die(); // »ç¸Á Ã³¸®
+				OnPawnDeath.Broadcast(); // AI ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½Îµï¿½Ä³ï¿½ï¿½Æ®
+				Die(); // ï¿½ï¿½ï¿½ Ã³ï¿½ï¿½
 			}
 
 		}
@@ -179,11 +182,17 @@ void APEAICharacter::Die()
 	PlayDeathAnimation();
 	UE_LOG(LogTemp, Warning, TEXT("%s has died!"), *GetName());
 
-	// ÄÝ¸®Àü ºñÈ°¼ºÈ­
+	// ï¿½Ý¸ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
 	SetActorEnableCollision(false);
 
-	// 3ÃÊ ÈÄ ÆÄ±«
+	// 3ï¿½ï¿½ ï¿½ï¿½ ï¿½Ä±ï¿½
 	SetLifeSpan(3.0f);
+
+	// Drop
+	if (DropComponent)
+	{
+		DropComponent->Drop();
+	}
 }
 
 void APEAICharacter::PlayAttackAnimation()
@@ -210,10 +219,10 @@ void APEAICharacter::PlayDeathAnimation()
 
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		// ¸ðµç ±âÁ¸ ¾Ö´Ï¸ÞÀÌ¼Ç Áß´Ü
+		// ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ß´ï¿½
 		AnimInstance->StopAllMontages(0.2f);
 
-		// »ç¸Á ¾Ö´Ï¸ÞÀÌ¼Ç Àç»ý
+		// ï¿½ï¿½ï¿½ ï¿½Ö´Ï¸ï¿½ï¿½Ì¼ï¿½ ï¿½ï¿½ï¿½
 		AnimInstance->Montage_Play(DeathMontage, 1.0f);
 		UE_LOG(LogTemp, Log, TEXT("%s playing death animation"), *GetName());
 	}

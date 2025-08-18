@@ -10,6 +10,7 @@
 DECLARE_MULTICAST_DELEGATE(FOnPawnDeath);
 
 class APEAIController;
+class UEnemyDropComponent;
 
 UCLASS()
 class PROJECTESCAPE_API APEAICharacter : public ACharacter
@@ -26,6 +27,10 @@ public:
 	TObjectPtr<UPEAttackBaseComponent> AttackComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Combat")
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveComponent;
+
+	// Drop
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Combat")
+	TObjectPtr<UEnemyDropComponent> DropComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy||Status")
 	int32 AttackAmount = 10;
