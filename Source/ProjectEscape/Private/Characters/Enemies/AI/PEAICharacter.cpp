@@ -67,7 +67,7 @@ void APEAICharacter::BeginPlay()
 
 	EnemyHealth = EnemyMaxHealth;
 
-	//�ִϸ��̼� ��Ÿ�� �Ϸ� ��������Ʈ ���ε� �߰�
+	//애니메이션 몽타주 완료 델리게이트 바인딩 추가
 		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 		{
 			if (AttackMontage)
@@ -96,7 +96,7 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 
 void APEAICharacter::BeginDestroy()
 {
-	// AI ��� �� ��������Ʈ ��ε�ĳ��Ʈ
+	// AI 사망 시 델리게이트 브로드캐스트
 	OnPawnDeath.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Destory"));
 	Super::BeginDestroy();
@@ -116,8 +116,8 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 			{
 				EnemyHealth = 0.0f;
 				UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
-				OnPawnDeath.Broadcast(); // AI ��� �� ��������Ʈ ��ε�ĳ��Ʈ
-				Die(); // ��� ó��
+				OnPawnDeath.Broadcast(); // AI 사망 시 델리게이트 브로드캐스트
+				Die(); // 사망 처리
 			}
 
 		}
@@ -182,10 +182,10 @@ void APEAICharacter::Die()
 	PlayDeathAnimation();
 	UE_LOG(LogTemp, Warning, TEXT("%s has died!"), *GetName());
 
-	// �ݸ��� ��Ȱ��ȭ
+	// 콜리전 비활성화
 	SetActorEnableCollision(false);
 
-	// 3�� �� �ı�
+	// 3초 후 파괴
 	SetLifeSpan(3.0f);
 
 	// Drop
@@ -219,10 +219,10 @@ void APEAICharacter::PlayDeathAnimation()
 
 	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
 	{
-		// ��� ���� �ִϸ��̼� �ߴ�
+		// 모든 기존 애니메이션 중단
 		AnimInstance->StopAllMontages(0.2f);
 
-		// ��� �ִϸ��̼� ���
+		// 사망 애니메이션 재생
 		AnimInstance->Montage_Play(DeathMontage, 1.0f);
 		UE_LOG(LogTemp, Log, TEXT("%s playing death animation"), *GetName());
 	}
