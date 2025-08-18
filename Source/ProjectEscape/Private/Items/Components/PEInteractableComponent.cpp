@@ -8,6 +8,11 @@ UPEInteractableComponent::UPEInteractableComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	ComponentOwner = nullptr;
+
+	// Collision 설정
+	SetCollisionProfileName(TEXT("InteractBox"));
+	SetCollisionObjectType(ECC_GameTraceChannel5); // CCHANNEL_INTERACTABLE
+	
 }
 
 void UPEInteractableComponent::BeginPlay()

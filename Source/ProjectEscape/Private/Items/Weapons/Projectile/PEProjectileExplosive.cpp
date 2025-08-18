@@ -35,7 +35,7 @@ void APEProjectileExplosive::PerformExplosion()
 		this,              // 데미지 원인자
 		GetInstigatorController(),
 		true,              // 풀 데미지 적용
-		ProjectileStats.CollisionChannel
+		ProjectileStats.HitscanChannel
 	);
 	
 	if (HitEffect)

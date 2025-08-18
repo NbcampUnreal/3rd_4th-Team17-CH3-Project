@@ -9,6 +9,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputAction.h"
 #include "Characters/Hero/Interface/PEInteractManagerHandler.h"
+#include "Core/PEPhysics.h"
 
 UPEInteractManagerComponent::UPEInteractManagerComponent()
 {
@@ -102,7 +103,7 @@ void UPEInteractManagerComponent::CheckAndSetForInteractable()
 		HitResult,
 		StartLocation,
 		EndLocation,
-		ECC_Visibility,
+		CCHANNEL_INTERACT,
 		QueryParams
 	);
 

@@ -87,7 +87,7 @@ void APEWeaponGranade::PerformThrowing(AActor* Holder)
 		AttackStats.ProjectileSpeed = WeaponStats.ProjectileSpeed;
 		AttackStats.ExplosionRadius = WeaponStats.ExplosionRadius;
 		AttackStats.ExplosionDelay = WeaponStats.ExplosionDelayTime;
-		AttackStats.CollisionChannel = ECC_Visibility; //TODO: Collision 수정 필요
+		AttackStats.HitscanChannel = ECC_Visibility; //TODO: Collision 수정 필요
 
 		AttackComponent->ExcuteAttack(AttackStats);
 		
