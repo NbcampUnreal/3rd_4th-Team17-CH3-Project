@@ -49,9 +49,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	float AirControl = 0.2f;
 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Status")
 	bool bIsDead = false;
+
+	//시야 Sight
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Sight")
+	float SightRadius = 1500.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Sight")
+	float LoseSightRadius = 2000.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Sight")
+	float SightAngle = 90.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Sight")
+	float SightDuration = 5.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Sight")
+	float InvestigateDuration = 5.0f; // 플레이어를 놓쳤을 때 조사하는 시간
 
 	// 애니메이션 상태 (Runtime 정보)
 
