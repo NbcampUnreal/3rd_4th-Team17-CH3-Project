@@ -43,7 +43,7 @@ APEAICharacter::APEAICharacter()
 
 	AttackComponent = CreateDefaultSubobject<UPEAttackHitscanComponent>(TEXT("AttackComponent"));
 	ReceiveComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveComponent"));
-	ReceiveComponent->SetHiddenInGame(false);
+	ReceiveComponent->SetHiddenInGame(true);
 	ReceiveComponent->SetupAttachment(RootComponent);
 
 	DropComponent = CreateDefaultSubobject<UEnemyDropComponent>(TEXT("DropComponent"));
@@ -184,19 +184,19 @@ void APEAICharacter::Die()
 
 	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
 	{
-		Movement->DisableMovement(); // ¿òÁ÷ÀÓ ºñÈ°¼ºÈ­
-		Movement->StopMovementImmediately(); // Áï½Ã Á¤Áö
+		Movement->DisableMovement(); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È°ï¿½ï¿½È­
+		Movement->StopMovementImmediately(); // ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	}
 
-	// AI Controllerµµ ¿ÏÀüÈ÷ Á¤Áö
+	// AI Controllerï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 	if (AAIController* AIController = Cast<AAIController>(GetController()))
 	{
-		AIController->StopMovement(); // AI ÀÌµ¿ ¸í·É Áß´Ü
+		AIController->StopMovement(); // AI ï¿½Ìµï¿½ ï¿½ï¿½ï¿½ ï¿½ß´ï¿½
 
-		// Behavior Treeµµ Á¤Áö (¼±ÅÃ»çÇ×)
+		// Behavior Treeï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ (ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½)
 		if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(AIController->GetBrainComponent()))
 		{
-			BTComp->StopTree(); // BT ¿ÏÀü Áß´Ü
+			BTComp->StopTree(); // BT ï¿½ï¿½ï¿½ï¿½ ï¿½ß´ï¿½
 		}
 	}
 

@@ -18,7 +18,7 @@ APEItemBase::APEItemBase()
 	// InteractableComponent 생성 및 설정
 	InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->SetupAttachment(RootComponent);
-	InteractableComponent->SetHiddenInGame(false);
+	InteractableComponent->SetHiddenInGame(true);
 	
 	// Inventroy 관련 컴포넌트 생성 및 설정
 	StorableItemComponent = CreateDefaultSubobject<UPEStorableItemComponent>(TEXT("StorableItemComponent"));

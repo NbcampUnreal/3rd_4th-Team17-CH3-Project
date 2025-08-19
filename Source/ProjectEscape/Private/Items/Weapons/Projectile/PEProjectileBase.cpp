@@ -19,7 +19,7 @@ APEProjectileBase::APEProjectileBase()
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
 	CollisionComponent->SetBoxExtent(FVector(2.5f, 2.5f, 5.0f)); // 박스 크기 설정 (길이 5, 폭/높이 2.5)
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	CollisionComponent->SetHiddenInGame(false);
+	CollisionComponent->SetHiddenInGame(true);
 	RootComponent = CollisionComponent;
 
 	// 메시 컴포넌트 설정

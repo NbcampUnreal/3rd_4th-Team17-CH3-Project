@@ -48,7 +48,7 @@ APEHero::APEHero()
 
 	// Receive Attack Component
 	ReceiveAttackComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveAttackComponent"));
-	ReceiveAttackComponent->SetHiddenInGame(false);
+	ReceiveAttackComponent->SetHiddenInGame(true);
 	ReceiveAttackComponent->SetupAttachment(RootComponent);
 
 	// AI Component
