@@ -78,7 +78,7 @@ void APEGameModeBase::OnGameStart(float TimeSeconds)
 
 void APEGameModeBase::OnGameEnd(APlayerController* PlayerController, float TimeSeconds, bool IsClear)
 {
-	static const float TimeBonusBasis = 60.0f * 20; // 20 min
+	static const float TimeBonusBasis = 60.0f * 5; // 5 min
 	static const float TimeBonusScoreMultiplier = 50.0f; // 600 sec left -> 30000 score bonus
 	if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
 	{
