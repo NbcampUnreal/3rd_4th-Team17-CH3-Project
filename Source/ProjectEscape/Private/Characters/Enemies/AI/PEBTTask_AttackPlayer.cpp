@@ -114,6 +114,10 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
                 return EBTNodeResult::Failed; // 또는 InProgress로 대기
             }
             BossCharacter->PerformBossAttack(DistanceToPlayer);
+            FPEAttackStats AttackStats;
+            AttackStats.AttackRange = BossCharacter->AttackRange; // 공격 범위 설정
+            AttackStats.DamageAmount = BossCharacter->AttackAmount; // 임시 데미지 값 설정
+            AICharacter->AttackComponent->ExcuteAttack(AttackStats, BossCharacter->AttackStart->GetComponentLocation(), Direction); // 공격 실행
         }
         else
         {
@@ -121,12 +125,14 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
             AICharacter->AttackComponent->SetAttackStartPoint(AICharacter->AttackStart); // 공격 시작 위치 설정
             AICharacter->AttackComponent->PlayParticleEffect(AICharacter->AttackParticleEffect, AICharacter->AttackStart->GetComponentLocation(), AICharacter->AttackStart->GetComponentRotation()); // 공격 이펙트 재생
             AICharacter->AttackComponent->PlaySoundEffect(AICharacter->AttackSoundEffect, AICharacter->AttackStart->GetComponentLocation()); // 공격 사운드 재생
+
+            FPEAttackStats AttackStats;
+            AttackStats.AttackRange = AICharacter->AttackRange; // 공격 범위 설정
+            AttackStats.DamageAmount = AICharacter->AttackAmount; // 임시 데미지 값 설정
+            AICharacter->AttackComponent->ExcuteAttack(AttackStats, AICharacter->AttackStart->GetComponentLocation(), Direction); // 공격 실행
         }
         //MyPawn->GetActorLocation(
-        FPEAttackStats AttackStats;
-        AttackStats.AttackRange = AICharacter->AttackRange; // 공격 범위 설정
-        AttackStats.DamageAmount = AICharacter->AttackAmount; // 임시 데미지 값 설정
-        AICharacter->AttackComponent->ExcuteAttack(AttackStats, AICharacter->AttackStart->GetComponentLocation(), Direction); // 공격 실행
+        
 	}
 
     // 화면에도 표시

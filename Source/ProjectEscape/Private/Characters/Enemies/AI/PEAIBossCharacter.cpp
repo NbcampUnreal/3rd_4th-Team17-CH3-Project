@@ -17,7 +17,6 @@ void APEAIBossCharacter::BeginPlay()
 {
 	Super::BeginPlay();
     AttackAmount = RangedAttackAmount;
-    AttackRange = AttackRange;
 	RangedAttackRange = AttackRange; // 블루프린트 프로퍼티 값 받을 시 AICharacter의 AttackRange를 사용
 
     if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
