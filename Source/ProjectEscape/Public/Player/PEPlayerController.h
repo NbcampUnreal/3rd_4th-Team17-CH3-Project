@@ -51,7 +51,7 @@ public:
 	UFUNCTION()
 	void OnChangeTotalScore(int32 TotalScore);
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void OnChangeMissionInfo(FText MissionInfo);
 
 	UFUNCTION()
