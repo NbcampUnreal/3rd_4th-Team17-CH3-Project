@@ -1,5 +1,5 @@
-#include "PEDoorSwitch.h"
-#include "PEDoorActor.h"
+#include "Systems/Levels/PEDoorSwitch.h"
+#include "Systems/Levels/PEDoorActor.h"
 #include "Components/StaticMeshComponent.h"
 
 APEDoorSwitch::APEDoorSwitch()

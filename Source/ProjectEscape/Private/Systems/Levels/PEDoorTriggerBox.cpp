@@ -1,8 +1,8 @@
-#include "PEDoorTriggerBox.h"
+#include "Systems/Levels/PEDoorTriggerBox.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Pawn.h"
 #include "Kismet/GameplayStatics.h"
-#include "PEDoorActor.h"
+#include "Systems/Levels/PEDoorActor.h"
 
 APEDoorTriggerBox::APEDoorTriggerBox()
 {

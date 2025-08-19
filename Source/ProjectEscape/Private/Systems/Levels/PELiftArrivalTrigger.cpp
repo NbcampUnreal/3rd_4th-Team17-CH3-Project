@@ -1,6 +1,6 @@
-#include "PELiftArrivalTrigger.h"
+#include "Systems/Levels/PELiftArrivalTrigger.h"
 #include "Components/BoxComponent.h"
-#include "PEDoorActor.h"
+#include "Systems/Levels/PEDoorActor.h"
 
 APELiftArrivalTrigger::APELiftArrivalTrigger()
 {

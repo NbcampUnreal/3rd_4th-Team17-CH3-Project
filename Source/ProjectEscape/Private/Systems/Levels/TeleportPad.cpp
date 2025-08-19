@@ -1,4 +1,4 @@
-#include "TeleportPad.h"
+#include "Systems/Levels/TeleportPad.h"
 #include "Components/BoxComponent.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/Character.h"
