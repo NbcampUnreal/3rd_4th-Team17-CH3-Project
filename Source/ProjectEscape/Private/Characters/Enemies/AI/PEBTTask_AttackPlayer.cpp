@@ -71,7 +71,9 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
     float DistanceToPlayer = FVector::Dist(MyPawn->GetActorLocation(), TargetActor->GetActorLocation());
     float CurrentTime = GetWorld()->GetTimeSeconds();
     float LastAttackTime = BlackboardComp->GetValueAsFloat(TEXT("LastAttackTime"));
-    FVector Direction = (TargetActor->GetActorLocation() - MyPawn->GetActorLocation()).GetSafeNormal();
+    FVector AttackStartLocation = AICharacter->AttackStart->GetComponentLocation();
+    //FVector Direction = (TargetActor->GetActorLocation() - MyPawn->GetActorLocation()).GetSafeNormal();
+    FVector Direction = (TargetActor->GetActorLocation() - AttackStartLocation).GetSafeNormal();
     FRotator LookRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 
     MyPawn->SetActorRotation(LookRotation);
