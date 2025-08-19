@@ -118,9 +118,10 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
         else
         {
             AICharacter->PerformAttack();
+            AICharacter->AttackComponent->SetAttackStartPoint(AICharacter->AttackStart); // 공격 시작 위치 설정
+            AICharacter->AttackComponent->PlayParticleEffect(AICharacter->AttackParticleEffect, AICharacter->AttackStart->GetComponentLocation(), AICharacter->AttackStart->GetComponentRotation()); // 공격 이펙트 재생
+            AICharacter->AttackComponent->PlaySoundEffect(AICharacter->AttackSoundEffect, AICharacter->AttackStart->GetComponentLocation()); // 공격 사운드 재생
         }
-        
-		AICharacter->AttackComponent->SetAttackStartPoint(AICharacter->AttackStart); // 공격 시작 위치 설정
         //MyPawn->GetActorLocation(
         FPEAttackStats AttackStats;
         AttackStats.AttackRange = AICharacter->AttackRange; // 공격 범위 설정

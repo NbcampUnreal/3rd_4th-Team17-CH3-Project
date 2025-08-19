@@ -1,4 +1,4 @@
-ï»¿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -25,29 +25,29 @@ struct PROJECTESCAPE_API FPEAttackStats
 };
 
 /*
- *	ê³µê²©ì„ ì‹¤í–‰í•  ìˆ˜ ìˆëŠ” ì•¡í„°ì— ë¶€ì°©í•˜ì—¬ ì‚¬ìš©í•˜ëŠ” ì»´í¬ë„ŒíŠ¸ í´ë˜ìŠ¤ì…ë‹ˆë‹¤.
- *	ê³µê²©ì„ ìœ„í•œ Rayë‚˜ Collisionì„ ì‚¬ìš©í•˜ì—¬ ê³µê²©ì„ ì‹¤í–‰í•˜ëŠ” ê¸°ëŠ¥ì„ ì œê³µí•©ë‹ˆë‹¤.
- *	ê³µê²© ì¿¨íƒ€ì„ê°™ì€ ê¸°íƒ€ ë¡œì§ì€ ê° ì•¡í„°ì—ì„œ êµ¬í˜„í•´ì•¼ í•©ë‹ˆë‹¤.
+ *	°ø°İÀ» ½ÇÇàÇÒ ¼ö ÀÖ´Â ¾×ÅÍ¿¡ ºÎÂøÇÏ¿© »ç¿ëÇÏ´Â ÄÄÆ÷³ÍÆ® Å¬·¡½ºÀÔ´Ï´Ù.
+ *	°ø°İÀ» À§ÇÑ Ray³ª CollisionÀ» »ç¿ëÇÏ¿© °ø°İÀ» ½ÇÇàÇÏ´Â ±â´ÉÀ» Á¦°øÇÕ´Ï´Ù.
+ *	°ø°İ ÄğÅ¸ÀÓ°°Àº ±âÅ¸ ·ÎÁ÷Àº °¢ ¾×ÅÍ¿¡¼­ ±¸ÇöÇØ¾ß ÇÕ´Ï´Ù.
  */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJECTESCAPE_API UPEAttackBaseComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-	/* Lifecycle ê´€ë ¨ ì„¹ì…˜ */
+	/* Lifecycle °ü·Ã ¼½¼Ç */
 public:
 	UPEAttackBaseComponent();
 
 protected:
 	virtual void BeginPlay() override;
 
-	/* Attack ê´€ë ¨ ì„¹ì…˜ */
+	/* Attack °ü·Ã ¼½¼Ç */
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Attack")
 	TObjectPtr<USceneComponent> AttackStartPoint;
 	
 public:
-	virtual bool ExcuteAttack(const FPEAttackStats& AttackStats);	//AttackStartPoint ê¸°ì¤€ìœ¼ë¡œ ê³µê²©ì„ ì‹¤í–‰í•©ë‹ˆë‹¤. (ì¹´ë©”ë¼ê°™ì€ ê¸°ì¤€ ì•¡í„°ë¥¼ ì‚¬ìš©í•  ë•Œ)
+	virtual bool ExcuteAttack(const FPEAttackStats& AttackStats);	//AttackStartPoint ±âÁØÀ¸·Î °ø°İÀ» ½ÇÇàÇÕ´Ï´Ù. (Ä«¸Ş¶ó°°Àº ±âÁØ ¾×ÅÍ¸¦ »ç¿ëÇÒ ¶§)
 	virtual bool ExcuteAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
 
 	void PlayParticleEffect(UParticleSystem* ParticleEffect, const FVector& Location, const FRotator& Rotation = FRotator::ZeroRotator);

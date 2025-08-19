@@ -81,6 +81,14 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Animation")
 	float MovementSpeed = 0.0f;
 
+	// 이펙트 및 사운드
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Effect")
+	UParticleSystem* AttackParticleEffect;
+
+	// 사운드를 블루프린트에서 설정 가능하도록  
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Effect")
+	USoundBase* AttackSoundEffect;
+
 	void SetMovementSpeed(float NewSpeed);
 
 	UFUNCTION()
