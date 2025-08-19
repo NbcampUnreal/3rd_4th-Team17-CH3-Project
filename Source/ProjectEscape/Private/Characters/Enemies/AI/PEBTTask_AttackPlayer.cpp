@@ -132,8 +132,10 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
     // 화면에도 표시
     if (GEngine)
     {
+#if UE_BUILD_DEBUG
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red,
             FString::Printf(TEXT("AI ATTACKING PLAYER! Distance: %.1f"), DistanceToPlayer));
+#endif
     }
 
     BlackboardComp->SetValueAsFloat(TEXT("LastAttackTime"), CurrentTime); //마지막 공격 시간 업데이트

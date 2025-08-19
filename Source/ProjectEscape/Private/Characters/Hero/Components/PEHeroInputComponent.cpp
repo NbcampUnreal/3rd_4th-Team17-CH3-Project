@@ -250,7 +250,7 @@ void UPEHeroInputComponent::OnInputQuickSlotNumber(const FInputActionValue& Valu
 	{
 		return;
 	}
-#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Red, FString::Printf(TEXT("SlotNumber: %d"), SlotNumber));
@@ -273,7 +273,7 @@ void UPEHeroInputComponent::OnInputReload(const FInputActionValue& Value)
 	{
 		return;
 	}
-#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Reload")));
@@ -291,7 +291,7 @@ void UPEHeroInputComponent::OnInputInteract(const FInputActionValue& Value)
 	{
 		return;
 	}
-#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Interact Triggered!!")));
@@ -305,7 +305,7 @@ void UPEHeroInputComponent::OnInputInteract(const FInputActionValue& Value)
 
 void UPEHeroInputComponent::OnDropHandEquipmentToWorld(const FInputActionValue& Value)
 {
-#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Drop Hand Item Triggered!!")));
@@ -323,7 +323,7 @@ void UPEHeroInputComponent::OnInputPrimaryActionTriggered(const FInputActionValu
 	{
 		return;
 	}
-#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Primary Action Triggered!!")));
@@ -341,7 +341,7 @@ void UPEHeroInputComponent::OnInputPrimaryActionCompleted(const FInputActionValu
 	{
 		return;
 	}
-#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Black, FString::Printf(TEXT("On Input Primary Action Complete...")));
@@ -359,7 +359,7 @@ void UPEHeroInputComponent::OnInputSecondaryActionTriggered(const FInputActionVa
 	{
 		return;
 	}
-#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Blue, FString::Printf(TEXT("On Input Secondary Action Triggered!!")));
@@ -377,7 +377,7 @@ void UPEHeroInputComponent::OnInputSecondaryActionCompleted(const FInputActionVa
 	{
 		return;
 	}
-#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 	if (GEngine)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 10, FColor::Black, FString::Printf(TEXT("On Input Secondary Action Complete...")));

@@ -139,7 +139,7 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 
 	if (Stimulus.WasSuccessfullySensed())
 	{
-	#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 		FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
 		DrawDebugString(GetWorld(),
 			DisplayLocation,
@@ -148,7 +148,7 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 			FColor::Green,
 			2.0f,
 			true);
-	#endif
+#endif
 
 		BlackboardComp->SetValueAsObject(TEXT("TargetActor"), Actor); // 블랙보드에 타겟 액터 설정
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), true);
@@ -159,7 +159,7 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 	}
 	else
 	{
-	#ifdef WITH_EDITOR
+#if UE_BUILD_DEBUG
 		FVector DisplayLocation = MyPawn->GetActorLocation() + FVector(0, 0, 100);
 		DrawDebugString(GetWorld(),
 			DisplayLocation + FVector(0, 0, 100),
@@ -168,7 +168,7 @@ void APEAIController::OnPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 			FColor::Red,
 			2.0f,
 			true);
-	#endif
+#endif
 	
 		BlackboardComp->SetValueAsBool(TEXT("CanSeeTarget"), false);
 		BlackboardComp->SetValueAsBool(TEXT("IsInvestigating"), true);

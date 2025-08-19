@@ -349,8 +349,10 @@ void APEAIBossCharacter::StartSpecialSkill()
     // 화면에 경고 메시지
     if (GEngine)
     {
+#if UE_BUILD_DEBUG
         GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red,
             TEXT("BOSS SPECIAL ATTACK - MISSILE STRIKE INCOMING!"));
+#endif
     }
 }
 
@@ -362,7 +364,7 @@ void APEAIBossCharacter::ExecuteMissileStrike()
         OnSpecialSkillCompleted();
         return;
     }
-
+    
     // 현재 미사일 인덱스 초기화
     CurrentMissileIndex = 0;
 
@@ -447,8 +449,10 @@ void APEAIBossCharacter::OnSpecialSkillCompleted()
 
     if (GEngine)
     {
+#if UE_BUILD_DEBUG
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green,
             TEXT("Boss special attack completed!"));
+#endif
     }
 }
 
