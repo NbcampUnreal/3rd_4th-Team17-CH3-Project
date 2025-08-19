@@ -37,8 +37,13 @@ APEAIController::APEAIController()
 void APEAIController::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void APEAIController::SetupAI()
+{
 	APawn* MyPawn = GetPawn();
 	APEAICharacter* AICharacter = Cast<APEAICharacter>(MyPawn);
+	check(AICharacter);
 
 	SightConfig->SightRadius = AICharacter->SightRadius;
 	SightConfig->LoseSightRadius = AICharacter->LoseSightRadius;
@@ -76,7 +81,6 @@ void APEAIController::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("¹ÙÀÎµù"));
 		AIPerception->OnTargetPerceptionUpdated.AddDynamic(this, &APEAIController::OnPerceptionUpdated);
 	}
-	
 }
 
 void APEAIController::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -100,7 +104,7 @@ void APEAIController::StartBehaviorTree()
 void APEAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
-
+	SetupAI();
 	if (InPawn)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AIController has possessed: %s"), *InPawn->GetName());
