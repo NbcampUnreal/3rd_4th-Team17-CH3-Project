@@ -123,6 +123,7 @@ public:
 	virtual void OnHand(AActor* NewOwner) override;
 	virtual void OnRelease() override;
 	virtual UPEUseableComponent* GetUseableComponent() const override;
+	virtual FGameplayTag GetItemTag() const override;
 
 	/* Combat(Attack) 관련 섹션 */
 protected:

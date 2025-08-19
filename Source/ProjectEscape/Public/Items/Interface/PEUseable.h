@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "PEUseable.generated.h"
 
+struct FGameplayTag;
 class UPEUseableComponent;
 // This class does not need to be modified.
 UINTERFACE()
@@ -28,5 +29,6 @@ public:
 	virtual void DoTertiaryAction(AActor* Holder) = 0;
 	virtual void OnHand(AActor* NewOwner) = 0;
 	virtual void OnRelease() = 0;
-	virtual UPEUseableComponent* GetUseableComponent() const = 0; 
+	virtual UPEUseableComponent* GetUseableComponent() const = 0;
+	virtual FGameplayTag GetItemTag() const = 0;
 };

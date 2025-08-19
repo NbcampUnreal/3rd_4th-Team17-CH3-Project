@@ -440,6 +440,11 @@ UPEUseableComponent* APEWeaponBase::GetUseableComponent() const
 	return HoldableComponent;
 }
 
+FGameplayTag APEWeaponBase::GetItemTag() const
+{
+	return FGameplayTag::EmptyTag;
+}
+
 AActor* APEWeaponBase::GetItemOwner() const
 {
 	return WeaponOwnerActor;

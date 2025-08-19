@@ -62,7 +62,8 @@ public:
 	virtual void DoTertiaryAction(AActor* Holder) override;
 	virtual void OnHand(AActor* NewOwner) override;
 	virtual void OnRelease() override;
-	virtual UPEUseableComponent* GetUseableComponent() const override; 
+	virtual UPEUseableComponent* GetUseableComponent() const override;
+	virtual FGameplayTag GetItemTag() const override;
 
 	/* UI 반영 델리게이트 헬퍼 함수 관련 섹션 */
 protected:

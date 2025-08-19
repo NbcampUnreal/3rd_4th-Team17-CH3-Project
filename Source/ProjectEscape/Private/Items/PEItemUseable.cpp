@@ -113,6 +113,11 @@ UPEUseableComponent* APEItemUseable::GetUseableComponent() const
 	return UseableComponent;	
 }
 
+FGameplayTag APEItemUseable::GetItemTag() const
+{
+	return ItemStats.ItemTag;
+}
+
 FPEEquipmentInfo APEItemUseable::CreateCurrentEquipmentInfo() const
 {
 	FPEEquipmentInfo EquipmentInfo;
