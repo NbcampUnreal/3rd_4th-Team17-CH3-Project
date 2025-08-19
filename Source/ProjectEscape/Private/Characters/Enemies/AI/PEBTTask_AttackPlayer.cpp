@@ -65,14 +65,15 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
     }
 
     APEAICharacter* AICharacter = Cast<APEAICharacter>(MyPawn);
-	float CharacterAttackRange = AICharacter ? AICharacter->AttackRange : 1500.0f; // 기본 공격 범위 설정
+    float CharacterAttackRange = AICharacter ? AICharacter->AttackRange : 1500.0f; // 기본 공격 범위 설정
+    check(AICharacter);
+    check(AICharacter->AttackStart);
 
     // 플레이어와의 거리 체크
     float DistanceToPlayer = FVector::Dist(MyPawn->GetActorLocation(), TargetActor->GetActorLocation());
     float CurrentTime = GetWorld()->GetTimeSeconds();
     float LastAttackTime = BlackboardComp->GetValueAsFloat(TEXT("LastAttackTime"));
     FVector AttackStartLocation = AICharacter->AttackStart->GetComponentLocation();
-    //FVector Direction = (TargetActor->GetActorLocation() - MyPawn->GetActorLocation()).GetSafeNormal();
     FVector Direction = (TargetActor->GetActorLocation() - AttackStartLocation).GetSafeNormal();
     FRotator LookRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 
@@ -128,7 +129,24 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
         FPEAttackStats AttackStats;
         AttackStats.AttackRange = AICharacter->AttackRange; // 공격 범위 설정
         AttackStats.DamageAmount = AICharacter->AttackAmount; // 임시 데미지 값 설정
-        AICharacter->AttackComponent->ExcuteAttack(AttackStats, AICharacter->AttackStart->GetComponentLocation(), Direction); // 공격 실행
+
+        // 공격 실행
+        if (APEAIBossCharacter* BossCharacter = Cast<APEAIBossCharacter>(AICharacter))
+        {
+            if (BossCharacter->ShouldUseMeleeAttack(DistanceToPlayer))
+            {
+                FVector MeleeDirection = (TargetActor->GetActorLocation() - MyPawn->GetActorLocation()).GetSafeNormal();
+                AICharacter->AttackComponent->ExcuteAttack(AttackStats, MyPawn->GetActorLocation(), MeleeDirection);
+            }
+            else
+            {
+                AICharacter->AttackComponent->ExcuteAttack(AttackStats, AICharacter->AttackStart->GetComponentLocation(), Direction);
+            }
+        }
+        else
+        {
+            AICharacter->AttackComponent->ExcuteAttack(AttackStats, AICharacter->AttackStart->GetComponentLocation(), Direction);
+        }
 	}
 
     // 화면에도 표시
