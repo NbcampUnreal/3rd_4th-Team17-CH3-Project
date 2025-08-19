@@ -1,3 +1,5 @@
+//Fill out your copyright notice in the Description page of Project Settings.
+
 #include "Characters/Enemies/AI/PEAICharacter.h"
 #include "Characters/Enemies/AI/PEAIController.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -11,6 +13,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Player/PEPlayerController.h"
 #include "Items/Weapons/PEWeaponBase.h"
+#include "Kismet/GameplayStatics.h"
 #include "Core/PEGameModeBase.h"
 #include "Items/Weapons/Projectile/PEProjectileBase.h"
 #include "Characters/Enemies/Drop/EnemyDropComponent.h"
@@ -35,8 +38,6 @@ APEAICharacter::APEAICharacter()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("AICharacterMovementComponent is nullptr!"));
 	}
-
-
 
 	AttackComponent = CreateDefaultSubobject<UPEAttackHitscanComponent>(TEXT("AttackComponent"));
 	AttackStart = CreateDefaultSubobject<USceneComponent>(TEXT("AttackStartPoint"));
@@ -97,7 +98,7 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 
 void APEAICharacter::BeginDestroy()
 {
-	// AI »ç¸Á ½Ã µ¨¸®°ÔÀÌÆ® ºê·ÎµåÄ³½ºÆ®
+	// AI ?¬ë§ ???¸ë¦¬ê²Œì´??ë¸Œë¡œ?œìº?¤íŠ¸
 	OnPawnDeath.Broadcast();
 	UE_LOG(LogTemp, Warning, TEXT("Destory"));
 	Super::BeginDestroy();
@@ -107,6 +108,22 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	UE_LOG(LogTemp, Warning, TEXT("Take Damage"));
+
+
+	if (DamageClass)
+	{
+		FTransform SpawnTransFrom = GetActorTransform();
+
+		APEUIDamage* Dmg = GetWorld()->SpawnActorDeferred<APEUIDamage>(DamageClass, SpawnTransFrom);
+
+		if (Dmg)
+		{
+			Dmg->DamageAmount = Damage;
+
+			UGameplayStatics::FinishSpawningActor(Dmg, SpawnTransFrom);
+
+		}
+	}
 
 	if (ReceiveComponent)
 	{
