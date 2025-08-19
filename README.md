@@ -13,8 +13,8 @@
 
 ## 개발 환경
 
-- Windows
-- Unreal Engine 5.5.4 
+- 운영체제: Windows
+- 엔진: Unreal Engine 5.5.4 
 
 
 
@@ -81,6 +81,41 @@
 
 ## 프로젝트 구조
 
+```
+ProjectEscape/
+ ├─ Source/
+ │   └─ ProjectEscape/            # 게임 모듈
+ │       ├─ Private/                # 
+ │       └─ Public/                 # 
+ │           ├─ Character/          # 
+ │               ├─ Enemies/        # 
+ │               └─ Hero/           # 
+ │           ├─ Combat/             # 
+ │           ├─ Core/               # 
+ │           ├─ Items/              # 
+ │               └─ Weapons/        # 
+ │           ├─ Player/             # 
+ │           ├─ Systems/Spawner/    # 
+ │           └─ UI/                 # 
+ │               ├─ Boss/           # 
+ │               └─ Inventory/      # 
+ │   
+ ├─ Content/                      # 에셋, 맵, 블루프린트
+ │   ├─ ProjectEscape/              # 
+ │   └─ Resources/                  # 
+ │       ├─ Characters/             # 
+ │       ├─ Core/                   # 
+ │       ├─ Input/                  # 
+ │       ├─ Items/                  # 
+ │       ├─ Maps/                   # 
+ │       ├─ Others/                 # 
+ │       ├─ Player/                 # 
+ │       ├─ PostProcess/            # 
+ │       ├─ Test/                   # 
+ │       └─ UI/                     # 
+ ├─ Config/                  
+ └─ ProjectName.uproject
+```
 
 
 
