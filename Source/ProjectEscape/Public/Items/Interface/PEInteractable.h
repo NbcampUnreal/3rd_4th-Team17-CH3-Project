@@ -12,9 +12,6 @@ class UPEInteractable : public UInterface
 	GENERATED_BODY()
 };
 
-/**
- * 
- */
 class PROJECTESCAPE_API IPEInteractable
 {
 	GENERATED_BODY()
