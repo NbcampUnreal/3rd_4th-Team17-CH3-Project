@@ -15,6 +15,7 @@
 #include "Items/Interface/PEUseable.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Perception/AISense_Sight.h"
+#include "Player/PEPlayerController.h"
 #include "Player/PEPlayerState.h"
 
 APEHero::APEHero()
@@ -139,7 +140,6 @@ void APEHero::DoPrimaryAction()
 	if (UseableItemManagerComponent)
 	{
 		UseableItemManagerComponent->DoPrimaryActionCurrentItem(this);
-		UE_LOG(LogTemp, Warning, TEXT("Primary Action with UseableComponent: %s"), *UseableItemManagerComponent->GetName());
 	}
 	else
 	{
@@ -234,23 +234,31 @@ void APEHero::HandleDropEquipmentToWorld(FGameplayTag EquipmentTag)
 	const FPEGameplayTags& GameplayTags = FPEGameplayTags::Get();
 	if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_MainWeapon)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Primary, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Primary, GetActorLocation(), GetActorRotation());
 	}
 	else if (EquipmentTag == GameplayTags.Item_Weapon_RangeWeapon_SubWeapon)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Secondary, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Secondary, GetActorLocation(), GetActorRotation());
 	}
 	else if (EquipmentTag == GameplayTags.Item_Weapon_MeleeWeapon)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Melee, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Melee, GetActorLocation(), GetActorRotation());
 	}
 	else if (EquipmentTag == GameplayTags.Item_Things_Heal)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Healing, GetActorLocation(), GetActorRotation());
+		if (UPEUseableComponent* UseableComponent = UseableItemManagerComponent->GetCurrentItem())
+		{
+			if (UseableComponent->GetEquipmentType() == EPEEquipmentType::Healing)
+			{
+				UseableItemManagerComponent->ReleaseHandItem();
+			}
+		}
+		QuickSlotManagerComponent->RemoveQuickSlotItem(EPEEquipmentType::Healing);
+		
 	}
 	else if ( EquipmentTag == GameplayTags.Item_Things_Grenade)
 	{
-		QuickSlotManagerComponent->DropHandEquipmentToWorld(EPEEquipmentType::Throwable, GetActorLocation(), GetActorRotation());
+		QuickSlotManagerComponent->DropEquipmentToWorld(EPEEquipmentType::Throwable, GetActorLocation(), GetActorRotation());
 	}
 }
 
@@ -299,6 +307,18 @@ void APEHero::BroadcastInventoryChanged()
 	}
 }
 
+void APEHero::BroadCastEquipmentChanged(FPEEquipmentInfo& EquipmentInfo)
+{
+	if (APEPlayerController* PlayerController = Cast<APEPlayerController>(GetController()))
+	{
+		PlayerController->OnWeaponInfoBroadcast.Broadcast(EquipmentInfo);
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("BroadCastEquipmentChanged: Controller is not APEPlayerController"));
+	}
+}
+
 float APEHero::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 {
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
@@ -334,7 +354,24 @@ void APEHero::HandleInventoryItemUse(FGameplayTag ItemTag)
 void APEHero::UseItemByInventory(FGameplayTag ItemTag)
 {
 	// NOTE: 인벤토리에서 아이템에 마우스 오른쪽 버튼을 눌렀을 때의 액션이 이곳에 호출됩니다.
-	//			ItemBase는 해당 함수를 비워둡니다.
+
+	if (InventoryManagerComponent && QuickSlotManagerComponent)
+	{
+		if (AActor* Actor = InventoryManagerComponent->GetItemByTag(ItemTag)->GetOwner())
+		{
+			if (UPEQuickSlotItemComponent* QuickSlotItemComponent = Actor->FindComponentByClass<UPEQuickSlotItemComponent>())
+			{
+				// 컴포넌트가 존재할 때 실행
+				QuickSlotManagerComponent->SetQuickSlotItem(QuickSlotItemComponent->GetEquipmentType(), Actor);
+				UE_LOG(LogPE, Log, TEXT("UseItemByInventory: Item with tag added to quick slot"));
+			}
+		}
+	}
+}
+
+UPEInventoryManagerComponent* APEHero::GetInventoryManagerComponent() const
+{
+	return InventoryManagerComponent;
 }
 
 bool APEHero::HasWeapon() const
@@ -367,27 +404,36 @@ void APEHero::AttachWeapon(AActor* WeaponActor, FTransform Transform)
 
 void APEHero::PlayEquipAnimation()
 {
-	float PlayRate = 1.0f;
-	PlayMontageAnimation(EquipAnimMontage, PlayRate);
+	if (EquipAnimMontage)
+	{
+		float PlayRate = 1.0f;
+		PlayMontageAnimation(EquipAnimMontage, PlayRate);
+	}
 }
 
 void APEHero::PlayReloadAnimation(float ReloadDelay)
 {
-	float AnimationLength = ReloadAnimMontage->GetPlayLength();
-	float PlayRate = ReloadDelay == 0 ? 1.0f : AnimationLength / ReloadDelay;
-	PlayMontageAnimation(ReloadAnimMontage, PlayRate);
+	if (ReloadAnimMontage)
+	{
+		float AnimationLength = ReloadAnimMontage->GetPlayLength();
+		float PlayRate = ReloadDelay == 0 ? 1.0f : AnimationLength / ReloadDelay;
+		PlayMontageAnimation(ReloadAnimMontage, PlayRate);
+	}
 }
 
 void APEHero::PlayFireWeaponAnimation(float ShotInterval)
 {
-	float AnimationLength = ReloadAnimMontage->GetPlayLength();
-	float PlayRate = ShotInterval == 0 ? 1.0f : AnimationLength / ShotInterval;
-	PlayMontageAnimation(FireWeaponAnimMontage, PlayRate);
+	if (FireWeaponAnimMontage)
+	{
+		float AnimationLength = FireWeaponAnimMontage->GetPlayLength();
+		float PlayRate = ShotInterval == 0 ? 1.0f : AnimationLength / ShotInterval;
+		PlayMontageAnimation(FireWeaponAnimMontage, PlayRate);
+	}
 }
 
 void APEHero::PlayMontageAnimation(UAnimMontage* Animation, float PlayRate)
 {
-	if (Animation && EquipAnimMontage)
+	if (Animation)
 	{
 		if (UAnimInstance* AnimInstance = FirstPersonSkeletalMesh->GetAnimInstance())
 		{

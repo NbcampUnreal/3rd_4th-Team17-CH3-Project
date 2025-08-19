@@ -120,6 +120,24 @@ void UPEInventoryManagerComponent::DropItemFromInventoryByTag(const int32& Count
 	}
 }
 
+void UPEInventoryManagerComponent::ReduceItemFromInventoryByTag(const int32& Count, const FGameplayTag& Tag)
+{
+	if (UPEStorableItemComponent* ReduceItem = GetItemByTag(Tag))
+	{
+		if (ReduceItem->GetItemCount() <= Count)
+		{
+			InventoryItems.Remove(ReduceItem->GetItemTag());
+		}
+		int32 DropCount = FMath::Clamp(Count, 0, ReduceItem->GetItemCount());
+		ReduceItem->ReduceItemCount(DropCount);
+		BroadcastInventoryChanged(); 
+	}
+	else
+	{
+		UE_LOG(LogPE, Log, TEXT("Item not found"));
+	}
+}
+
 void UPEInventoryManagerComponent::RemoveItemFromInventoryByTag(const FGameplayTag& Tag)
 {
 	if (InventoryItems.Contains(Tag))

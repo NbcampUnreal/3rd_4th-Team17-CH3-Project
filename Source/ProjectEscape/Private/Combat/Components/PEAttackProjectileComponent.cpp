@@ -4,6 +4,8 @@
 #include "Combat/Components/PEAttackProjectileComponent.h"
 #include "Items/Weapons/Projectile/PEProjectileBase.h"
 #include "Engine/World.h"
+#include "Items/PEItemThrowable.h"
+#include "Items/Weapons/PEWeaponBase.h"
 
 
 UPEAttackProjectileComponent::UPEAttackProjectileComponent()
@@ -54,8 +56,16 @@ void UPEAttackProjectileComponent::PerformAttack(const FPEAttackStats& AttackSta
 	// 투사체가 성공적으로 생성되었다면 Launch 실행
 	if (Projectile)
 	{
-		Projectile->Launch(AttackStats, StartLocation, Direction);
-		UE_LOG(LogTemp, Log, TEXT("Projectile launched with physics-based movement"));
+		if (APEWeaponBase* Weapon = Cast<APEWeaponBase>(GetOwner()))
+		{
+			Projectile->Launch(Weapon->GetItemOwner(), AttackStats, StartLocation, Direction);
+			UE_LOG(LogTemp, Log, TEXT("Projectile launched with physics-based movement"));
+		}
+		if (APEItemThrowable* Throwable = Cast<APEItemThrowable>(GetOwner()))
+		{
+			Projectile->Launch(Throwable->GetItemOwner(), AttackStats, StartLocation, Direction);
+			UE_LOG(LogTemp, Log, TEXT("Throwable item launched with physics-based movement"));
+		}
 	}
 	else
 	{

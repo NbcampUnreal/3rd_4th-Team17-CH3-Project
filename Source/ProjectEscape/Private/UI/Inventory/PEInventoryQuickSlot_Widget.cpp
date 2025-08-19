@@ -14,27 +14,27 @@ void UPEInventoryQuickSlot_Widget::CustomOnInitialized(UPEInventoryHUD* Parent)
 	if (MainWeaponSlot)
 	{
 		MainWeaponSlot->SetParentWidget(ParentWidget);
-		MainWeaponSlot->SetSlotTag(ItemTags.Item_Weapon_RangeWeapon_MainWeapon);
+		MainWeaponSlot->SetSlotCategoryTag(ItemTags.Item_Weapon_RangeWeapon_MainWeapon);
 	}
 	if (SubWeaponSlot)
 	{
 		SubWeaponSlot->SetParentWidget(ParentWidget);
-		SubWeaponSlot->SetSlotTag(ItemTags.Item_Weapon_RangeWeapon_SubWeapon);
+		SubWeaponSlot->SetSlotCategoryTag(ItemTags.Item_Weapon_RangeWeapon_SubWeapon);
 	}
 	if (MeleeWeaponSlot)
 	{
 		MeleeWeaponSlot->SetParentWidget(ParentWidget);
-		MeleeWeaponSlot->SetSlotTag(ItemTags.Item_Weapon_MeleeWeapon);
+		MeleeWeaponSlot->SetSlotCategoryTag(ItemTags.Item_Weapon_MeleeWeapon);
 	}
 	if (HealItemSlot)
 	{
 		HealItemSlot->SetParentWidget(ParentWidget);
-		HealItemSlot->SetSlotTag(ItemTags.Item_Things_Heal);
+		HealItemSlot->SetSlotCategoryTag(ItemTags.Item_Things_Heal);
 	}
 	if (GrenadeSlot)
 	{
 		GrenadeSlot->SetParentWidget(ParentWidget);
-		GrenadeSlot->SetSlotTag(ItemTags.Item_Things_Grenade);
+		GrenadeSlot->SetSlotCategoryTag(ItemTags.Item_Things_Grenade);
 	}
 }
 

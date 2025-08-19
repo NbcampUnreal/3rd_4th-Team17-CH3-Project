@@ -40,4 +40,17 @@ public:
     // IPEInteractable 구현 (UFUNCTION 아님, 그냥 C++ 가상함수)
     virtual void Interact(AActor* Interactor) override;
     virtual bool IsInteractable() const override { return true; }
+
+
+    virtual void ShowInteractionUI();
+    virtual void HideInteractionUI();
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    TSubclassOf<UUserWidget> InteractWidgetClass;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+    TObjectPtr<UWidgetComponent> InteractWidgetComponent;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+    float InteractionUIOffsetZ = 10.0f;
 };

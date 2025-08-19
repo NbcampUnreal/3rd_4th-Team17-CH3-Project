@@ -10,6 +10,7 @@
 #include "Items/FPEItemData.h"
 #include "PEItemBase.generated.h"
 
+class UWidgetComponent;
 class UPEStorableItemComponent;
 class UPEInteractableComponent;
 
@@ -22,8 +23,14 @@ public:
 	APEItemBase();
 
 protected:
+	virtual void PostLoad() override;
 	virtual void BeginPlay() override;
 	virtual void PostInitializeComponents() override;
+
+	/* Mesh 관련 섹션 */
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Mesh")
+	TObjectPtr<UStaticMeshComponent> ItemMesh;
 
 	/* Interact 관련 섹션 */
 protected:
@@ -36,6 +43,21 @@ protected:
 public:
 	virtual void Interact(AActor* Interactor) override;
 	virtual bool IsInteractable() const override;
+
+	// 3D UI Widget 관련
+public:
+	virtual void ShowInteractionUI() override;
+	virtual void HideInteractionUI() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<UUserWidget> InteractWidgetClass;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "UI")
+	TObjectPtr<UWidgetComponent> InteractWidgetComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	float InteractionUIOffsetZ = 10.0f; 
+	
 
 	/* Storable 관련 섹션 */
 protected:
@@ -77,4 +99,7 @@ public:
 	virtual void AddItemCount(int32 Count) override;
 	virtual void ReduceItemCount(int32 Count) override;
 	virtual void DestoryItem() override;
+
+	/* UI 관련 섹션 */
+	virtual void OnUseFromInventory();
 };

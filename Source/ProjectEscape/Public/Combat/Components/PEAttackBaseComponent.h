@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Combat/Interface/PEAttackable.h"
 #include "Components/ActorComponent.h"
+#include "Core/PEPhysics.h"
 #include "PEAttackBaseComponent.generated.h"
 
 class APEProjectileBase;
@@ -19,7 +20,10 @@ struct PROJECTESCAPE_API FPEAttackStats
 	float AttackRange = 1000.0f;
 	float SpreadAngle = 0.0f;
 	float ProjectileSpeed = 1000.0f;
-	ECollisionChannel CollisionChannel = ECC_Pawn;
+	float ExplosionRadius = 200.0f;
+	float ExplosionDelay = 3.0f;
+	ECollisionChannel HitscanChannel = CCHANNEL_ENEMYHITSCAN;
+	ECollisionChannel ProjectileCollisionChannel = CCHANNEL_ENEMYPROJECTILE;
 };
 
 /*
@@ -48,7 +52,12 @@ public:
 	virtual bool ExcuteAttack(const FPEAttackStats& AttackStats);	//AttackStartPoint 기준으로 공격을 실행합니다. (카메라같은 기준 액터를 사용할 때)
 	virtual bool ExcuteAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
 
+	void PlayParticleEffect(UParticleSystem* ParticleEffect, const FVector& Location, const FRotator& Rotation = FRotator::ZeroRotator);
+	void PlayParticleEffect(UParticleSystem* ParticleEffect);
+	void PlaySoundEffect(USoundBase* SoundEffect, const FVector& Location);
+	void PlaySoundEffect(USoundBase* SoundEffect);
 	void SetAttackStartPoint(USceneComponent* NewStartPoint);
+	
 
 protected:
 	FVector ApplyAccuracyDeviation(const FVector& OriginalDirection, const float& SpreadAngle) const;

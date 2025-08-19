@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+Ôªø// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Characters/Enemies/AI/PEAICharacter.h"
@@ -6,9 +6,17 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include <Combat/Components/PEAttackHitscanComponent.h>
 #include <Combat/Components/PEReceiveAttackComponent.h>
+#include "BehaviorTree/BlackboardComponent.h"
+#include "BehaviorTree/BehaviorTreeComponent.h"
+#include "Animation/AnimMontage.h"
+#include "Animation/AnimInstance.h"
+#include "Characters/Hero/PEHero.h"
+#include "Components/CapsuleComponent.h"
 #include "Player/PEPlayerController.h"
 #include "Items/Weapons/PEWeaponBase.h"
 #include "Core/PEGameModeBase.h"
+#include "Items/Weapons/Projectile/PEProjectileBase.h"
+#include "Characters/Enemies/Drop/EnemyDropComponent.h"
 
 APEAICharacter::APEAICharacter()
 {
@@ -31,8 +39,14 @@ APEAICharacter::APEAICharacter()
 		UE_LOG(LogTemp, Warning, TEXT("AICharacterMovementComponent is nullptr!"));
 	}
 
+	
+
 	AttackComponent = CreateDefaultSubobject<UPEAttackHitscanComponent>(TEXT("AttackComponent"));
 	ReceiveComponent = CreateDefaultSubobject<UPEReceiveAttackComponent>(TEXT("ReceiveComponent"));
+	ReceiveComponent->SetHiddenInGame(false);
+	ReceiveComponent->SetupAttachment(RootComponent);
+
+	DropComponent = CreateDefaultSubobject<UEnemyDropComponent>(TEXT("DropComponent"));
 }
 
 void APEAICharacter::PreInitializeComponents()
@@ -53,6 +67,17 @@ void APEAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	EnemyHealth = EnemyMaxHealth;
+
+	//Ïï†ÎãàÎ©îÏù¥ÏÖò Î™ΩÌÉÄÏ£º ÏôÑÎ£å Îç∏Î¶¨Í≤åÏù¥Ìä∏ Î∞îÏù∏Îî© Ï∂îÍ∞Ä
+		if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+		{
+			if (AttackMontage)
+			{
+				AnimInstance->OnMontageEnded.AddDynamic(this, &APEAICharacter::OnAttackMontageCompleted);
+			}
+		}
+
 	UE_LOG(LogTemp, Warning, TEXT("AICharacter has been spawned"));
 }
 
@@ -62,8 +87,8 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 	if (Movement)
 	{
 		Movement->MaxWalkSpeed = NewSpeed; // Update the walk speed
-		WalkSpeed = NewSpeed; // Update the WalkSpeed property
-		UE_LOG(LogTemp, Warning, TEXT("AICharacter movement speed set to: %f"), WalkSpeed);
+		//WalkSpeed = NewSpeed; // Update the WalkSpeed property
+		UE_LOG(LogTemp, Warning, TEXT("AICharacter movement speed set to: %f"), NewSpeed);
 	}
 	else
 	{
@@ -73,9 +98,9 @@ void APEAICharacter::SetMovementSpeed(float NewSpeed)
 
 void APEAICharacter::BeginDestroy()
 {
-	// AI ªÁ∏¡ Ω√ µ®∏Æ∞‘¿Ã∆Æ ∫Í∑ŒµÂƒ≥Ω∫∆Æ
+	// AI ÏÇ¨Îßù Ïãú Îç∏Î¶¨Í≤åÏù¥Ìä∏ Î∏åÎ°úÎìúÏ∫êÏä§Ìä∏
 	OnPawnDeath.Broadcast();
-
+	UE_LOG(LogTemp, Warning, TEXT("Destory"));
 	Super::BeginDestroy();
 }
 
@@ -84,7 +109,6 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 	float Damage = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 	UE_LOG(LogTemp, Warning, TEXT("Take Damage"));
 
-	bool bIsDead = false;
 	if (ReceiveComponent)
 	{
 		if (Damage > 0.0f)
@@ -94,37 +118,142 @@ float APEAICharacter::TakeDamage(float DamageAmount, const FDamageEvent& DamageE
 			{
 				EnemyHealth = 0.0f;
 				UE_LOG(LogTemp, Display, TEXT("AICharacter is dead!"));
-				OnPawnDeath.Broadcast(); // AI ªÁ∏¡ Ω√ µ®∏Æ∞‘¿Ã∆Æ ∫Í∑ŒµÂƒ≥Ω∫∆Æ
-				this->Destroy(); // AI ƒ≥∏Ø≈Õ ¡¶∞≈
-				bIsDead = true;
+				OnPawnDeath.Broadcast(); // AI ÏÇ¨Îßù Ïãú Îç∏Î¶¨Í≤åÏù¥Ìä∏ Î∏åÎ°úÎìúÏ∫êÏä§Ìä∏
+				Die(); // ÏÇ¨Îßù Ï≤òÎ¶¨
+			}
+
+		}
+	}
+	
+	APEPlayerController* PEPlayerController = nullptr;
+	if (APEHero* Pawn = Cast<APEHero>(DamageCauser))
+	{
+		PEPlayerController = Pawn->GetController<APEPlayerController>();
+	}
+	else if (APEProjectileBase* Projectile = Cast<APEProjectileBase>(DamageCauser))
+	{
+		if (APEHero* Hero = Cast<APEHero>(Projectile->GetInstigator()))
+		{
+			PEPlayerController = Hero->GetController<APEPlayerController>();
+		}
+	}
+
+	if (PEPlayerController)
+	{
+		if (APEGameModeBase* PEGameModeBase = Cast<APEGameModeBase>(PEPlayerController->GetWorld()->GetAuthGameMode()))
+		{
+			if (bIsDead)
+			{
+				int32 KillScore = 500; // TODO: 
+				PEGameModeBase->OnKillEnemy(PEPlayerController, KillScore);
+				PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
+				PEPlayerController->PlayKillMarkerAnimOfHUDWidget();
+			}
+			else
+			{
+				PEGameModeBase->OnDamageDealt(PEPlayerController, Damage);
+				PEPlayerController->PlayHitMarkerAnimOfHUDWIdget();
 			}
 		}
 	}
 	
-	if (APEWeaponBase* WeaponBase = Cast<APEWeaponBase>(DamageCauser))
-	{
-		if (APawn* WeaponOwner = Cast<APawn>(WeaponBase->GetItemOwner()))
-		{
-			if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(WeaponOwner->GetController()))
-			{
-				if (APEGameModeBase* PEGameModeBase = Cast<APEGameModeBase>(PEPlayerController->GetWorld()->GetAuthGameMode()))
-				{
-					if (bIsDead)
-					{
-						int32 KillScore = 500; // TODO: 
-						PEGameModeBase->OnKillEnemy(KillScore);
-						PEGameModeBase->OnDamageDealt(Damage);
-						PEPlayerController->PlayKillMarkerAnimOfHUDWidget();
-					}
-					else
-					{
-						PEGameModeBase->OnDamageDealt(Damage);
-						PEPlayerController->PlayHitMarkerAnimOfHUDWIdget();
-					}
-				}
-			}
-		}
-	}
 	return Damage;
 }
 
+bool APEAICharacter::PerformAttack()
+{
+	if (!AttackComponent || bIsDead || bIsAttacking)
+	{
+		return false;
+	}
+	PlayAttackAnimation();
+	UE_LOG(LogTemp, Log, TEXT("%s triggered attack animation"), *GetName());
+
+	return true;
+}
+
+
+void APEAICharacter::Die()
+{
+	if (bIsDead) 
+	{ 
+		return; 
+	}
+
+	bIsDead = true;
+
+	if (UCharacterMovementComponent* Movement = GetCharacterMovement())
+	{
+		Movement->DisableMovement(); // øÚ¡˜¿” ∫Ò»∞º∫»≠
+		Movement->StopMovementImmediately(); // ¡ÔΩ√ ¡§¡ˆ
+	}
+
+	// AI Controllerµµ øœ¿¸»˜ ¡§¡ˆ
+	if (AAIController* AIController = Cast<AAIController>(GetController()))
+	{
+		AIController->StopMovement(); // AI ¿Ãµø ∏Ì∑… ¡ﬂ¥‹
+
+		// Behavior Treeµµ ¡§¡ˆ (º±≈√ªÁ«◊)
+		if (UBehaviorTreeComponent* BTComp = Cast<UBehaviorTreeComponent>(AIController->GetBrainComponent()))
+		{
+			BTComp->StopTree(); // BT øœ¿¸ ¡ﬂ¥‹
+		}
+	}
+
+	PlayDeathAnimation();
+	UE_LOG(LogTemp, Warning, TEXT("%s has died!"), *GetName());
+
+	// ÏΩúÎ¶¨Ï†Ñ ÎπÑÌôúÏÑ±Ìôî
+	SetActorEnableCollision(false);
+
+	// 3Ï¥à ÌõÑ ÌååÍ¥¥
+	SetLifeSpan(3.0f);
+
+	// Drop
+	if (DropComponent)
+	{
+		DropComponent->Drop();
+	}
+}
+
+void APEAICharacter::PlayAttackAnimation()
+{
+	if (!AttackMontage)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AttackMontage is nullptr!"));
+		return;
+	}
+
+	if (!AttackMontage || bIsDead || bIsAttacking) return;
+
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		bIsAttacking = true;
+		AnimInstance->Montage_Play(AttackMontage);
+		UE_LOG(LogTemp, Log, TEXT("%s playing attack animation"), *GetName());
+	}
+}
+
+void APEAICharacter::PlayDeathAnimation()
+{
+	if (!DeathMontage) return;
+
+	if (UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance())
+	{
+		// Î™®Îì† Í∏∞Ï°¥ Ïï†ÎãàÎ©îÏù¥ÏÖò Ï§ëÎã®
+		AnimInstance->StopAllMontages(0.2f);
+
+		// ÏÇ¨Îßù Ïï†ÎãàÎ©îÏù¥ÏÖò Ïû¨ÏÉù
+		AnimInstance->Montage_Play(DeathMontage, 1.0f);
+		UE_LOG(LogTemp, Log, TEXT("%s playing death animation"), *GetName());
+	}
+}
+
+void APEAICharacter::OnAttackMontageCompleted(UAnimMontage* Montage, bool bInterrupted)
+{
+	if (Montage == AttackMontage)
+	{
+		bIsAttacking = false;
+		UE_LOG(LogTemp, Log, TEXT("%s attack animation completed"), *GetName());
+	}
+}

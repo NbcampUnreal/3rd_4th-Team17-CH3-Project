@@ -20,17 +20,24 @@ public:
 	UPROPERTY()
 	FOnWeaponInfoBroadcast OnWeaponInfoBroadcast;
 
+
 	UFUNCTION(BlueprintCallable)
 	void PauseGameAndShowPauseMenu();
 
 	UFUNCTION(BlueprintCallable)
 	void OnClickResume();
 
+	UFUNCTION(BlueprintCallable)
+	void ShowBossUI();
+
 	void ShowHUD();
 	void ClearAllWidget();
 
 	UFUNCTION()
-	void OnChangeHealthPoint(float HealthPoint, float MaxHealthPoint);
+	void OnRemoveBossUI();
+
+	UFUNCTION()
+	void OnChangeHealthPoint(float OldValue, float HealthPoint, float MaxHealthPoint);
 
 	UFUNCTION()
 	void OnChangeStamina(float HealthPoint, float MaxHealthPoint);
@@ -40,6 +47,21 @@ public:
 
 	UFUNCTION()
 	void OnChangeWeaponInfo(FPEEquipmentInfo& EquipmentInfo);
+
+	UFUNCTION()
+	void OnChangeTotalScore(int32 TotalScore);
+
+	UFUNCTION()
+	void OnChangeMissionInfo(FText MissionInfo);
+
+	UFUNCTION()
+	void OnChangeBossHealth(float HealthPoint, float MaxHealthPoint);
+
+	UFUNCTION()
+	void OnBossDeath();
+
+	UFUNCTION()
+	void OnBossPhaseTwo();
 
 	void PlayDamageAnimOfHUDWidget();
 	void PlayHitMarkerAnimOfHUDWIdget();
@@ -56,6 +78,8 @@ public:
 
 	void ShowGameOverWidget(FGameResult GameResult);
 	void ShowGameClearWidget(FGameResult GameResult);
+
+	void OnEquipmentEmptyHand();
 
 protected:
 	virtual void BeginPlay() override;
@@ -75,6 +99,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
 	TSubclassOf<UUserWidget> GameClearWidgetClass;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI|Class")
+	TSubclassOf<UUserWidget> BossWidgetClass;
+
 	UPROPERTY()
 	UUserWidget* HUDWidget;
 
@@ -89,4 +116,9 @@ protected:
 
 	UPROPERTY()
 	UUserWidget* GameClearWidget;
+
+	UPROPERTY()
+	UUserWidget* BossWidget;
+
+	FTimerHandle BossDeathTimerHandle;
 };

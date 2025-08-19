@@ -10,6 +10,7 @@
 #include "Interface/PEWeaponAttachable.h"
 #include "PEHero.generated.h"
 
+struct FPEEquipmentInfo;
 class UAnimMontage;
 
 // 인벤토리 리스트 구조체
@@ -119,6 +120,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Inventory")
 	void UseItemByInventory(FGameplayTag ItemTag);
 
+	UPEInventoryManagerComponent* GetInventoryManagerComponent() const;
+
 	/* Combat 관련 섹션 */
 public:
 	virtual USceneComponent* GetAttackStartPoint() const override;
@@ -138,6 +141,7 @@ public:
 	void SetInventoryBagInfo(const FInventoryInfo& InventoryInfo);
 	void SetQuickSlotInfo(const FInventoryInfo& InventoryInfo);
 	void BroadcastInventoryChanged();
+	void BroadCastEquipmentChanged(FPEEquipmentInfo& EquipmentInfo);
 	
 	// AI Perception Stimulus Source 컴포넌트
 protected:

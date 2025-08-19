@@ -9,6 +9,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Engine/Engine.h"
 #include "Items/Weapons/PEWeaponBase.h"
+#include "Kismet/GameplayStatics.h"
 
 APEProjectileBase::APEProjectileBase()
 {
@@ -18,9 +19,6 @@ APEProjectileBase::APEProjectileBase()
 	CollisionComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionComponent"));
 	CollisionComponent->SetBoxExtent(FVector(2.5f, 2.5f, 5.0f)); // 박스 크기 설정 (길이 5, 폭/높이 2.5)
 	CollisionComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	CollisionComponent->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-	CollisionComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	CollisionComponent->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
 	CollisionComponent->SetHiddenInGame(false);
 	RootComponent = CollisionComponent;
 
@@ -74,11 +72,18 @@ void APEProjectileBase::Tick(float DeltaTime)
 	
 }
 
-void APEProjectileBase::Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
+void APEProjectileBase::Launch(AActor* InInstigator, const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
 	ProjectileStats = AttackStats;
+	InstigatorActor = InInstigator;
 	
 	SetActorLocation(StartLocation);
+	
+	// CollisionComponent의 Object Type을 AttackStats의 ProjectileCollision으로 설정
+	if (CollisionComponent)
+	{
+		CollisionComponent->SetCollisionObjectType(AttackStats.ProjectileCollisionChannel);
+	}
 	
 	if (ProjectileMovement)
 	{
@@ -93,6 +98,11 @@ void APEProjectileBase::Launch(const FPEAttackStats& AttackStats, const FVector&
 		UE_LOG(LogTemp, Log, TEXT("Projectile launched with speed: %f, direction: %s"), 
 			Speed, *LaunchDirection.ToString());
 	}
+}
+
+AActor* APEProjectileBase::GetInstigator() const
+{
+	return InstigatorActor;
 }
 
 void APEProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
@@ -111,14 +121,35 @@ void APEProjectileBase::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherAc
 				ProjectileStats.DamageAmount,
 				Hit.Location,
 				Hit.Normal,
-				GetOwner()
+				InstigatorActor
 			);
 			UE_LOG(LogTemp, Log, TEXT("Damage applied: %f to %s"), 
 				ProjectileStats.DamageAmount, *OtherActor->GetName());
-		
-			OnProjectileExpired();
+
+			
 		}
 	}
+
+	if (HitEffect)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(
+			GetWorld(),
+			HitEffect,
+			Hit.Location
+		);
+	}
+
+	// 사운드 이펙트
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(
+			GetWorld(),
+			HitSound,
+			Hit.Location
+		);
+	}
+	
+	OnProjectileExpired();
 }
 
 void APEProjectileBase::OnProjectileExpired()

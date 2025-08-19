@@ -12,6 +12,7 @@
 #include "Characters/Hero/Interface/PEWeaponAttachable.h"
 #include "Characters/Hero/PEHero.h"
 #include "Player/PEPlayerController.h"
+#include "Camera/CameraComponent.h"
 
 APEWeaponBase::APEWeaponBase()
 {
@@ -31,7 +32,16 @@ APEWeaponBase::APEWeaponBase()
 
 	// 퀵슬롯 아이템 컴포넌트 생성 및 설정
 	QuickSlotItemComponent = CreateDefaultSubobject<UPEQuickSlotItemComponent>(TEXT("QuickSlotItemComponent"));
-
+	
+	// InteractWidgetComponent 생성 및 설정
+	InteractWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("InteractionUIComponent"));
+	InteractWidgetComponent->SetupAttachment(RootComponent);
+	InteractWidgetComponent->SetRelativeLocation(FVector(0.0f, 0.0f, InteractionUIOffsetZ)); // 아이템 위쪽에 표시
+	InteractWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen); // 3D 공간에 표시
+	InteractWidgetComponent->SetDrawSize(FVector2D(200.0f, 100.0f)); // UI 크기 설정
+	InteractWidgetComponent->SetVisibility(false); // 기본적으로 숨김
+	
+	
 	bIsFiring = false;
 	bIsReloading = false;
 	LastAttackTime = 0.0f;
@@ -116,19 +126,7 @@ bool APEWeaponBase::TryReload()
 	if (AmmoComponent->GetItemCount() > 0)
 	{
 		bIsReloading = true;
-	
-		GetWorldTimerManager().SetTimer(
-			ReloadTimerHandle,
-			this,
-			&APEWeaponBase::PerformReload,
-			WeaponStats.ReloadTime,
-			false);
-		UE_LOG(LogPE, Log, TEXT("Reloading..."));
-
-		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
-		{
-			PEHero->PlayReloadAnimation(WeaponStats.ReloadTime);
-		}
+		PerformReload();
 	}
 	else
 	{
@@ -140,6 +138,39 @@ bool APEWeaponBase::TryReload()
 }
 
 void APEWeaponBase::PerformReload()
+{
+	if (WeaponStats.IsMagazineReload)
+	{
+		GetWorldTimerManager().SetTimer(
+			ReloadTimerHandle,
+			this,
+			&APEWeaponBase::MagazineReload,
+			WeaponStats.ReloadTime,
+			false);
+		
+		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+		{
+			PEHero->PlayReloadAnimation(WeaponStats.ReloadTime);
+		}
+	}
+	else
+	{
+		GetWorldTimerManager().SetTimer(
+			ReloadTimerHandle,
+			this,
+			&APEWeaponBase::SingleRoundReload,
+			WeaponStats.ReloadTime,
+			false);
+		
+		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+		{
+			PEHero->PlayReloadAnimation(WeaponStats.ReloadTime);
+		}
+	}
+		UE_LOG(LogPE, Log, TEXT("Reloading..."));
+}
+
+void APEWeaponBase::MagazineReload()
 {
 	if (!GetUseableComponent()->IsHolding())
 	{
@@ -157,6 +188,46 @@ void APEWeaponBase::PerformReload()
 	bIsReloading = false;
 	UE_LOG(LogPE, Log, TEXT("Reload complete. Current ammo: %d"), CurrentAmmoCount);
 	
+	BroadcastWeaponStateChanged();
+}
+
+void APEWeaponBase::SingleRoundReload()
+{
+	if (!GetUseableComponent()->IsHolding())
+	{
+		bIsReloading = false;
+		return;
+	}
+	
+	if (!AmmoComponent.IsValid() || AmmoComponent->GetItemCount() <= 0)
+	{
+		bIsReloading = false;
+		UE_LOG(LogPE, Warning, TEXT("SingleRoundReload: No ammo available"));
+		return;
+	}
+	
+	CurrentAmmoCount++;
+	AmmoComponent->ReduceItemCount(1);
+	
+	UE_LOG(LogPE, Log, TEXT("SingleRoundReload: Loaded 1 round. Current ammo: %d/%d"), CurrentAmmoCount, WeaponStats.MaxAmmo);
+	
+	// 최대 탄약수에 도달했거나 더 이상 탄약이 없으면 재장전 완료
+	if (CurrentAmmoCount >= WeaponStats.MaxAmmo || !AmmoComponent.IsValid())
+	{
+		bIsReloading = false;
+		UE_LOG(LogPE, Log, TEXT("SingleRoundReload complete. Final ammo: %d"), CurrentAmmoCount);
+		BroadcastWeaponStateChanged();
+		return;
+	}
+	
+	// 아직 재장전할 탄약이 있고 최대치에 도달하지 않았다면 다음 재장전 예약
+	GetWorldTimerManager().SetTimer(
+		ReloadTimerHandle,
+		this,
+		&APEWeaponBase::PerformReload,
+		WeaponStats.ReloadTime,
+		false);
+		
 	BroadcastWeaponStateChanged();
 }
 
@@ -185,15 +256,22 @@ void APEWeaponBase::Interact(AActor* Interactor)
 void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 {
 	UE_LOG(LogTemp, Warning, TEXT("Use called on %s by %s"), *GetName(), *Holder->GetName());
-	if (CurrentAmmoCount <= 0)
+	if (CurrentAmmoCount <= 0 && !WeaponStats.IsInfiniteAmmo)
 	{
 		return; 
 	}
 
-	// NOTE: 무기 발사 불가능 상태가 많아지면 Tag로 전환하는 것을 고려해야 함
-	if (bIsReloading)
+	// 관형 탄창이 아닌 무기는 재장전 중 발사 불가
+	if (bIsReloading && WeaponStats.IsMagazineReload)
 	{
 		return;
+	}
+
+	// 관형 탄창 무기가 재장전 중이면 재장전 취소
+	if (bIsReloading && !WeaponStats.IsMagazineReload)
+	{
+		CancleReload();
+		UE_LOG(LogPE, Log, TEXT("SingleRound reload cancelled due to firing"));
 	}
 
 	if (!WeaponStats.IsAutomatic && bIsFiring)
@@ -201,7 +279,7 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 		UE_LOG(LogTemp, Log, TEXT("Weapon is not automatic and already firing. Ignoring primary action."));
 		return;
 	}
-	
+
 	// FireRate 체크 (RPM을 초당 발사 횟수로 변환)
 	if (WeaponStats.FireRate > 0.0f)
 	{
@@ -225,13 +303,39 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 	AttackStats.SpreadAngle = WeaponStats.Spread;
 	AttackStats.ProjectileClass = WeaponStats.ProjectileClass;
 	AttackStats.ProjectileSpeed = WeaponStats.ProjectileSpeed;
-	AttackStats.CollisionChannel = ECC_Visibility;
+	AttackStats.ExplosionRadius = WeaponStats.ExplosionRadius;
+	AttackStats.ExplosionDelay = WeaponStats.ExplosionDelayTime;
+	AttackStats.HitscanChannel = CCHANNEL_HEROHITSCAN;
+	AttackStats.ProjectileCollisionChannel = CCHANNEL_HEROPROJECTILE;
 
 	// 1회 발사 시 몇 개의 탄환을 발사할지 설정 (e.g. 산탄총은 12개의 펠릿이 발사됌)
 	for (int32 i = 0; i < WeaponStats.BulletsPerShot; ++i)
 	{
 		AttackComponent->ExcuteAttack(AttackStats);
 	}
+
+	if (WeaponStats.FireSound)
+	{
+		AttackComponent->PlaySoundEffect(WeaponStats.FireSound, GetActorLocation());
+	}
+	if (WeaponStats.FireParticles)
+	{
+		if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
+		{
+			if (UCameraComponent* Camera = PEHero->FirstPersonCameraComponent)
+			{
+				FVector ParticleLocation = Camera->GetComponentLocation();
+				FRotator ParticleRotation = Camera->GetComponentRotation();
+				FVector Offset = WeaponStats.ParticleTransform.GetLocation();
+				ParticleLocation += Offset.X * Camera->GetForwardVector();
+				ParticleLocation += Offset.Y * Camera->GetRightVector();
+				ParticleLocation += Offset.Z * Camera->GetUpVector();
+				ParticleRotation += WeaponStats.ParticleTransform.GetRotation().Rotator();
+				AttackComponent->PlayParticleEffect(WeaponStats.FireParticles, ParticleLocation, ParticleRotation);
+			}
+		}
+	}
+	
 
 	if (APEHero* PEHero = Cast<APEHero>(WeaponOwnerActor))
 	{
@@ -251,7 +355,10 @@ void APEWeaponBase::DoPrimaryAction(AActor* Holder)
 		}
 	}
 
-	CurrentAmmoCount--;
+	if (!WeaponStats.IsInfiniteAmmo)
+	{
+		CurrentAmmoCount--;
+	}
 	bIsFiring = true;
 	
 	BroadcastWeaponStateChanged();
@@ -300,6 +407,34 @@ bool APEWeaponBase::IsInteractable() const
 	return true;
 }
 
+void APEWeaponBase::ShowInteractionUI()
+{
+	if (InteractWidgetComponent && InteractWidgetClass)
+	{
+		// 위젯 클래스가 설정되어 있으면 위젯 생성
+		if (!InteractWidgetComponent->GetWidget())
+		{
+			InteractWidgetComponent->SetWidgetClass(InteractWidgetClass);
+		}
+		
+		InteractWidgetComponent->SetVisibility(true);
+		UE_LOG(LogTemp, Log, TEXT("Interaction UI shown for %s"), *GetName());
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("InteractionUIComponent or InteractionUIWidgetClass is null for %s"), *GetName());
+	}
+}
+
+void APEWeaponBase::HideInteractionUI()
+{
+	if (InteractWidgetComponent)
+	{
+		InteractWidgetComponent->SetVisibility(false);
+		UE_LOG(LogTemp, Log, TEXT("Interaction UI hidden for %s"), *GetName());
+	}
+}
+
 UPEUseableComponent* APEWeaponBase::GetUseableComponent() const
 {
 	return HoldableComponent;
@@ -312,6 +447,8 @@ AActor* APEWeaponBase::GetItemOwner() const
 
 void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 {
+	BroadcastEmptyWeaponState();
+	
 	WeaponOwnerActor = nullptr;
 	OnRelease();
 	
@@ -319,7 +456,7 @@ void APEWeaponBase::OnDropped(const FVector& Location, const FRotator& Rotation)
 	SetActorRotation(Rotation);
 	SetActorHiddenInGame(false);
 	SetActorEnableCollision(true);
-	
+
 	UE_LOG(LogTemp, Warning, TEXT("APEWeaponBase::OnDropped called on %s"), *GetName());
 }
 
@@ -342,37 +479,58 @@ UPEAttackBaseComponent* APEWeaponBase::CreateAttackComponent()
 FPEEquipmentInfo APEWeaponBase::CreateCurrentEquipmentInfo() const
 {
 	FPEEquipmentInfo EquipmentInfo;
-	EquipmentInfo.EquipmentName = WeaponRowName;
+	EquipmentInfo.EquipmentName = WeaponStats.Name;
 	EquipmentInfo.AmmoCount = FString::Printf(TEXT("%d/%d"), CurrentAmmoCount, WeaponStats.MaxAmmo);
+	EquipmentInfo.EquipmentIcon = WeaponStats.IconTexture2D;
 	EquipmentInfo.EquipmentDescription = FString::Printf(TEXT("Damage: %d, Range: %.1f"), 
 		WeaponStats.Damage, WeaponStats.Range);
-	// EquipmentInfo.EquipmentIcon = WeaponStats.WeaponIcon; // 필요시 추가
+
 	return EquipmentInfo;
 }
 
 void APEWeaponBase::BroadcastWeaponStateChanged()
 {
 	FPEEquipmentInfo EquipmentInfo = CreateCurrentEquipmentInfo();
+
+	if (APEHero* Hero = Cast<APEHero>(WeaponOwnerActor))
+	{
+		Hero->BroadCastEquipmentChanged(EquipmentInfo);
 	
-	OnWeaponStateChanged.Broadcast(EquipmentInfo);
-	
-	// 델리게이트 브로드캐스트 정보 로그 출력 (테스트 용 코드)
-	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
-		*EquipmentInfo.EquipmentName.ToString(),
-		*EquipmentInfo.AmmoCount,
-		*EquipmentInfo.EquipmentDescription);
-	
+		// 델리게이트 브로드캐스트 정보 로그 출력 (테스트 용 코드)
+		UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
+			*EquipmentInfo.EquipmentName.ToString(),
+			*EquipmentInfo.AmmoCount,
+			*EquipmentInfo.EquipmentDescription);
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("BroadcastWeaponStateChanged: WeaponOwnerActor is not APEHero"));
+	}
 }
 
 void APEWeaponBase::BroadcastEmptyWeaponState()
 {
 	FPEEquipmentInfo EmptyEquipmentInfo;
-	EmptyEquipmentInfo.EquipmentName = FName();
-	EmptyEquipmentInfo.AmmoCount = TEXT("");
-	EmptyEquipmentInfo.EquipmentDescription = TEXT("");
+	EmptyEquipmentInfo.EquipmentName = FName(" ");
+	EmptyEquipmentInfo.AmmoCount = TEXT(" ");
+	EmptyEquipmentInfo.EquipmentDescription = TEXT(" ");
+	EmptyEquipmentInfo.EquipmentIcon = nullptr;
 	
-	UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Empty Weapon State"));
-	OnWeaponStateChanged.Broadcast(EmptyEquipmentInfo);
+	if (APEHero* Hero = Cast<APEHero>(WeaponOwnerActor))
+	{
+		Hero->BroadCastEquipmentChanged(EmptyEquipmentInfo);
+	
+		// 델리게이트 브로드캐스트 정보 로그 출력 (테스트 용 코드)
+		UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Name: %s, Count: %s, Description: %s"), 
+			*EmptyEquipmentInfo.EquipmentName.ToString(),
+			*EmptyEquipmentInfo.AmmoCount,
+			*EmptyEquipmentInfo.EquipmentDescription);
+		UE_LOG(LogPE, Log, TEXT("Broadcasting weapon state changed - Empty Weapon State"));
+	}
+	else
+	{
+		UE_LOG(LogPE, Warning, TEXT("BroadcastWeaponStateChanged: WeaponOwnerActor is not APEHero"));
+	}
 }
 
 void APEWeaponBase::AttachToOwner()

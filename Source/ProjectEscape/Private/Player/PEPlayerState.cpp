@@ -25,8 +25,9 @@ void APEPlayerState::SetHealthPoint(float NewValue)
 		return;
 	}
 
+	float OldValue = HealthPoint;
 	HealthPoint = FMath::Clamp(NewValue, 0, MaxHealthPoint);
-	OnChangeHealthPoint.Broadcast(HealthPoint, MaxHealthPoint);
+	OnChangeHealthPoint.Broadcast(OldValue, HealthPoint, MaxHealthPoint);
 
 	if (HealthPoint <= 0)
 	{

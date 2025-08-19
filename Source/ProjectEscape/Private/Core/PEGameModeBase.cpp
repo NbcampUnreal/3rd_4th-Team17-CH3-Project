@@ -21,7 +21,7 @@ void APEGameModeBase::GameOver(APlayerController* PlayerController)
 {
 	if (PlayerController && GetWorld())
 	{
-		OnGameEnd(GetWorld()->TimeSeconds, false);
+		OnGameEnd(PlayerController, GetWorld()->TimeSeconds, false);
 		if (APawn* Pawn = PlayerController->GetPawn())
 		{
 			Pawn->Destroy();
@@ -36,7 +36,7 @@ void APEGameModeBase::GameClear(APlayerController* PlayerController)
 {
 	if (PlayerController && GetWorld())
 	{
-		OnGameEnd(GetWorld()->TimeSeconds, true);
+		OnGameEnd(PlayerController, GetWorld()->TimeSeconds, true);
 		if (APawn* Pawn = PlayerController->GetPawn())
 		{
 			Pawn->Destroy();
@@ -47,61 +47,49 @@ void APEGameModeBase::GameClear(APlayerController* PlayerController)
 	}
 }
 
-void APEGameModeBase::OnDamageDealt(float damage)
+void APEGameModeBase::OnDamageDealt(APlayerController* PlayerController, float Damage)
 {
 	static const int DamageScoreMultiplier = 2;
-	if (FGameResult* GameResult = GetGameResultFromGameState())
+	if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
 	{
-		GameResult->DamageDealt += damage;
-		GameResult->TotalScore += (int)(damage * DamageScoreMultiplier);
+		PEGameStateBase->AddDamageDealt(Damage);
+
+		int32 DamageScore = (int32)(Damage * DamageScoreMultiplier);
+		PEGameStateBase->AddTotalScore(PlayerController, DamageScore);
 	}
 }
 
-void APEGameModeBase::OnKillEnemy(int32 KillScore)
+void APEGameModeBase::OnKillEnemy(APlayerController* PlayerController, int32 KillScore)
 {
-	if (FGameResult* GameResult = GetGameResultFromGameState())
+	if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
 	{
-		GameResult->KillCount += 1;
-		GameResult->TotalScore += KillScore;
+		PEGameStateBase->AddKillScore(KillScore);
 	}
 }
 
 void APEGameModeBase::OnGameStart(float TimeSeconds)
 {
-	if (FGameResult* GameResult = GetGameResultFromGameState())
+	if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
 	{
-		GameResult->GameStartTime = TimeSeconds;
-		GameResult->DamageDealt = 0.0f;
-		GameResult->KillCount = 0;
-		GameResult->TotalScore = 0;
+		PEGameStateBase->Reset();
+		PEGameStateBase->SetGameStart(TimeSeconds);
 	}
 }
 
-void APEGameModeBase::OnGameEnd(float TimeSeconds, bool IsClear)
+void APEGameModeBase::OnGameEnd(APlayerController* PlayerController, float TimeSeconds, bool IsClear)
 {
 	static const float TimeBonusBasis = 60.0f * 20; // 20 min
 	static const float TimeBonusScoreMultiplier = 50.0f; // 600 sec left -> 30000 score bonus
-
-	if (FGameResult* GameResult = GetGameResultFromGameState())
+	if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
 	{
-		GameResult->GameEndTime = TimeSeconds;
-		GameResult->GameRunTime = GameResult->GameEndTime - GameResult->GameStartTime;
-
+		PEGameStateBase->SetGameEnd(TimeSeconds);
 		float RemainTime = TimeBonusBasis - TimeSeconds;
 		if (IsClear)
 		{
-			GameResult->TotalScore += (RemainTime > 0) ? (RemainTime * TimeBonusScoreMultiplier) : 0;
+			int32 TimeBonusScore = (RemainTime > 0) ? (RemainTime * TimeBonusScoreMultiplier) : 0;
+			PEGameStateBase->AddTotalScore(PlayerController, TimeBonusScore);
 		}
 	}
-}
-
-FGameResult* APEGameModeBase::GetGameResultFromGameState()
-{
-	if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
-	{
-		return &(PEGameStateBase->GetGameResult());
-	}
-	return nullptr;
 }
 
 void APEGameModeBase::GameOverTimerFunction(APlayerController* PlayerController)
@@ -110,9 +98,9 @@ void APEGameModeBase::GameOverTimerFunction(APlayerController* PlayerController)
 	{
 		if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(PlayerController))
 		{
-			if (FGameResult* GameResult = GetGameResultFromGameState())
+			if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
 			{
-				PEPlayerController->ShowGameOverWidget(*GameResult);
+				PEPlayerController->ShowGameOverWidget(PEGameStateBase->GetGameResult());
 			}
 		}
 	}
@@ -124,9 +112,9 @@ void APEGameModeBase::GameClearTimerFunction(APlayerController* PlayerController
 	{
 		if (APEPlayerController* PEPlayerController = Cast<APEPlayerController>(PlayerController))
 		{
-			if (FGameResult* GameResult = GetGameResultFromGameState())
+			if (APEGameStateBase* PEGameStateBase = GetGameState<APEGameStateBase>())
 			{
-				PEPlayerController->ShowGameClearWidget(*GameResult);
+				PEPlayerController->ShowGameClearWidget(PEGameStateBase->GetGameResult());
 			}
 		}
 	}

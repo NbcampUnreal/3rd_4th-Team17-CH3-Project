@@ -4,6 +4,7 @@
 #include "Characters/Enemies/AI/PEBTTask_AttackPlayer.h"
 #include "Characters/Enemies/AI/PEAIController.h"
 #include "Characters/Enemies/AI/PEAICharacter.h"
+#include "Characters/Enemies/AI/PEAIBossCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Engine/Engine.h"
@@ -63,14 +64,11 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
         return EBTNodeResult::Failed;
     }
 
+    APEAICharacter* AICharacter = Cast<APEAICharacter>(MyPawn);
+	float CharacterAttackRange = AICharacter ? AICharacter->AttackRange : 1500.0f; // 기본 공격 범위 설정
+
     // 플레이어와의 거리 체크
     float DistanceToPlayer = FVector::Dist(MyPawn->GetActorLocation(), TargetActor->GetActorLocation());
-    if (DistanceToPlayer > AttackRange)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Attack Fail: Player too far (%.1f > %.1f)"), DistanceToPlayer, AttackRange);
-        return EBTNodeResult::Failed;
-    }
-
     float CurrentTime = GetWorld()->GetTimeSeconds();
     float LastAttackTime = BlackboardComp->GetValueAsFloat(TEXT("LastAttackTime"));
 
@@ -100,16 +98,32 @@ EBTNodeResult::Type UPEBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& 
     }
 
     // 플레이어를 바라보도록 회전
+    //MyPawn->SetActorRotation(FMath::RInterpTo(MyPawn->GetActorRotation(), LookRotation, GetWorld()->GetDeltaSeconds(), 5.0f));
+	//MyPawn->SetActorRotation(LookRotation);
     FVector Direction = (TargetActor->GetActorLocation() - MyPawn->GetActorLocation()).GetSafeNormal();
     FRotator LookRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-    MyPawn->SetActorRotation(FMath::RInterpTo(MyPawn->GetActorRotation(), LookRotation, GetWorld()->GetDeltaSeconds(), 5.0f));
-
     // 공격 실행 (로그)
     UE_LOG(LogTemp, Warning, TEXT("AI ATTACKING PLAYER! Distance: %.1f"), DistanceToPlayer);
-    if (APEAICharacter* AICharacter = Cast<APEAICharacter>(MyPawn))
+    if (AICharacter)
     {
+        MyPawn->SetActorRotation(LookRotation);
+        if (APEAIBossCharacter* BossCharacter = Cast<APEAIBossCharacter>(AICharacter))
+        {
+            if (BossCharacter->bIsInPhaseTransition || BossCharacter->bIsUsingSpecialSkill)
+            {
+                UE_LOG(LogTemp, Warning, TEXT("Boss is in phase transition, skipping attack"));
+                return EBTNodeResult::Failed; // 또는 InProgress로 대기
+            }
+            BossCharacter->PerformBossAttack(DistanceToPlayer);
+        }
+        else
+        {
+            AICharacter->PerformAttack();
+        }
+        //AICharacter->PerformAttack();
+
         FPEAttackStats AttackStats;
-        AttackStats.AttackRange = AttackRange; // 공격 범위 설정
+        AttackStats.AttackRange = AICharacter->AttackRange; // 공격 범위 설정
         AttackStats.DamageAmount = AICharacter->AttackAmount; // 임시 데미지 값 설정
         AICharacter->AttackComponent->ExcuteAttack(AttackStats, MyPawn->GetActorLocation(), Direction); // 공격 실행
 	}

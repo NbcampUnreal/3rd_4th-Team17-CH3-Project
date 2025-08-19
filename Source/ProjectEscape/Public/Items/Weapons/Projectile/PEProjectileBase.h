@@ -41,8 +41,8 @@ protected:
 
 	/* Projectile 관련 섹션 */
 public:
-	void Launch(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
-
+	virtual void Launch(AActor* InInstigator, const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction);
+	AActor* GetInstigator() const;
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Projectile")
 	FPEAttackStats ProjectileStats;
@@ -53,11 +53,20 @@ protected:
 	UPROPERTY()
 	FTimerHandle ProjectileLifetimeTimer;
 
-private:
+	UPROPERTY()
+	TObjectPtr<AActor> InstigatorActor;
+
+protected:
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
+	virtual void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
 
 	UFUNCTION()
 	void OnProjectileExpired();
-	
+
+	/* Effect 관련 섹션 */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
+	UParticleSystem* HitEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effects")
+	USoundBase* HitSound;
 };

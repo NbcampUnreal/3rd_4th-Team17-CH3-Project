@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
+#include "Items/PEEquipmentType.h"
 #include "UObject/Object.h"
 #include "FPEWeaponData.generated.h"
 
@@ -20,59 +21,77 @@ struct FPEWeaponData : public FTableRowBase
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FName Name;
+	FName Name = "DefaultWeapon";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EPEEquipmentType Type;
+	EPEEquipmentType Type = EPEEquipmentType::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FGameplayTag AmmoType;
+	FGameplayTag AmmoType = FGameplayTag::EmptyTag;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<APEProjectileBase> ProjectileClass; // 투사체 방식일 때만 사용
+	TSubclassOf<APEProjectileBase> ProjectileClass = nullptr; // 투사체 방식일 때만 사용
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ExplosionRadius = 100.0f; // 폭발 반경, 투사체가 폭발하는 경우에만 사용
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float ExplosionDelayTime = 1.0f; // 폭발 지연 시간, 투사체가 폭발하는 경우에만 사용
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool IsAutomatic;
+	bool IsAutomatic = false;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool IsHitscan;
+	bool IsHitscan = true;	// 명시적으로 사용, 실제로는 HitScan 클래스로 구현해야 함
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool IsMagazineReload;
+	bool IsMagazineReload = true; // 명시적으로 사용, 실제로는 무기 클래스 안에 구현해야 함
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsInfiniteAmmo = false;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 BulletsPerShot;
+	int32 BulletsPerShot = 1;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 Damage;
+	int32 Damage = 10;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float FireRate;
+	float FireRate = 600;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ReloadTime;
+	float ReloadTime = 2.0f;;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 MaxAmmo;
+	int32 MaxAmmo = 30;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Range;
+	float Range = 10000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float ProjectileSpeed;
+	float ProjectileSpeed = 1000.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Spread;
+	float Spread = 0.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString Description;
+	FString Description = " ";
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TSubclassOf<AActor> ActorToAttach;
+	TSubclassOf<AActor> ActorToAttach = nullptr; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FTransform AttachTransform;
+	FTransform AttachTransform = FTransform::Identity;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<UTexture2D> IconTexture2D;
+	TObjectPtr<UTexture2D> IconTexture2D = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<USoundBase> FireSound = nullptr;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UParticleSystem> FireParticles = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FTransform ParticleTransform = FTransform::Identity;
 };
