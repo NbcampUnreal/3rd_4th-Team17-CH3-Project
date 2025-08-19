@@ -167,8 +167,10 @@ bool APEAIBossCharacter::PerformBossAttack(float DistanceToTarget)
         return false;
     }
 
+    bool bIsMeleeAttack = ShouldUseMeleeAttack(DistanceToTarget);
+
     // 거리에 따른 공격 타입 결정 및 애니메이션 재생
-    if (ShouldUseMeleeAttack(DistanceToTarget))
+    if (bIsMeleeAttack)
     {
         PlayRandomMeleeAttackAnimation();
 
@@ -185,6 +187,7 @@ bool APEAIBossCharacter::PerformBossAttack(float DistanceToTarget)
         AttackAmount = RangedAttackAmount;
         AttackRange = RangedAttackRange;
     }
+    PlayBossAttackEffects(bIsMeleeAttack);
 
     return true;
 }
@@ -316,6 +319,8 @@ void APEAIBossCharacter::StartSpecialSkill()
 
     UE_LOG(LogTemp, Warning, TEXT("Boss starting special missile strike!"));
 
+    PlaySpecialSkillEffects();
+
     // AI 일시 정지
     if (AAIController* AIController = Cast<AAIController>(GetController()))
     {
@@ -344,8 +349,10 @@ void APEAIBossCharacter::StartSpecialSkill()
     // 화면에 경고 메시지
     if (GEngine)
     {
+#if UE_BUILD_DEBUG
         GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red,
             TEXT("BOSS SPECIAL ATTACK - MISSILE STRIKE INCOMING!"));
+#endif
     }
 }
 
@@ -357,7 +364,7 @@ void APEAIBossCharacter::ExecuteMissileStrike()
         OnSpecialSkillCompleted();
         return;
     }
-
+    
     // 현재 미사일 인덱스 초기화
     CurrentMissileIndex = 0;
 
@@ -442,7 +449,80 @@ void APEAIBossCharacter::OnSpecialSkillCompleted()
 
     if (GEngine)
     {
+#if UE_BUILD_DEBUG
         GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Green,
             TEXT("Boss special attack completed!"));
+#endif
+    }
+}
+
+void APEAIBossCharacter::PlayBossAttackEffects(bool bIsMeleeAttack)
+{
+    if (!AttackComponent) return;
+
+    USceneComponent* StartPoint = AttackStart;
+
+    if (bIsMeleeAttack)
+    {
+        // 근접 공격 이펙트/사운드
+        if (MeleeAttackParticleEffect)
+        {
+            AttackComponent->PlayParticleEffect(
+                MeleeAttackParticleEffect,
+                StartPoint->GetComponentLocation(),
+                StartPoint->GetComponentRotation()
+            );
+        }
+
+        if (MeleeAttackSoundEffect)
+        {
+            AttackComponent->PlaySoundEffect(
+                MeleeAttackSoundEffect,
+                StartPoint->GetComponentLocation()
+            );
+        }
+    }
+    else
+    {
+        // 원거리 공격 이펙트/사운드
+        if (RangedAttackParticleEffect)
+        {
+            AttackComponent->PlayParticleEffect(
+                RangedAttackParticleEffect,
+                StartPoint->GetComponentLocation(),
+                StartPoint->GetComponentRotation()
+            );
+        }
+
+        if (RangedAttackSoundEffect)
+        {
+            AttackComponent->PlaySoundEffect(
+                RangedAttackSoundEffect,
+                StartPoint->GetComponentLocation()
+            );
+        }
+    }
+}
+
+void APEAIBossCharacter::PlaySpecialSkillEffects()
+{
+    if (!AttackComponent) return;
+
+    // 스페셜 스킬 이펙트/사운드
+    if (SpecialSkillParticleEffect)
+    {
+        AttackComponent->PlayParticleEffect(
+            SpecialSkillParticleEffect,
+            GetActorLocation(),
+            GetActorRotation()
+        );
+    }
+
+    if (SpecialSkillSoundEffect)
+    {
+        AttackComponent->PlaySoundEffect(
+            SpecialSkillSoundEffect,
+            GetActorLocation()
+        );
     }
 }

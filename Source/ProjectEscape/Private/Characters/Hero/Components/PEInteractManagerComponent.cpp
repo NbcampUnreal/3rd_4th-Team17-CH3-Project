@@ -109,7 +109,7 @@ void UPEInteractManagerComponent::CheckAndSetForInteractable()
 	);
 
 	// 디버그 라인 그리기 (개발 중에만)
-	#if WITH_EDITOR
+#if UE_BUILD_DEBUG
 	DrawDebugLine(
 		World,
 		StartLocation,
@@ -120,7 +120,7 @@ void UPEInteractManagerComponent::CheckAndSetForInteractable()
 		0,
 		1.0f
 	);
-	#endif
+#endif
 
 	// 이전 상호작용 대상 초기화
 	UPEInteractableComponent* NewInteractable = nullptr;

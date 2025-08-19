@@ -25,7 +25,7 @@ APEWeaponBase::APEWeaponBase()
 	// 상호작용 컴포넌트 생성 및 설정
 	InteractableComponent = CreateDefaultSubobject<UPEInteractableComponent>(TEXT("InteractableComponent"));
 	InteractableComponent->SetupAttachment(WeaponMesh);
-	InteractableComponent->SetHiddenInGame(false);
+	InteractableComponent->SetHiddenInGame(true);
 
 	// 장착 컴포넌트 생성 및 설정
 	HoldableComponent = CreateDefaultSubobject<UPEUseableComponent>(TEXT("HoldableComponent"));

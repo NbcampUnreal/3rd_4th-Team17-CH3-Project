@@ -1,10 +1,11 @@
-#pragma once
+癤�#pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Characters/Enemies/AI/PEAIController.h"
 #include "Combat/Components/PEAttackBaseComponent.h"
 #include "Combat/Components/PEReceiveAttackComponent.h"
+#include "UI/HUD/PEUIDamage.h"
 #include "PEAICharacter.generated.h"
 
 DECLARE_MULTICAST_DELEGATE(FOnPawnDeath);
@@ -27,12 +28,14 @@ public:
 	TObjectPtr<UPEAttackBaseComponent> AttackComponent;
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Combat")
 	TObjectPtr<UPEReceiveAttackComponent> ReceiveComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Combat")
+	USceneComponent* AttackStart;
 
 	// Drop
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Combat")
 	TObjectPtr<UEnemyDropComponent> DropComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy||Status")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	int32 AttackAmount = 10;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	float AttackRange = 1000.0f;
@@ -45,6 +48,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	TSubclassOf<APEAIController> AIControllerClassBP = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Damage")
+	TSubclassOf<class APEUIDamage> DamageClass;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	float WalkSpeed = 300.0f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
@@ -53,6 +59,8 @@ public:
 	FRotator RotateSpeed = FRotator(0.0f, 540.0f, 0.0f);
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
 	float AirControl = 0.2f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Status")
+	float AttackCoolTime = 0.2f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Status")
 	bool bIsDead = false;
@@ -76,6 +84,14 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Enemy|Animation")
 	float MovementSpeed = 0.0f;
+
+	// 이펙트 및 사운드
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Effect")
+	UParticleSystem* AttackParticleEffect;
+
+	// 사운드를 블루프린트에서 설정 가능하도록  
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Effect")
+	USoundBase* AttackSoundEffect;
 
 	void SetMovementSpeed(float NewSpeed);
 

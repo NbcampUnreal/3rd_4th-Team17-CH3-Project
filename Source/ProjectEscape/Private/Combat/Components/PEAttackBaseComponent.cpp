@@ -1,4 +1,4 @@
-ï»¿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "Combat/Components/PEAttackBaseComponent.h"
@@ -108,7 +108,7 @@ void UPEAttackBaseComponent::SetAttackStartPoint(USceneComponent* NewStartPoint)
 
 void UPEAttackBaseComponent::PerformAttack(const FPEAttackStats& AttackStats, const FVector& StartLocation, const FVector& Direction)
 {
-	// NOTE: ì‹¤ì œ êµ¬í˜„ì€ ìì‹ í´ë˜ìŠ¤ì— ì‘ì„±í•´ì•¼ í•©ë‹ˆë‹¤.
+	// NOTE: ½ÇÁ¦ ±¸ÇöÀº ÀÚ½Ä Å¬·¡½º¿¡ ÀÛ¼ºÇØ¾ß ÇÕ´Ï´Ù.
 	UE_LOG(LogPE, Warning, TEXT("PEAttackComponentBase::PerformAttack: This function should be overridden in derived classes."));
 }
 

@@ -92,6 +92,25 @@ public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Boss|Animation")
     TObjectPtr<UAnimMontage> SpecialSkillMontage; 
 
+    // 사운드 및 이펙트
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Boss|VFX")
+    UParticleSystem* MeleeAttackParticleEffect;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Boss|VFX")
+    UParticleSystem* RangedAttackParticleEffect;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Boss|VFX")
+    UParticleSystem* SpecialSkillParticleEffect;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Boss|Audio")
+    USoundBase* MeleeAttackSoundEffect;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Boss|Audio")
+    USoundBase* RangedAttackSoundEffect;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy|Boss|Audio")
+    USoundBase* SpecialSkillSoundEffect;
+
     // 공격 타입 판단 및 실행
     UFUNCTION(BlueprintPure, Category = "Enemy|Boss|Combat")
     bool ShouldUseMeleeAttack(float DistanceToTarget) const;
@@ -151,4 +170,7 @@ private:
     void StartSpecialSkillTimer();
     void SpawnSingleMissile();
     void OnSpecialSkillCompleted();
+
+    void PlayBossAttackEffects(bool bIsMeleeAttack);
+    void PlaySpecialSkillEffects();
 };
