@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Components/ActorComponent.h"
 #include "PEUseableComponent.generated.h"
 
@@ -55,4 +56,5 @@ public:
 	bool IsHolding() const;
 
 	EPEEquipmentType GetEquipmentType() const;
+	FGameplayTag GetGameplayTag() const;
 };

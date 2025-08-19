@@ -222,10 +222,36 @@ void APEHero::HandEquipment(EPEEquipmentType EquipmentType)
 
 void APEHero::DropHandEquipmentToWorld()
 {
-	if (UseableItemManagerComponent)
+	if (UseableItemManagerComponent && InventoryManagerComponent)
 	{
-		UseableItemManagerComponent->DropHandEquipmentToWorld();
+		if (UPEUseableComponent* CurrentItem = UseableItemManagerComponent->GetCurrentItem())
+		{
+			if (UPEStorableItemComponent* StorableItem = InventoryManagerComponent->GetItemByTag(CurrentItem->GetGameplayTag()))
+			{
+				if (StorableItem->GetItemCount() <= 1)
+				{
+					QuickSlotManagerComponent->RemoveQuickSlotItem(CurrentItem->GetEquipmentType());
+					UseableItemManagerComponent->ReleaseHandItem();
+					CurrentItem->Release();
+				
+					FPEEquipmentInfo EquipmentInfo;
+					EquipmentInfo.EquipmentName = FName(" ");
+					EquipmentInfo.AmmoCount = TEXT(" ");
+					EquipmentInfo.EquipmentDescription = TEXT(" ");
+					EquipmentInfo.EquipmentIcon = nullptr;
+				
+					BroadCastEquipmentChanged(EquipmentInfo);
+				}
+				InventoryManagerComponent->DropItemFromInventoryByTag(1, CurrentItem->GetGameplayTag());
+			}
+			else
+			{
+				UseableItemManagerComponent->DropHandEquipmentToWorld();
+			}
+		}
+		
 	}
+	
 }
 
 void APEHero::HandleDropEquipmentToWorld(FGameplayTag EquipmentTag)

@@ -3,6 +3,7 @@
 
 #include "Items/Components/PEUseableComponent.h"
 
+#include "GameplayTagContainer.h"
 #include "Core/PELogChannels.h"
 #include "Items/Interface/PEQuickSlotItem.h"
 #include "Items/Interface/PEUseable.h"
@@ -131,4 +132,13 @@ EPEEquipmentType UPEUseableComponent::GetEquipmentType() const
 	}
 	UE_LOG(LogPE, Warning, TEXT("UPEUseableComponent::GetEquipmentType: Owner %s does not implement IPEQuickSlotItem interface!"), *GetOwner()->GetName());
 	return EPEEquipmentType::None; // 기본값 반환
+}
+
+FGameplayTag UPEUseableComponent::GetGameplayTag() const
+{
+	if (IPEUseable* UseableInterface = Cast<IPEUseable>(GetOwner()))
+	{
+		return UseableInterface->GetItemTag();
+	}
+	return FGameplayTag::EmptyTag; // 기본값 반환
 }
